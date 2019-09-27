@@ -1,0 +1,387 @@
+﻿@page "/"
+
+@inject AppState AppState
+@inject Interop Interop
+@inject Worker Worker
+@inject ExceptionHandler ExceptionHandler
+@*@inject HttpClient HttpClient*@
+@*@inject IndexedDBManager IndexedDBManager*@
+
+<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
+    <div class="Body">
+        <div class="inner">
+            @if (!AppState.Error)
+            {
+                <canvas id="theCanvas" width="640" height="480" tabindex="1" style="border: 1px solid red"
+                        @onmousemove="OnMouseMove" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp" @onkeydown="OnKeyDown" @onkeyup="OnKeyUp" />
+            }
+        </div>
+    </div>
+    <div class="BodyV">
+        @if (!AppState.Started)
+        {
+            <div class="start">
+                <p>
+                    Based on the excellent <a href="https://github.com/d07RiV/diabloweb">DiabloWeb</a> which, in turn, is based on the likewise excellent <a href="https://github.com/diasurgical/devilution">Devilution</a>.
+                    The project page with information and links can be found over here: <a href="https://github.com/n-stefan/diabloblazor">https://github.com/n-stefan/diabloblazor</a>.
+                </p>
+                <p>
+                    If you own the original game, you can drop the original DIABDAT.MPQ onto this page or click the button below to start playing.
+                    The game can be purchased from <a href="https://www.gog.com/game/diablo">GoG</a>.
+                    @*<span class="link" @onclick="CompressMPQ">Click here to compress the MPQ, greatly reducing its size.</span>*@
+                </p>
+                @if (!AppState.HasSpawn)
+                {
+                    <p>
+                        Or you can play the shareware version for free (50MB download).
+                    </p>
+                }
+                <form>
+                    <label for="loadFile" class="startButton">Browse for MPQ</label>
+                    <input accept=".mpq" type="file" id="loadFile" style="display: none" @onchange="ParseFile" />
+                </form>
+                <div class="startButton" @onclick="() => Start()">Play Shareware</div>
+                @if (AppState.SaveNames.Count > 0)
+                {
+                    <div class="startButton" @onclick="ShowSaves">Manage Saves</div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code
+{
+    //TODO: Modularize
+
+    private const string retailFilename = "diabdat.mpq";
+    private const string spawnFilename = "spawn.mpq";
+    private static readonly int[] spawnFilesizes = { 50_274_091, 25_830_791 };
+    private bool offscreen;
+    private ClientRect canvasRect;
+    private GameType gameType;
+    private string saveName;
+    private Timer timer;
+
+    //private Dictionary<string, byte[]> fileSystem;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitFileSystem();
+
+        if (await Interop.HasFile(spawnFilename, spawnFilesizes))
+            AppState.HasSpawn = true;
+
+        //  if ([...fs.files.keys()].filter(name => name.match(/\.sv$/i)).length) {
+        //    this.setState({save_names: true});
+        //  }
+
+        offscreen = false;
+
+        canvasRect = await Interop.GetCanvasRect();
+
+        ExceptionHandler.OnException += (source, message) => Interop.Alert($"An error has occured: {message}");
+
+        await Interop.AddEventListeners();
+
+        await Interop.StoreDotNetReference(DotNetObjectReference.Create<Index>(this));
+    }
+
+    //private bool PointerLocked()
+    //{
+    //    return true;
+    //    //return document.pointerLockElement === this.canvas || document.mozPointerLockElement === this.canvas;
+    //}
+
+    private (double x, double y) MousePos(MouseEventArgs e)
+    {
+        double tx = 0, ty = 0;
+        //if (PointerLocked())
+        //{
+        tx = Math.Max(canvasRect.Left, Math.Min(canvasRect.Right, tx + e.ClientX));
+        ty = Math.Max(canvasRect.Top, Math.Min(canvasRect.Bottom, ty + e.ClientY));
+        //}
+        //else
+        //{
+        //    tx = e.ClientX;
+        //    ty = e.ClientY;
+        //}
+        return (
+            x: Math.Max(0, Math.Min(Math.Round((tx - canvasRect.Left) / (canvasRect.Right - canvasRect.Left) * 640), 639)),
+            y: Math.Max(0, Math.Min(Math.Round((ty - canvasRect.Top) / (canvasRect.Bottom - canvasRect.Top) * 480), 479))
+        );
+    }
+
+    private int MouseButton(MouseEventArgs e) =>
+        e.Button switch
+        {
+            0 => 1,
+            1 => 4,
+            2 => 2,
+            3 => 5,
+            4 => 6,
+            _ => 1
+        };
+
+    private int EventModifiers(EventArgs e)
+    {
+        //A common base class with at least ShiftKey, CtrlKey and AltKey would be nice
+        if (e is MouseEventArgs me)
+            return ((me.ShiftKey /*|| this.touchMods[TOUCH_SHIFT]*/) ? 1 : 0) + (me.CtrlKey ? 2 : 0) + (me.AltKey ? 4 : 0) /*+ (e.touches ? 8 : 0)*/;
+        else if (e is KeyboardEventArgs ke)
+            return ((ke.ShiftKey /*|| this.touchMods[TOUCH_SHIFT]*/) ? 1 : 0) + (ke.CtrlKey ? 2 : 0) + (ke.AltKey ? 4 : 0) /*+ (e.touches ? 8 : 0)*/;
+        else
+            throw new Exception($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs!");
+    }
+
+    private int TranslateCode(KeyboardEventArgs e) =>
+        e.Code switch
+        {
+            "Backspace" => 8,
+            "Enter"     => 13,
+            _           => (int)e.Key[0] - 32
+        };
+
+    private async Task OnMouseMove(MouseEventArgs e)
+    {
+        var (x, y) = MousePos(e);
+        await Interop.DApiMouse(0, 0, EventModifiers(e), x, y);
+    }
+
+    private async Task OnMouseDown(MouseEventArgs e)
+    {
+        var (x, y) = MousePos(e);
+
+        //if (window.screen && window.innerHeight === window.screen.height) {
+        //  // we're in fullscreen, let's get pointer lock!
+        //  if (!this.pointerLocked()) {
+        //    this.canvas.requestPointerLock();
+        //  }
+        //}
+
+        await Interop.DApiMouse(1, MouseButton(e), EventModifiers(e), x, y);
+    }
+
+    private async Task OnMouseUp(MouseEventArgs e)
+    {
+        var (x, y) = MousePos(e);
+        await Interop.DApiMouse(2, MouseButton(e), EventModifiers(e), x, y);
+    }
+
+    //TODO: Check Backspace
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        var keyCode = TranslateCode(e);
+
+        await Interop.DApiKey(0, EventModifiers(e), keyCode);
+
+        if (keyCode >= 32 && e.Key.Length == 1)
+            await Interop.DApiChar((int)e.Key[0]);
+        else if (keyCode == 8 || keyCode == 13)
+            await Interop.DApiChar(keyCode);
+
+        //this.clearKeySel();
+        //if (!this.showKeyboard) {
+        //  if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119)) {
+        //    e.preventDefault();
+        //  }
+        //}
+    }
+
+    private async Task OnKeyUp(KeyboardEventArgs e)
+    {
+        await Interop.DApiKey(1, EventModifiers(e), TranslateCode(e));
+
+        //this.clearKeySel();
+    }
+
+    private void SetDropping(int change) =>
+        AppState.Dropping = Math.Max(AppState.Dropping + change, 0);
+
+    private void OnDragEnter(DragEventArgs e)
+    {
+        SetDropping(1);
+    }
+
+    private void OnDragLeave(DragEventArgs e) =>
+        SetDropping(-1);
+
+    [JSInvokable]
+    public void OnResize(ClientRect rect) =>
+        canvasRect = rect;
+
+    private async Task InitFileSystem()
+    {
+        //var store = await IndexedDBManager.GetRecords<IndexedDBFile>("kv");
+        //return store.ToDictionary(x => x.Name, x => x.Data);
+
+        await Interop.InitIndexedDB();
+    }
+
+    private void CompressMPQ() =>
+        AppState.Compress = true;
+
+    private async Task ParseFile(ChangeEventArgs e)
+    {
+        if (e.Value != null)
+        {
+            var valueAsString = e.Value.ToString();
+            var name = valueAsString.Substring(valueAsString.LastIndexOf("\\") + 1);
+            await Start(name.ToLower());
+        }
+    }
+
+    [JSInvokable]
+    public async Task Start(string name = null)
+    {
+        //if (this.compressMpq)
+        //    this.compressMpq.start(file);
+        //else:
+
+        //if (file && file.name.match(/\.sv$/ i))
+        //{
+        //    this.fs.then(fs => fs.upload(file)).then(() =>
+        //    {
+        //        this.updateSaves();
+        //    });
+        //    return;
+        //}
+        //if (this.state.show_saves)
+        //{
+        //    return;
+        //}
+        if (name != null && !name.EndsWith(".mpq"))
+        {
+            Interop.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
+            
+            AppState.Dropping = 0;
+            
+            StateHasChanged();
+            
+            return;
+        }
+
+        //const retail = !!(file && !file.name.match(/ ^spawn\.mpq$/ i));
+        //if (process.env.NODE_ENV === 'production')
+        //{
+        //  ReactGA.event ({
+        //      category: 'Game',
+        //      action: retail ? 'Start Retail' : 'Start Shareware',
+        //  });
+        //}
+
+        gameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Spawn;
+
+        AppState.Loading = true;
+
+        await LoadGame();
+
+        //document.addEventListener('contextmenu', this.onMenu, true);
+
+        //document.addEventListener('touchstart', this.onTouchStart, { passive: false, capture: true});
+        //document.addEventListener('touchmove', this.onTouchMove, { passive: false, capture: true});
+        //document.addEventListener('touchend', this.onTouchEnd, { passive: false, capture: true});
+
+        //document.addEventListener('pointerlockchange', this.onPointerLockChange);
+
+        AppState.Dropping = 0;
+        AppState.Started = true;
+
+        StateHasChanged();
+    }
+
+    private void ShowSaves() =>
+        WriteLine("Debug: In ShowSaves");
+
+    private async Task LoadGame()
+    {
+        await Interop.InitGraphics(offscreen);
+        await Interop.InitSound();
+        await DoLoadGame();
+    }
+
+    private async Task DoLoadGame()
+    {
+        if (gameType == GameType.Retail)
+            await LoadRetail();
+        else
+            await LoadSpawn();
+
+        //let packetQueue = [];
+        //const webrtc = webrtc_open(data =>
+        //{
+        //    packetQueue.push(data);
+        //});
+
+        timer = await Worker.InitGame(/*fileSystem, file*/ gameType, offscreen);
+
+        //await Worker.Loaded();
+
+        //...?
+    }
+
+    private async Task LoadRetail()
+    {
+        var filesize = await Interop.GetFilesize(retailFilename);
+        if (filesize == 0)
+            if (AppState.Dropping > 0)
+                await Interop.SetDropFile();
+            else
+                await Interop.SetInputFile();
+    }
+
+    private async Task LoadSpawn()
+    {
+        var filesize = await Interop.GetFilesize(spawnFilename);
+        if (filesize != 0 && !spawnFilesizes.Contains(filesize))
+        {
+            //await IndexedDBManager.DeleteRecord<string>("kv", spawnFilename);
+
+            await Interop.RemoveFile(spawnFilename);
+            filesize = 0;
+        }
+        if (filesize == 0)
+        {
+            //HttpClient.DefaultRequestHeaders.Add("Cache-Control", "max-age=31536000");
+            //TODO: URL from config
+            var url = $"http://localhost:53287/{spawnFilename}";
+            //var spawn = await HttpClient.GetByteArrayAsync(url);
+
+            //onDownloadProgress: e => {
+            //  if (api.onProgress) {
+            //    api.onProgress({text: 'Downloading...', loaded: e.loaded, total: e.total || spawnFilesizes[0]});
+            //  }
+            //},
+
+            //fileSystem[spawnFilename] = spawn;
+
+            //var indexedDBFile = new IndexedDBFile { Name = spawnFilename, Data = spawn };
+            //var storeRecord = new StoreRecord<IndexedDBFile> { Storename = "kv", Data = indexedDBFile };
+            //await IndexedDBManager.UpdateRecord<IndexedDBFile>(storeRecord);
+
+            //TODO: When serialization is fast enough
+            //await Interop.UpdateIndexedDB(spawnFilename, spawn);
+
+            filesize = await Interop.DownloadAndUpdateIndexedDB(url, spawnFilename);
+
+            if (!spawnFilesizes.Contains(filesize))
+                throw new Exception("Invalid spawn.mpq size. Try clearing the cache and refreshing the page.");
+        }
+    }
+
+    [JSInvokable]
+    public void SetSaveName(int id) =>
+        saveName = (id >= 0) ? (gameType == GameType.Spawn) ? $"spawn{id}.sv" : $"single_{id}.sv" : null;
+
+    [JSInvokable]
+    public async Task OnExit()
+    {
+        if (!AppState.Error)
+        {
+            timer.Dispose();
+            timer = null;
+
+            await Interop.Reload();
+        }
+    }
+}

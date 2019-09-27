@@ -1,0 +1,125 @@
+﻿
+//TODO master list:
+//.wasm: change "DiabloWeb" to "DiabloBlazor", maximize trimming
+//Manage saves
+//Compress .mpq
+//Progress bars
+//Move as much as possible from TS/JS to C#
+//Add more TS type annotations (noImplicitAny)
+//Use AOT compilation/non-Mono runtime/threads (Worker) when available
+//Memory leak?
+//Multiplayer?
+//Touch? Low priority
+
+declare const axios: any;
+
+class Interop {
+    private _webassembly: Webassembly;
+    private _graphics: Graphics;
+    private _sound: Sound;
+    private _fileStore: FileStore;
+    private _dotNetReference;
+
+    constructor() {
+        this._webassembly = new Webassembly();
+        this._graphics = new Graphics();
+        this._sound = new Sound();
+        this._fileStore = new FileStore();
+
+        windowAny.DApi.open_keyboard = this.openKeyboard;
+        windowAny.DApi.close_keyboard = this.closeKeyboard;
+        windowAny.DApi.current_save_id = this.currentSaveId;
+        windowAny.DApi.exit_game = this.exitGame;
+        windowAny.DApi.exit_error = this.exitError;
+    }
+
+    public get webassembly(): Webassembly {
+        return this._webassembly;
+    }
+
+    public get graphics(): Graphics {
+        return this._graphics;
+    }
+
+    public get sound(): Sound {
+        return this._sound;
+    }
+
+    public get fileStore(): FileStore {
+        return this._fileStore;
+    }
+
+    public get dotNetReference() {
+        return this._dotNetReference;
+    }
+
+    public addEventListeners = (): void => {
+        window.addEventListener('resize', () => this._dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
+
+        const main = document.getElementById('main');
+        main.addEventListener('drop', (event: DragEvent) => this._fileStore.onDropFile(event));
+        main.addEventListener('dragover', (event: DragEvent) => event.preventDefault());
+    }
+
+    private download = async (url: string): Promise<ArrayBuffer> => {
+        const response = await axios.request({
+            url: url,
+            responseType: 'arraybuffer',
+            //onDownloadProgress: e => {
+            //    if (api.onProgress) {
+            //        api.onProgress({ text: 'Downloading...', loaded: e.loaded, total: e.total || sizes[0] });
+            //    }
+            //},
+            headers: {
+                'Cache-Control': 'max-age=31536000'
+            }
+        });
+        return response.data;
+    }
+
+    public downloadAndUpdateIndexedDb = async (url: string, name: string): Promise<number> => {
+        const arrayBuffer = await this.download(url);
+        const array = await this._fileStore.updateIndexedDbFromArrayBuffer(name, arrayBuffer);
+        this._fileStore.setFile(name, array);
+        return arrayBuffer.byteLength;
+    }
+
+    public getCanvasRect = (): ClientRect => {
+        const canvas = document.getElementById('theCanvas');
+        return canvas.getBoundingClientRect();
+    }
+
+    public reload = (): void => {
+        window.location.reload();
+    }
+
+    public openKeyboard = (...args): void => {
+        //Do nothing
+    }
+
+    public closeKeyboard = (): void => {
+        //Do nothing
+    }
+
+    public currentSaveId = (id: number): void => {
+        this._dotNetReference.invokeMethodAsync('SetSaveName', id);
+    }
+
+    public exitError = (error): void => {
+        throw Error(error);
+    }
+
+    public exitGame = (): void => {
+        this._dotNetReference.invokeMethodAsync('OnExit');
+    }
+
+    public storeDotNetReference = (dotNetReference): void => {
+        this._dotNetReference = dotNetReference;
+    }
+}
+
+const windowAny = window as any;
+windowAny.DApi = {};
+windowAny.interop = new Interop();
+
+const getInterop = (): Interop => windowAny.interop;

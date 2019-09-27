@@ -1,0 +1,54 @@
+[
+  {
+    "outputFileName": "wwwroot/dist/external.min.css",
+    "inputFiles": [
+      "wwwroot/css/reset.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/diablo.min.css",
+    "inputFiles": [
+      "wwwroot/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/external.min.js",
+    "inputFiles": [
+      "wwwroot/libs/idb-kv-store/idbkvstore.min.js",
+      "wwwroot/libs/axios/dist/axios.min.js"
+    ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/dist/diablo.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/Diablo.js",
+      "wwwroot/scripts/DiabloSpawn.js",
+      "wwwroot/scripts/helper.js",
+      "wwwroot/scripts/graphics.js",
+      "wwwroot/scripts/sound.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/dist/diablo.js",
+    "inputFiles": [
+      "wwwroot/scripts/webassembly.js",
+      "wwwroot/scripts/filestore.js",
+      "wwwroot/scripts/interop.js"
+    ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    },
+    "sourceMap": false
+  }
+]
