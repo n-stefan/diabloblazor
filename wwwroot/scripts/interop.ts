@@ -1,6 +1,5 @@
 ﻿
 //TODO master list:
-//.wasm: change "DiabloWeb" to "DiabloBlazor", maximize trimming
 //Manage saves
 //Compress .mpq
 //Progress bars
