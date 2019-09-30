@@ -1,5 +1,5 @@
 ﻿
-namespace diabloblazor.DTO
+namespace diabloblazor.Models
 {
     public struct ClientRect
     {

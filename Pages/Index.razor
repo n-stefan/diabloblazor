@@ -4,15 +4,15 @@
 @inject Interop Interop
 @inject Worker Worker
 @inject ExceptionHandler ExceptionHandler
-@*@inject HttpClient HttpClient*@
-@*@inject IndexedDBManager IndexedDBManager*@
+@*@inject HttpClient HttpClient
+@inject IndexedDBManager IndexedDBManager*@
 
 <div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
     <div class="Body">
         <div class="inner">
             @if (!AppState.Error)
             {
-                <canvas id="theCanvas" width="640" height="480" tabindex="1" style="border: 1px solid red"
+                <canvas id="theCanvas" width="640" height="480" tabindex="1"
                         @onmousemove="OnMouseMove" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp" @onkeydown="OnKeyDown" @onkeyup="OnKeyUp" />
             }
         </div>
@@ -38,7 +38,7 @@
                 }
                 <form>
                     <label for="loadFile" class="startButton">Browse for MPQ</label>
-                    <input accept=".mpq" type="file" id="loadFile" style="display: none" @onchange="ParseFile" />
+                    <input accept=".mpq" type="file" id="loadFile" class="hidden" @onchange="ParseFile" />
                 </form>
                 <div class="startButton" @onclick="() => Start()">Play Shareware</div>
                 @if (AppState.SaveNames.Count > 0)
@@ -80,7 +80,7 @@
 
         canvasRect = await Interop.GetCanvasRect();
 
-        ExceptionHandler.OnException += (source, message) => Interop.Alert($"An error has occured: {message}");
+        ExceptionHandler.OnException += (_, message) => Interop.Alert($"An error has occured: {message}");
 
         await Interop.AddEventListeners();
 
@@ -198,10 +198,8 @@
     private void SetDropping(int change) =>
         AppState.Dropping = Math.Max(AppState.Dropping + change, 0);
 
-    private void OnDragEnter(DragEventArgs e)
-    {
+    private void OnDragEnter(DragEventArgs e) =>
         SetDropping(1);
-    }
 
     private void OnDragLeave(DragEventArgs e) =>
         SetDropping(-1);
@@ -322,8 +320,7 @@
 
     private async Task LoadRetail()
     {
-        var filesize = await Interop.GetFilesize(retailFilename);
-        if (filesize == 0)
+        if (!await Interop.HasFile(retailFilename))
             if (AppState.Dropping > 0)
                 await Interop.SetDropFile();
             else

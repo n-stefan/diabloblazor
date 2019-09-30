@@ -1,5 +1,5 @@
-﻿using diabloblazor.DTO;
-using diabloblazor.JsonConverters;
+﻿using diabloblazor.JsonConverters;
+using diabloblazor.Models;
 using diabloblazor.Pages;
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
@@ -47,7 +47,7 @@ namespace diabloblazor.Services
             return await _jsRuntime.InvokeAsync<int>("interop.downloadAndUpdateIndexedDb", url, name);
         }
 
-        public async ValueTask<bool> HasFile(string name, int[] sizes)
+        public async ValueTask<bool> HasFile(string name, params int[] sizes)
         {
             return await _jsRuntime.InvokeAsync<bool>("interop.fileStore.hasFile", name, sizes);
         }

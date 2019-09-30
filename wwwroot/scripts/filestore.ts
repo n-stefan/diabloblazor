@@ -9,7 +9,7 @@ class FileStore {
     constructor() {
         this.files = new Map<string, Uint8Array>();
 
-        windowAny.DApi.get_file_size = this.getFilesizeFromPath;
+        windowAny.DApi.get_file_size = this.getFilesize;
         windowAny.DApi.get_file_contents = this.getFileContents;
         windowAny.DApi.put_file_contents = this.putFileContents;
         windowAny.DApi.remove_file = this.removeFile;
@@ -17,9 +17,8 @@ class FileStore {
 
     public initIndexedDb = async (): Promise<void> => {
         this.store = new IdbKvStore('diablo_fs');
-        for (let [name, data] of Object.entries(await this.store.json())) {
-            this.files.set(name, data as Uint8Array);
-        }
+        for (let [name, data] of Object.entries(await this.store.json()))
+            this.files.set(name.toLowerCase(), data as Uint8Array);
     }
 
     public updateIndexedDb = async (name: string, base64: string): Promise<void> => {
@@ -27,22 +26,18 @@ class FileStore {
         await this.store.set(name, array);
     }
 
-    public updateIndexedDbFromUint8Array = async (name: string, data: Uint8Array): Promise<void> => {
-        await this.store.set(name, data);
+    public updateIndexedDbFromUint8Array = async (name: string, array: Uint8Array): Promise<void> => {
+        await this.store.set(name, array);
     }
 
-    public updateIndexedDbFromArrayBuffer = async (name: string, data: ArrayBuffer): Promise<Uint8Array> => {
-        const array = new Uint8Array(data);
+    public updateIndexedDbFromArrayBuffer = async (name: string, buffer: ArrayBuffer): Promise<Uint8Array> => {
+        const array = new Uint8Array(buffer);
         await this.store.set(name, array);
         return array;
     }
 
-    public getFiles = (): Map<string, Uint8Array> => {
-        return this.files;
-    }
-
     public setFile = (name: string, array: Uint8Array): void => {
-        this.files.set(name, array);
+        this.files.set(name.toLowerCase(), array);
     }
 
     private readFile = (file: File) => new Promise<ArrayBuffer>((resolve, reject) => {
@@ -55,11 +50,11 @@ class FileStore {
 
     private getDropFile = (event: DragEvent): File => {
         const items = event.dataTransfer.items;
-        const files = event.dataTransfer.files;
         if (items)
             for (let i = 0; i < items.length; ++i)
                 if (items[i].kind === 'file')
                     return items[i].getAsFile();
+        const files = event.dataTransfer.files;
         if (files.length)
             return files[0];
     }
@@ -79,41 +74,35 @@ class FileStore {
 
     public onDropFile = (event: DragEvent): void => {
         this.dropFile = this.getDropFile(event);
-        if (this.dropFile) {
+        if (this.dropFile)
             getInterop().dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase());
-        }
     }
 
     public hasFile = (name: string, sizes: number[]): boolean => {
-        const file = this.files.get(name);
+        const file = this.files.get(name.toLowerCase());
         if (!file)
             return false;
-        else
+        else if (sizes.length > 0)
             return sizes.includes(file.byteLength);
+        else
+            return true;
     }
 
     public getFilesize = (name: string): number => {
-        const file = this.files.get(name);
-        return file ? file.byteLength : 0;
-    }
-
-    public getFilesizeFromPath = (path: string): number => {
-        const file = this.files.get(path.toLowerCase());
+        const file = this.files.get(name.toLowerCase());
         return file ? file.byteLength : 0;
     }
 
     public getFileContents = (path: string, array: Uint8Array, offset: number): void => {
         const file = this.files.get(path.toLowerCase());
-        if (file) {
+        if (file)
             array.set(file.subarray(offset, offset + array.byteLength));
-        }
     }
 
     public putFileContents = (path: string, array: Uint8Array): void => {
         path = path.toLowerCase();
-        //if (!path.match(/^(spawn\d+\.sv|single_\d+\.sv|config\.ini)$/i)) {
+        //if (!path.match(/^(spawn\d+\.sv|single_\d+\.sv|config\.ini)$/i))
         //  alert(`Bad file name: ${path}`);
-        //}
         this.files.set(path, array);
         this.updateIndexedDbFromUint8Array(path, array);
     }

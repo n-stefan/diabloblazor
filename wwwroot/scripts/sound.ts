@@ -68,7 +68,7 @@ class Sound {
     }
 
     public createSoundRaw = (id, data, length, channels, rate) => {
-        if(!this.context) {
+        if (!this.context) {
             return;
         }
         const buffer = this.context.createBuffer(channels, length, rate);

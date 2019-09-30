@@ -101,16 +101,16 @@ class Interop {
         //Do nothing
     }
 
-    public currentSaveId = (id: number): void => {
-        this._dotNetReference.invokeMethodAsync('SetSaveName', id);
-    }
-
     public exitError = (error): void => {
         throw Error(error);
     }
 
     public exitGame = (): void => {
         this._dotNetReference.invokeMethodAsync('OnExit');
+    }
+
+    public currentSaveId = (id: number): void => {
+        this._dotNetReference.invokeMethodAsync('SetSaveName', id);
     }
 
     public storeDotNetReference = (dotNetReference): void => {

@@ -64,7 +64,7 @@ namespace diabloblazor.Services
             await _interop.DApiInit(DateTime.Now.Ticks / _resolution, offscreen ? 1 : 0, int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value));
 
             var timer = new Timer(
-                async state => await _interop.CallApi("DApi_Render", DateTime.Now.Ticks / _resolution),
+                async _ => await _interop.CallApi("DApi_Render", DateTime.Now.Ticks / _resolution),
             null, 0, 50);
 
             return timer;

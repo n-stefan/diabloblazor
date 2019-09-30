@@ -63,7 +63,6 @@ class Graphics {
 
     public drawEnd = (): void => {
         //DApi.draw_text(10, 10, `FPS: ${getFPS().toFixed(1)} (Transfer)`, 0xFFCC00);
-        //const transfer = this.renderBatch.images.map(({ data }) => data.buffer);
         const transfer = this.renderBatch.images.map(data => data.buffer);
         if (this.renderBatch.belt) {
             transfer.push(this.renderBatch.belt.buffer);
