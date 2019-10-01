@@ -14,8 +14,8 @@ namespace diabloblazor.Services
         private const string _spawnWasmFilename = "DiabloSpawn.wasm";
         private const string _retailWasmFilename = "Diablo.wasm";
 
-        private const int _spawnWasmFilesize = 1_337_416;
-        private const int _retailWasmFilesize = 1_466_809;
+        private const int _spawnWasmFilesize = 1_390_365;
+        private const int _retailWasmFilesize = 1_528_787;
 
         private readonly HttpClient _httpClient;
         private readonly Interop _interop;

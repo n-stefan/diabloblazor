@@ -30,7 +30,8 @@
       "wwwroot/scripts/DiabloSpawn.js",
       "wwwroot/scripts/helper.js",
       "wwwroot/scripts/graphics.js",
-      "wwwroot/scripts/sound.js"
+      "wwwroot/scripts/sound.js",
+      "wwwroot/scripts/progress.js"
     ],
     "minify": {
       "enabled": true,

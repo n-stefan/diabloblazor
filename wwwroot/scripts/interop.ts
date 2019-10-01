@@ -1,8 +1,9 @@
 ﻿
 //TODO master list:
+//Finish progress bars
+//Interop.cs: => syntax
 //Manage saves
 //Compress .mpq
-//Progress bars
 //Move as much as possible from TS/JS to C#
 //Add more TS type annotations (noImplicitAny)
 //Use AOT compilation/non-Mono runtime/threads (Worker) when available
@@ -60,24 +61,18 @@ class Interop {
         main.addEventListener('dragover', (event: DragEvent) => event.preventDefault());
     }
 
-    private download = async (url: string): Promise<ArrayBuffer> => {
+    private download = async (url: string, sizes: number[]): Promise<ArrayBuffer> => {
         const response = await axios.request({
             url: url,
             responseType: 'arraybuffer',
-            //onDownloadProgress: e => {
-            //    if (api.onProgress) {
-            //        api.onProgress({ text: 'Downloading...', loaded: e.loaded, total: e.total || sizes[0] });
-            //    }
-            //},
-            headers: {
-                'Cache-Control': 'max-age=31536000'
-            }
+            onDownloadProgress: e => this._dotNetReference.invokeMethodAsync('OnProgress', new Progress('Downloading...', e.loaded, e.total || sizes[1])),
+            headers: { 'Cache-Control': 'max-age=31536000' }
         });
         return response.data;
     }
 
-    public downloadAndUpdateIndexedDb = async (url: string, name: string): Promise<number> => {
-        const arrayBuffer = await this.download(url);
+    public downloadAndUpdateIndexedDb = async (url: string, name: string, sizes: number[]): Promise<number> => {
+        const arrayBuffer = await this.download(url, sizes);
         const array = await this._fileStore.updateIndexedDbFromArrayBuffer(name, arrayBuffer);
         this._fileStore.setFile(name, array);
         return arrayBuffer.byteLength;

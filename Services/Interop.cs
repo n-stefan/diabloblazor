@@ -42,9 +42,9 @@ namespace diabloblazor.Services
             await _jsRuntime.InvokeVoidAsync("interop.fileStore.updateIndexedDb", name, new ByteArray(data));
         }
 
-        public async ValueTask<int> DownloadAndUpdateIndexedDB(string url, string name)
+        public async ValueTask<int> DownloadAndUpdateIndexedDB(string url, string name, int[] sizes)
         {
-            return await _jsRuntime.InvokeAsync<int>("interop.downloadAndUpdateIndexedDb", url, name);
+            return await _jsRuntime.InvokeAsync<int>("interop.downloadAndUpdateIndexedDb", url, name, sizes);
         }
 
         public async ValueTask<bool> HasFile(string name, params int[] sizes)

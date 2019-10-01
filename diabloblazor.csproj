@@ -10,6 +10,7 @@
     <Content Remove="wwwroot\scripts\graphics.ts" />
     <Content Remove="wwwroot\scripts\helper.ts" />
     <Content Remove="wwwroot\scripts\interop.ts" />
+    <Content Remove="wwwroot\scripts\progress.ts" />
     <Content Remove="wwwroot\scripts\sound.ts" />
     <Content Remove="wwwroot\scripts\webassembly.ts" />
   </ItemGroup>

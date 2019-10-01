@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using diabloblazor.Enums;
+using diabloblazor.Models;
+using System.Collections.Generic;
 
 namespace diabloblazor.Services
 {
@@ -16,10 +18,10 @@ namespace diabloblazor.Services
 
         public bool Error { get; set; }
 
-        public int Dropping { get; set; }
+        public Drop Drop { get; set; }
+
+        public Progress Progress { get; set; }
 
         public IList<string> SaveNames { get; set; } = new List<string>();
-
-        //progress
     }
 }

@@ -45,6 +45,8 @@ class FileStore {
         reader.onload = () => resolve(reader.result as ArrayBuffer);
         reader.onerror = () => reject(reader.error);
         reader.onabort = () => reject();
+        reader.onprogress = (event: ProgressEvent<FileReader>) =>
+            getInterop().dotNetReference.invokeMethodAsync('OnProgress', new Progress('Loading...', event.loaded, event.total));
         reader.readAsArrayBuffer(file);
     });
 
@@ -75,7 +77,7 @@ class FileStore {
     public onDropFile = (event: DragEvent): void => {
         this.dropFile = this.getDropFile(event);
         if (this.dropFile)
-            getInterop().dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase());
+            getInterop().dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase(), true);
     }
 
     public hasFile = (name: string, sizes: number[]): boolean => {

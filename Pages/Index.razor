@@ -7,7 +7,7 @@
 @*@inject HttpClient HttpClient
 @inject IndexedDBManager IndexedDBManager*@
 
-<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
+<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Drop == Drop.Visible ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
     <div class="Body">
         <div class="inner">
             @if (!AppState.Error)
@@ -18,7 +18,14 @@
         </div>
     </div>
     <div class="BodyV">
-        @if (!AppState.Started)
+        @if (AppState.Loading && !AppState.Started)
+        {
+            <div class="loading">
+                @(AppState.Progress.Message ?? "Loading...")
+                <span class="progressBar"><span><span style="width: @ProgressBarWidth%" /></span></span>
+            </div>
+        }
+        else if (!AppState.Started)
         {
             <div class="start">
                 <p>
@@ -36,10 +43,7 @@
                         Or you can play the shareware version for free (50MB download).
                     </p>
                 }
-                <form>
-                    <label for="loadFile" class="startButton">Browse for MPQ</label>
-                    <input accept=".mpq" type="file" id="loadFile" class="hidden" @onchange="ParseFile" />
-                </form>
+                <label for="loadFile" class="startButton">Browse for MPQ</label>
                 <div class="startButton" @onclick="() => Start()">Play Shareware</div>
                 @if (AppState.SaveNames.Count > 0)
                 {
@@ -47,6 +51,7 @@
                 }
             </div>
         }
+        <input accept=".mpq" type="file" id="loadFile" class="hidden" @onchange="ParseFile" />
     </div>
 </div>
 
@@ -98,8 +103,8 @@
         double tx = 0, ty = 0;
         //if (PointerLocked())
         //{
-        tx = Math.Max(canvasRect.Left, Math.Min(canvasRect.Right, tx + e.ClientX));
-        ty = Math.Max(canvasRect.Top, Math.Min(canvasRect.Bottom, ty + e.ClientY));
+        tx = Max(canvasRect.Left, Min(canvasRect.Right, tx + e.ClientX));
+        ty = Max(canvasRect.Top, Min(canvasRect.Bottom, ty + e.ClientY));
         //}
         //else
         //{
@@ -107,8 +112,8 @@
         //    ty = e.ClientY;
         //}
         return (
-            x: Math.Max(0, Math.Min(Math.Round((tx - canvasRect.Left) / (canvasRect.Right - canvasRect.Left) * 640), 639)),
-            y: Math.Max(0, Math.Min(Math.Round((ty - canvasRect.Top) / (canvasRect.Bottom - canvasRect.Top) * 480), 479))
+            x: Max(0, Min(Round((tx - canvasRect.Left) / (canvasRect.Right - canvasRect.Left) * 640), 639)),
+            y: Max(0, Min(Round((ty - canvasRect.Top) / (canvasRect.Bottom - canvasRect.Top) * 480), 479))
         );
     }
 
@@ -133,14 +138,6 @@
         else
             throw new Exception($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs!");
     }
-
-    private int TranslateCode(KeyboardEventArgs e) =>
-        e.Code switch
-        {
-            "Backspace" => 8,
-            "Enter"     => 13,
-            _           => (int)e.Key[0] - 32
-        };
 
     private async Task OnMouseMove(MouseEventArgs e)
     {
@@ -171,7 +168,7 @@
     //TODO: Check Backspace
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
-        var keyCode = TranslateCode(e);
+        var keyCode = TranslateCode();
 
         await Interop.DApiKey(0, EventModifiers(e), keyCode);
 
@@ -186,6 +183,14 @@
         //    e.preventDefault();
         //  }
         //}
+
+        int TranslateCode() =>
+            e.Code switch
+            {
+                "Backspace" => 8,
+                "Enter"     => 13,
+                _           => (int)e.Key[0] - 32
+            };
     }
 
     private async Task OnKeyUp(KeyboardEventArgs e)
@@ -195,14 +200,11 @@
         //this.clearKeySel();
     }
 
-    private void SetDropping(int change) =>
-        AppState.Dropping = Math.Max(AppState.Dropping + change, 0);
-
     private void OnDragEnter(DragEventArgs e) =>
-        SetDropping(1);
+        AppState.Drop = Drop.Visible;
 
     private void OnDragLeave(DragEventArgs e) =>
-        SetDropping(-1);
+        AppState.Drop = Drop.Invisible;
 
     [JSInvokable]
     public void OnResize(ClientRect rect) =>
@@ -230,7 +232,7 @@
     }
 
     [JSInvokable]
-    public async Task Start(string name = null)
+    public async Task Start(string name = null, bool isDrop = false)
     {
         //if (this.compressMpq)
         //    this.compressMpq.start(file);
@@ -251,11 +253,11 @@
         if (name != null && !name.EndsWith(".mpq"))
         {
             Interop.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
-            
-            AppState.Dropping = 0;
-            
+
+            AppState.Drop = Drop.None;
+
             StateHasChanged();
-            
+
             return;
         }
 
@@ -270,6 +272,7 @@
 
         gameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Spawn;
 
+        AppState.Drop = isDrop ? Drop.Invisible : Drop.None;
         AppState.Loading = true;
 
         await LoadGame();
@@ -282,7 +285,7 @@
 
         //document.addEventListener('pointerlockchange', this.onPointerLockChange);
 
-        AppState.Dropping = 0;
+        AppState.Drop = Drop.None;
         AppState.Started = true;
 
         StateHasChanged();
@@ -314,14 +317,12 @@
         timer = await Worker.InitGame(/*fileSystem, file*/ gameType, offscreen);
 
         //await Worker.Loaded();
-
-        //...?
     }
 
     private async Task LoadRetail()
     {
         if (!await Interop.HasFile(retailFilename))
-            if (AppState.Dropping > 0)
+            if (AppState.Drop == Drop.Invisible)
                 await Interop.SetDropFile();
             else
                 await Interop.SetInputFile();
@@ -344,12 +345,6 @@
             var url = $"http://localhost:53287/{spawnFilename}";
             //var spawn = await HttpClient.GetByteArrayAsync(url);
 
-            //onDownloadProgress: e => {
-            //  if (api.onProgress) {
-            //    api.onProgress({text: 'Downloading...', loaded: e.loaded, total: e.total || spawnFilesizes[0]});
-            //  }
-            //},
-
             //fileSystem[spawnFilename] = spawn;
 
             //var indexedDBFile = new IndexedDBFile { Name = spawnFilename, Data = spawn };
@@ -359,7 +354,7 @@
             //TODO: When serialization is fast enough
             //await Interop.UpdateIndexedDB(spawnFilename, spawn);
 
-            filesize = await Interop.DownloadAndUpdateIndexedDB(url, spawnFilename);
+            filesize = await Interop.DownloadAndUpdateIndexedDB(url, spawnFilename, spawnFilesizes);
 
             if (!spawnFilesizes.Contains(filesize))
                 throw new Exception("Invalid spawn.mpq size. Try clearing the cache and refreshing the page.");
@@ -381,4 +376,15 @@
             await Interop.Reload();
         }
     }
+
+    [JSInvokable]
+    public void OnProgress(Progress progress)
+    {
+        AppState.Progress = progress;
+
+        StateHasChanged();
+    }
+
+    private double ProgressBarWidth =>
+        AppState.Progress.Total != 0 ? Round(100d * AppState.Progress.Loaded / AppState.Progress.Total) : 100d;
 }
