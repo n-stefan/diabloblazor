@@ -139,6 +139,14 @@
             throw new Exception($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs!");
     }
 
+    private int TranslateCode(KeyboardEventArgs e) =>
+        e.Code switch
+        {
+            "Backspace" => 8,
+            "Enter"     => 13,
+            _           => (int)e.Key[0] - 32
+        };
+
     private async Task OnMouseMove(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
@@ -168,7 +176,7 @@
     //TODO: Check Backspace
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
-        var keyCode = TranslateCode();
+        var keyCode = TranslateCode(e);
 
         await Interop.DApiKey(0, EventModifiers(e), keyCode);
 
@@ -183,14 +191,6 @@
         //    e.preventDefault();
         //  }
         //}
-
-        int TranslateCode() =>
-            e.Code switch
-            {
-                "Backspace" => 8,
-                "Enter"     => 13,
-                _           => (int)e.Key[0] - 32
-            };
     }
 
     private async Task OnKeyUp(KeyboardEventArgs e)
