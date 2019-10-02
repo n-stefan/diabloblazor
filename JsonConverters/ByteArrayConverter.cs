@@ -27,7 +27,9 @@ namespace diabloblazor.JsonConverters
                 //Filesize: 50_274_091
 
                 //Duration: 20:59 -> 24:04
-                writer.WriteStringValue(Convert.ToBase64String(value._data));
+                //writer.WriteStringValue(Convert.ToBase64String(value._data));
+                
+                writer.WriteBase64StringValue(value._data);
 
                 //Duration: 41:44 -> 49:43
                 //writer.WriteStartArray();
