@@ -1,10 +1,10 @@
 ﻿
 namespace diabloblazor.Enums
 {
-    public enum Drop
+    public enum DropZone
     {
         None,
-        Invisible,
-        Visible
+        Hide,
+        Show
     }
 }

@@ -18,7 +18,7 @@ namespace diabloblazor.Services
 
         public bool Error { get; set; }
 
-        public Drop Drop { get; set; }
+        public DropZone DropZone { get; set; }
 
         public Progress Progress { get; set; }
 

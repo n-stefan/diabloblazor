@@ -1,6 +1,5 @@
 ﻿
 //TODO master list:
-//Finish progress bars
 //Interop.cs: => syntax
 //Manage saves
 //Compress .mpq

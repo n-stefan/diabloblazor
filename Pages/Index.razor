@@ -7,7 +7,7 @@
 @*@inject HttpClient HttpClient
 @inject IndexedDBManager IndexedDBManager*@
 
-<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Drop == Drop.Visible ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
+<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.DropZone == DropZone.Show ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
     <div class="Body">
         <div class="inner">
             @if (!AppState.Error)
@@ -22,7 +22,10 @@
         {
             <div class="loading">
                 @(AppState.Progress.Message ?? "Loading...")
-                <span class="progressBar"><span><span style="width: @ProgressBarWidth%" /></span></span>
+                @if (AppState.Progress.Total != 0)
+                {
+                    <span class="progressBar"><span><span style="width: @ProgressBarWidth%" /></span></span>
+                }
             </div>
         }
         else if (!AppState.Started)
@@ -62,13 +65,17 @@
     private const string retailFilename = "diabdat.mpq";
     private const string spawnFilename = "spawn.mpq";
     private static readonly int[] spawnFilesizes = { 50_274_091, 25_830_791 };
-    private bool offscreen;
-    private ClientRect canvasRect;
-    private GameType gameType;
     private string saveName;
+    private ClientRect canvasRect;
+    private bool offscreen;
+    private GameType gameType;
     private Timer timer;
 
     //private Dictionary<string, byte[]> fileSystem;
+
+    public bool Offscreen { get => offscreen; }
+    public GameType GameType { get => gameType; }
+    public Timer Timer { set => timer = value; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -201,10 +208,10 @@
     }
 
     private void OnDragEnter(DragEventArgs e) =>
-        AppState.Drop = Drop.Visible;
+        AppState.DropZone = DropZone.Show;
 
     private void OnDragLeave(DragEventArgs e) =>
-        AppState.Drop = Drop.Invisible;
+        AppState.DropZone = DropZone.Hide;
 
     [JSInvokable]
     public void OnResize(ClientRect rect) =>
@@ -254,7 +261,7 @@
         {
             Interop.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
 
-            AppState.Drop = Drop.None;
+            AppState.DropZone = DropZone.None;
 
             StateHasChanged();
 
@@ -272,7 +279,7 @@
 
         gameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Spawn;
 
-        AppState.Drop = isDrop ? Drop.Invisible : Drop.None;
+        AppState.DropZone = isDrop ? DropZone.Hide : DropZone.None;
         AppState.Loading = true;
 
         await LoadGame();
@@ -285,7 +292,7 @@
 
         //document.addEventListener('pointerlockchange', this.onPointerLockChange);
 
-        AppState.Drop = Drop.None;
+        AppState.DropZone = DropZone.None;
         AppState.Started = true;
 
         StateHasChanged();
@@ -314,7 +321,7 @@
         //    packetQueue.push(data);
         //});
 
-        timer = await Worker.InitGame(/*fileSystem, file*/ gameType, offscreen);
+        await Worker.InitGame(this);
 
         //await Worker.Loaded();
     }
@@ -322,7 +329,7 @@
     private async Task LoadRetail()
     {
         if (!await Interop.HasFile(retailFilename))
-            if (AppState.Drop == Drop.Invisible)
+            if (AppState.DropZone == DropZone.Hide)
                 await Interop.SetDropFile();
             else
                 await Interop.SetInputFile();

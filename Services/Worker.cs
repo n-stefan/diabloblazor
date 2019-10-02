@@ -1,4 +1,6 @@
 ﻿using diabloblazor.Enums;
+using diabloblazor.Models;
+using diabloblazor.Pages;
 using System;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -26,11 +28,11 @@ namespace diabloblazor.Services
             _interop = interop;
         }
 
-        public async Task<Timer> InitGame(/*Dictionary<string, byte[]> files, file*/ GameType gameType, bool offscreen)
+        public async Task InitGame(Index app)
         {
             //progress("Loading...");
 
-            int mpqLoaded = 0, /*mpqTotal = (mpq ? mpq.size : 0)*/ wasmLoaded = 0, wasmTotal = (gameType == GameType.Spawn ? _spawnWasmFilesize : _retailWasmFilesize);
+            int mpqLoaded = 0, /*mpqTotal = (mpq ? mpq.size : 0)*/ wasmLoaded = 0, wasmTotal = (app.GameType == GameType.Spawn ? _spawnWasmFilesize : _retailWasmFilesize);
             int wasmWeight = 5;
 
             //function updateProgress()
@@ -38,7 +40,9 @@ namespace diabloblazor.Services
             //    progress("Loading...", mpqLoaded + wasmLoaded * wasmWeight, mpqTotal + wasmTotal * wasmWeight);
             //}
 
-            var loadWasm = InitWasm(gameType);
+            app.OnProgress(new Progress { Message = "Initializing..." });
+
+            var loadWasm = InitWasm(app);
 
             //wasmLoaded = Math.Min(e.loaded, wasmTotal);
             //updateProgress();
@@ -57,28 +61,26 @@ namespace diabloblazor.Services
 
             //progress("Initializing...");
 
-            //TODO: version from config
+            //TODO: version from app (config)
             var version = Regex.Match("1.0.0", @"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled);
 
             //await _interop.SNetInitWebsocket();
-            await _interop.DApiInit(DateTime.Now.Ticks / _resolution, offscreen ? 1 : 0, int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value));
+            await _interop.DApiInit(DateTime.Now.Ticks / _resolution, app.Offscreen ? 1 : 0, int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value));
 
-            var timer = new Timer(
+            app.Timer = new Timer(
                 async _ => await _interop.CallApi("DApi_Render", DateTime.Now.Ticks / _resolution),
             null, 0, 50);
-
-            return timer;
         }
 
-        private async Task InitWasm(GameType gameType /* progress */)
+        private async Task InitWasm(Index app /*progress*/)
         {
-            //TODO: URL from config
-            var url = $"http://localhost:53287/{ (gameType == GameType.Spawn ? _spawnWasmFilename : _retailWasmFilename) }";
+            //TODO: URL from app (config)
+            var url = $"http://localhost:53287/{ (app.GameType == GameType.Spawn ? _spawnWasmFilename : _retailWasmFilename) }";
             
             var binary = await _httpClient.GetByteArrayAsync(url);
             //onDownloadProgress: progress
 
-            /*var result =*/ await _interop.InitWebAssembly(gameType == GameType.Spawn, binary);
+            /*var result =*/ await _interop.InitWebAssembly(app.GameType == GameType.Spawn, binary);
             //progress({ loaded: 2000000 });
            
             //return result;
