@@ -75,6 +75,10 @@
         visibility: visible;
     }
 
+    &.started canvas:focus {
+        outline: none;
+    }
+
     .keyboard {
         position: absolute;
         pointer-events: auto;
