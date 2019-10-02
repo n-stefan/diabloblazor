@@ -1,6 +1,5 @@
 ﻿
 //TODO master list:
-//Interop.cs: => syntax
 //Manage saves
 //Compress .mpq
 //Move as much as possible from TS/JS to C#
