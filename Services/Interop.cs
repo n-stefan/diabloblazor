@@ -23,7 +23,7 @@ namespace diabloblazor.Services
         public async ValueTask Log(string message) =>
             await _jsRuntime.InvokeVoidAsync("console.log", message);
 
-        public async ValueTask StoreDotNetReference(DotNetObjectReference<Index> reference) =>
+        public async ValueTask StoreDotNetReference(DotNetObjectReference<Main> reference) =>
             await _jsRuntime.InvokeVoidAsync("interop.storeDotNetReference", reference);
 
         public async ValueTask InitIndexedDB() =>
@@ -37,6 +37,9 @@ namespace diabloblazor.Services
 
         public async ValueTask<bool> HasFile(string name, params int[] sizes) =>
             await _jsRuntime.InvokeAsync<bool>("interop.fileStore.hasFile", name, sizes);
+
+        public async ValueTask<string[]> GetFilenames() =>
+            await _jsRuntime.InvokeAsync<string[]>("interop.fileStore.getFilenames");
 
         public async ValueTask<int> GetFilesize(string name) =>
             await _jsRuntime.InvokeAsync<int>("interop.fileStore.getFilesize", name);

@@ -22,6 +22,6 @@ namespace diabloblazor.Services
 
         public Progress Progress { get; set; }
 
-        public IList<string> SaveNames { get; set; } = new List<string>();
+        public IList<SaveGame> Saves { get; } = new List<SaveGame>();
     }
 }

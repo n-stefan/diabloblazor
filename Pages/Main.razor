@@ -18,7 +18,27 @@
         </div>
     </div>
     <div class="BodyV">
-        @if (AppState.Loading && !AppState.Started)
+        @if (AppState.ShowSaves)
+        {
+            <div class="start">
+                <ul class="saveList">
+                    @foreach (var save in AppState.Saves)
+                    {
+                        <li @key="save.Name">
+                            @save.ShortName <span class="info">@save.PlayerName (level @save.PlayerLevel @save.PlayerClass)</span>
+                            <i class="btnDownload fa fa-download" @onclick="() => DownloadSave(save.Name)"></i>
+                            <i class="btnRemove fa fa-times" @onclick="() => RemoveSave(save.Name)"></i>
+                        </li>
+                    }
+                </ul>
+                @*<form>*@
+                <label htmlFor="loadSaveFile" class="startButton">Upload Save</label>
+                <input accept=".sv" type="file" id="loadSaveFile" class="hidden" @onchange="ParseFile" />
+                @*</form>*@
+                <div class="startButton" @onclick="GoBack">Back</div>
+            </div>
+        }
+        else if (AppState.Loading && !AppState.Started)
         {
             <div class="loading">
                 @(AppState.Progress.Message ?? "Loading...")
@@ -48,7 +68,7 @@
                 }
                 <label for="loadFile" class="startButton">Browse for MPQ</label>
                 <div class="startButton" @onclick="() => Start()">Play Shareware</div>
-                @if (AppState.SaveNames.Count > 0)
+                @if (AppState.Saves.Count > 0)
                 {
                     <div class="startButton" @onclick="ShowSaves">Manage Saves</div>
                 }
@@ -84,9 +104,7 @@
         if (await Interop.HasFile(spawnFilename, spawnFilesizes))
             AppState.HasSpawn = true;
 
-        //  if ([...fs.files.keys()].filter(name => name.match(/\.sv$/i)).length) {
-        //    this.setState({save_names: true});
-        //  }
+        await InitSaves();
 
         offscreen = false;
 
@@ -96,7 +114,7 @@
 
         await Interop.AddEventListeners();
 
-        await Interop.StoreDotNetReference(DotNetObjectReference.Create<Index>(this));
+        await Interop.StoreDotNetReference(DotNetObjectReference.Create<Main>(this));
     }
 
     //private bool PointerLocked()
@@ -225,6 +243,13 @@
         await Interop.InitIndexedDB();
     }
 
+    private async Task InitSaves()
+    {
+        var filenames = await Interop.GetFilenames();
+        var saveNames = filenames.Where(x => x.EndsWith(".sv")).ToList();
+        saveNames.ForEach(x => AppState.Saves.Add(new SaveGame { Name = x, ShortName = Path.GetFileNameWithoutExtension(x) }));
+    }
+
     private void CompressMPQ() =>
         AppState.Compress = true;
 
@@ -298,8 +323,47 @@
         StateHasChanged();
     }
 
-    private void ShowSaves() =>
-        WriteLine("Debug: In ShowSaves");
+    private void GoBack() =>
+        AppState.ShowSaves = false;
+
+    //TODO
+    private void DownloadSave(string name)
+    {
+        //this.fs.then(fs => fs.download(name));
+    }
+
+    //TODO
+    private void RemoveSave(string name)
+    {
+        //if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+        //  (async () => {
+        //    const fs = await this.fs;
+        //    await fs.delete(name.toLowerCase());
+        //    fs.files.delete(name.toLowerCase());
+        //    this.updateSaves();
+        //  })();
+        //}
+    }
+
+    //TODO
+    private async Task UpdateSaves()
+    {
+        //return this.fs.then(fs => {
+        //  const saves = {};
+        //  [...fs.files.keys()].filter(name => name.match(/\.sv$/i)).forEach(name => {
+        //    saves[name] = getPlayerName(fs.files.get(name).buffer, name);
+        //  });
+        //  this.setState({save_names: saves});
+        //});
+    }
+
+    private async Task ShowSaves()
+    {
+        if (AppState.Saves.Count > 0)
+            await UpdateSaves();
+
+        AppState.ShowSaves = !AppState.ShowSaves;
+    }
 
     private async Task LoadGame()
     {

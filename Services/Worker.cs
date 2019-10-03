@@ -28,7 +28,7 @@ namespace diabloblazor.Services
             _interop = interop;
         }
 
-        public async Task InitGame(Index app)
+        public async Task InitGame(Main app)
         {
             //progress("Loading...");
 
@@ -72,7 +72,7 @@ namespace diabloblazor.Services
             null, 0, 50);
         }
 
-        private async Task InitWasm(Index app /*progress*/)
+        private async Task InitWasm(Main app /*progress*/)
         {
             //TODO: URL from app (config)
             var url = $"http://localhost:53287/{ (app.GameType == GameType.Spawn ? _spawnWasmFilename : _retailWasmFilename) }";
