@@ -27,7 +27,7 @@
                         <li @key="save.Name">
                             @save.ShortName <span class="info">@save.PlayerName (level @save.PlayerLevel @save.PlayerClass)</span>
                             <i class="btnDownload fa fa-download" @onclick="() => DownloadSave(save.Name)"></i>
-                            <i class="btnRemove fa fa-times" @onclick="() => RemoveSave(save.Name)"></i>
+                            <i class="btnRemove fa fa-times" @onclick="() => RemoveSave(save.Name, save.ShortName)"></i>
                         </li>
                     }
                 </ul>
@@ -197,7 +197,7 @@
         await Interop.DApiMouse(2, MouseButton(e), EventModifiers(e), x, y);
     }
 
-    //TODO: Check Backspace
+    //TODO: Check Backspace, numbers
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
         var keyCode = TranslateCode(e);
@@ -231,7 +231,7 @@
 
     private async Task InitFileSystem()
     {
-        //var store = await IndexedDBManager.GetRecords<IndexedDBFile>("kv");
+        //var store = await IndexedDBManager.GetRecords<IndexedDbFile>("kv");
         //return store.ToDictionary(x => x.Name, x => x.Data);
 
         await Interop.InitIndexedDB();
@@ -317,17 +317,14 @@
         //this.fs.then(fs => fs.download(name));
     }
 
-    //TODO
-    private void RemoveSave(string name)
+    private async Task RemoveSave(string name, string shortName)
     {
-        //if (window.confirm(`Are you sure you want to delete ${name}?`)) {
-        //  (async () => {
-        //    const fs = await this.fs;
-        //    await fs.delete(name.toLowerCase());
-        //    fs.files.delete(name.toLowerCase());
-        //    this.updateSaves();
-        //  })();
-        //}
+        if (Interop.Confirm($"Are you sure you want to delete {shortName}?"))
+        {
+            await Interop.RemoveFile(name);
+            var saveToRemove = AppState.Saves.FirstOrDefault(x => x.Name == name);
+            AppState.Saves.Remove(saveToRemove);
+        }
     }
 
     //TODO
@@ -401,9 +398,9 @@
 
             //fileSystem[spawnFilename] = spawn;
 
-            //var indexedDBFile = new IndexedDBFile { Name = spawnFilename, Data = spawn };
-            //var storeRecord = new StoreRecord<IndexedDBFile> { Storename = "kv", Data = indexedDBFile };
-            //await IndexedDBManager.UpdateRecord<IndexedDBFile>(storeRecord);
+            //var indexedDBFile = new IndexedDbFile { Name = spawnFilename, Data = spawn };
+            //var storeRecord = new StoreRecord<IndexedDbFile> { Storename = "kv", Data = indexedDBFile };
+            //await IndexedDBManager.UpdateRecord<IndexedDbFile>(storeRecord);
 
             //TODO: When serialization is fast enough
             //await Interop.UpdateIndexedDB(spawnFilename, spawn);

@@ -1,7 +1,7 @@
 ﻿
 namespace diabloblazor.Models
 {
-    public class IndexedDBFile
+    public class IndexedDbFile
     {
         public string Name { get; set; }
 

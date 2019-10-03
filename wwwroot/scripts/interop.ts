@@ -1,6 +1,8 @@
 ﻿
 //TODO master list:
 //Manage saves
+//Config
+//GitHub page
 //Compress .mpq
 //Move as much as possible from TS/JS to C#
 //Add more TS type annotations (noImplicitAny)

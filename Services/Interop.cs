@@ -20,6 +20,9 @@ namespace diabloblazor.Services
         public void Alert(string message) =>
             _jsInProcessRuntime.InvokeVoid("alert", message);
 
+        public bool Confirm(string message) =>
+            _jsInProcessRuntime.Invoke<bool>("confirm", message);
+
         public async ValueTask Log(string message) =>
             await _jsRuntime.InvokeVoidAsync("console.log", message);
 
