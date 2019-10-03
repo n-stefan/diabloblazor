@@ -90,6 +90,10 @@ class FileStore {
             return true;
     }
 
+    public getFilenames = (): string[] => {
+        return [...this.files.keys()];
+    }
+
     public getFilesize = (name: string): number => {
         const file = this.files.get(name.toLowerCase());
         return file ? file.byteLength : 0;
