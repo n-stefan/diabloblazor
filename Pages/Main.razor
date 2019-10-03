@@ -119,8 +119,7 @@
 
     //private bool PointerLocked()
     //{
-    //    return true;
-    //    //return document.pointerLockElement === this.canvas || document.mozPointerLockElement === this.canvas;
+    //    return document.pointerLockElement === this.canvas || document.mozPointerLockElement === this.canvas;
     //}
 
     private (double x, double y) MousePos(MouseEventArgs e)
@@ -210,7 +209,6 @@
         else if (keyCode == 8 || keyCode == 13)
             await Interop.DApiChar(keyCode);
 
-        //this.clearKeySel();
         //if (!this.showKeyboard) {
         //  if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119)) {
         //    e.preventDefault();
@@ -218,12 +216,8 @@
         //}
     }
 
-    private async Task OnKeyUp(KeyboardEventArgs e)
-    {
+    private async Task OnKeyUp(KeyboardEventArgs e) =>
         await Interop.DApiKey(1, EventModifiers(e), TranslateCode(e));
-
-        //this.clearKeySel();
-    }
 
     private void OnDragEnter(DragEventArgs e) =>
         AppState.DropZone = DropZone.Show;
@@ -292,15 +286,6 @@
 
             return;
         }
-
-        //const retail = !!(file && !file.name.match(/ ^spawn\.mpq$/ i));
-        //if (process.env.NODE_ENV === 'production')
-        //{
-        //  ReactGA.event ({
-        //      category: 'Game',
-        //      action: retail ? 'Start Retail' : 'Start Shareware',
-        //  });
-        //}
 
         gameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Spawn;
 
@@ -386,8 +371,6 @@
         //});
 
         await Worker.InitGame(this);
-
-        //await Worker.Loaded();
     }
 
     private async Task LoadRetail()
