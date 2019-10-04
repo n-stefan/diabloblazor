@@ -15,7 +15,8 @@
     "outputFileName": "wwwroot/dist/external.min.js",
     "inputFiles": [
       "wwwroot/libs/idb-kv-store/idbkvstore.min.js",
-      "wwwroot/libs/axios/dist/axios.min.js"
+      "wwwroot/libs/axios/dist/axios.min.js",
+      "wwwroot/libs/base64-js/base64js.min.js"
     ],
     "minify": {
       "enabled": false,

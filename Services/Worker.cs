@@ -40,7 +40,7 @@ namespace diabloblazor.Services
             //    progress("Loading...", mpqLoaded + wasmLoaded * wasmWeight, mpqTotal + wasmTotal * wasmWeight);
             //}
 
-            app.OnProgress(new Progress { Message = "Initializing..." });
+            app.OnProgress(new Progress { Message = "Starting game..." });
 
             var loadWasm = InitWasm(app);
 

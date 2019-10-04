@@ -27,6 +27,9 @@
                         <li @key="save.Name">
                             @save.ShortName <span class="info">@save.PlayerName (level @save.PlayerLevel @save.PlayerClass)</span>
                             <i class="btnDownload fa fa-download" @onclick="() => DownloadSave(save.Name)"></i>
+
+                            @*<a download="">Test</a>*@
+
                             <i class="btnRemove fa fa-times" @onclick="() => RemoveSave(save.Name, save.ShortName)"></i>
                         </li>
                     }
@@ -311,9 +314,13 @@
     private void GoBack() =>
         AppState.ShowSaves = false;
 
-    //TODO
-    private void DownloadSave(string name)
+    //Continue
+    private async Task DownloadSave(string name)
     {
+        var save = await Interop.ReadIndexedDb(name);
+
+        Interop.Alert($"Save size: {save.Data.Length}");
+
         //this.fs.then(fs => fs.download(name));
     }
 

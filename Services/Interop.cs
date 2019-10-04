@@ -38,6 +38,9 @@ namespace diabloblazor.Services
         public async ValueTask<int> DownloadAndUpdateIndexedDB(string url, string name, int[] sizes) =>
             await _jsRuntime.InvokeAsync<int>("interop.downloadAndUpdateIndexedDb", url, name, sizes);
 
+        public async ValueTask<ByteArray> ReadIndexedDb(string name) =>
+            await _jsRuntime.InvokeAsync<ByteArray>("interop.fileStore.readIndexedDb", name);
+
         public async ValueTask<bool> HasFile(string name, params int[] sizes) =>
             await _jsRuntime.InvokeAsync<bool>("interop.fileStore.hasFile", name, sizes);
 

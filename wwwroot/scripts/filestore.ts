@@ -36,6 +36,11 @@ class FileStore {
         return array;
     }
 
+    public readIndexedDb = async (name: string): Promise<string> => {
+        const array = await this.store.get(name.toLowerCase());
+        return Helper.fromUint8ArrayToBase64(array);
+    }
+
     public setFile = (name: string, array: Uint8Array): void => {
         this.files.set(name.toLowerCase(), array);
     }
@@ -99,23 +104,23 @@ class FileStore {
         return file ? file.byteLength : 0;
     }
 
-    public getFileContents = (path: string, array: Uint8Array, offset: number): void => {
-        const file = this.files.get(path.toLowerCase());
+    public getFileContents = (name: string, array: Uint8Array, offset: number): void => {
+        const file = this.files.get(name.toLowerCase());
         if (file)
             array.set(file.subarray(offset, offset + array.byteLength));
     }
 
-    public putFileContents = (path: string, array: Uint8Array): void => {
-        path = path.toLowerCase();
-        //if (!path.match(/^(spawn\d+\.sv|single_\d+\.sv|config\.ini)$/i))
-        //  alert(`Bad file name: ${path}`);
-        this.files.set(path, array);
-        this.updateIndexedDbFromUint8Array(path, array);
+    public putFileContents = async (name: string, array: Uint8Array): Promise<void> => {
+        name = name.toLowerCase();
+        //if (!name.match(/^(spawn\d+\.sv|single_\d+\.sv|config\.ini)$/i))
+        //  alert(`Bad file name: ${name}`);
+        this.files.set(name, array);
+        await this.updateIndexedDbFromUint8Array(name, array);
     }
 
-    public removeFile = async (path: string): Promise<void> => {
-        path = path.toLowerCase();
-        this.files.delete(path);
-        await this.store.remove(path);
+    public removeFile = async (name: string): Promise<void> => {
+        name = name.toLowerCase();
+        this.files.delete(name);
+        await this.store.remove(name);
     }
 }
