@@ -44,6 +44,9 @@ namespace diabloblazor.Services
         public async ValueTask DownloadFile(string name) =>
             await _jsRuntime.InvokeVoidAsync("interop.fileStore.downloadFile", name);
 
+        public async ValueTask UploadFile() =>
+            await _jsRuntime.InvokeVoidAsync("interop.fileStore.uploadFile");
+
         public async ValueTask<bool> HasFile(string name, params int[] sizes) =>
             await _jsRuntime.InvokeAsync<bool>("interop.fileStore.hasFile", name, sizes);
 

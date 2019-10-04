@@ -32,7 +32,7 @@
                     }
                 </ul>
                 @*<form>*@
-                <label htmlFor="loadSaveFile" class="startButton">Upload Save</label>
+                <label for="loadSaveFile" class="startButton">Upload Save</label>
                 <input accept=".sv" type="file" id="loadSaveFile" class="hidden" @onchange="ParseFile" />
                 @*</form>*@
                 <div class="startButton" @onclick="GoBack">Back</div>
@@ -249,12 +249,12 @@
 
     private async Task ParseFile(ChangeEventArgs e)
     {
-        if (e.Value != null)
-        {
-            var valueAsString = e.Value.ToString();
-            var name = valueAsString.Substring(valueAsString.LastIndexOf("\\") + 1);
-            await Start(name.ToLower());
-        }
+        if (e.Value == null)
+            return;
+
+        var valueAsString = e.Value.ToString();
+        var name = valueAsString.Substring(valueAsString.LastIndexOf("\\") + 1);
+        await Start(name.ToLower());
     }
 
     [JSInvokable]
@@ -262,28 +262,22 @@
     {
         //if (this.compressMpq)
         //    this.compressMpq.start(file);
-        //else:
 
-        //if (file && file.name.match(/\.sv$/ i))
-        //{
-        //    this.fs.then(fs => fs.upload(file)).then(() =>
-        //    {
-        //        this.updateSaves();
-        //    });
-        //    return;
-        //}
-        //if (this.state.show_saves)
-        //{
-        //    return;
-        //}
+        //TODO: Move?
+        if (name != null && name.EndsWith(".sv"))
+        {
+            await Interop.UploadFile();
+            await UpdateSaves();
+            return;
+        }
+        if (AppState.ShowSaves)
+            return;
+
         if (name != null && !name.EndsWith(".mpq"))
         {
             Interop.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
-
             AppState.DropZone = DropZone.None;
-
             StateHasChanged();
-
             return;
         }
 

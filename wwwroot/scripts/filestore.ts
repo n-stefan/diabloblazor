@@ -56,6 +56,15 @@ class FileStore {
         URL.revokeObjectURL(url);
     }
 
+    //TODO: Consolidate with setInputFile
+    public uploadFile = async (): Promise<void> => {
+        const input = document.getElementById('loadSaveFile') as HTMLInputElement;
+        const file = input.files[0];
+        const array = new Uint8Array(await this.readFile(file));
+        this.files.set(file.name.toLowerCase(), array);
+        this.store.set(file.name.toLowerCase(), array);
+    }
+
     public setFile = (name: string, array: Uint8Array): void => {
         this.files.set(name.toLowerCase(), array);
     }
