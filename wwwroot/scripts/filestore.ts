@@ -41,6 +41,21 @@ class FileStore {
         return Helper.fromUint8ArrayToBase64(array);
     }
 
+    public downloadFile = async (name: string): Promise<void> => {
+        const file = await this.store.get(name.toLowerCase());
+        if (!file)
+            return;
+        const blob = new Blob([file], { type: 'binary/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
     public setFile = (name: string, array: Uint8Array): void => {
         this.files.set(name.toLowerCase(), array);
     }
