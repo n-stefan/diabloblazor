@@ -110,6 +110,14 @@ class Interop {
     public storeDotNetReference = (dotNetReference): void => {
         this._dotNetReference = dotNetReference;
     }
+
+    public clickDownloadLink = (element: HTMLElement, download: string, href: string): void => {
+        element.setAttribute('download', download);
+        element.setAttribute('href', href);
+        element.click();
+        element.removeAttribute('download');
+        element.removeAttribute('href');
+    }
 }
 
 const windowAny = window as any;

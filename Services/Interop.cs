@@ -1,6 +1,7 @@
 ﻿using diabloblazor.JsonConverters;
 using diabloblazor.Models;
 using diabloblazor.Pages;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
 
@@ -38,8 +39,14 @@ namespace diabloblazor.Services
         public async ValueTask<int> DownloadAndUpdateIndexedDB(string url, string name, int[] sizes) =>
             await _jsRuntime.InvokeAsync<int>("interop.downloadAndUpdateIndexedDb", url, name, sizes);
 
-        public async ValueTask<ByteArray> ReadIndexedDb(string name) =>
+        public async ValueTask<ByteArray> ReadIndexedDbAsByteArray(string name) =>
             await _jsRuntime.InvokeAsync<ByteArray>("interop.fileStore.readIndexedDb", name);
+
+        public async ValueTask<string> ReadIndexedDbAsBase64String(string name) =>
+            await _jsRuntime.InvokeAsync<string>("interop.fileStore.readIndexedDb", name);
+
+        public async ValueTask ClickDownloadLink(ElementReference link, string download, string href) =>
+            await _jsRuntime.InvokeVoidAsync("interop.clickDownloadLink", link, download, href);
 
         public async ValueTask DownloadFile(string name) =>
             await _jsRuntime.InvokeVoidAsync("interop.fileStore.downloadFile", name);

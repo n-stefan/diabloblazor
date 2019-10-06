@@ -1,6 +1,11 @@
 ﻿
 declare const IdbKvStore: any;
 
+interface FileDef {
+    name: string;
+    data: Uint8Array;
+}
+
 class FileStore {
     private store; //: IdbKvStore;
     private files: Map<string, Uint8Array>;
@@ -56,13 +61,18 @@ class FileStore {
         URL.revokeObjectURL(url);
     }
 
-    //TODO: Consolidate with setInputFile
-    public uploadFile = async (): Promise<void> => {
-        const input = document.getElementById('loadSaveFile') as HTMLInputElement;
+    private setFileFromInput = async (name: string): Promise<FileDef> => {
+        const input = document.getElementById(name) as HTMLInputElement;
         const file = input.files[0];
         const array = new Uint8Array(await this.readFile(file));
-        this.files.set(file.name.toLowerCase(), array);
-        this.store.set(file.name.toLowerCase(), array);
+        const filename = file.name.toLowerCase();
+        this.files.set(filename, array);
+        return { name: filename, data: array };
+    }
+
+    public uploadFile = async (): Promise<void> => {
+        const fileDef = await this.setFileFromInput('saveInput');
+        this.store.set(fileDef.name, fileDef.data);
     }
 
     public setFile = (name: string, array: Uint8Array): void => {
@@ -91,10 +101,7 @@ class FileStore {
     }
 
     public setInputFile = async (): Promise<void> => {
-        const input = document.getElementById('loadFile') as HTMLInputElement;
-        const file = input.files[0];
-        const array = new Uint8Array(await this.readFile(file));
-        this.files.set(file.name.toLowerCase(), array);
+        await this.setFileFromInput('mpqInput');
     }
 
     public setDropFile = async (): Promise<void> => {

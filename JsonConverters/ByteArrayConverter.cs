@@ -31,7 +31,7 @@ namespace diabloblazor.JsonConverters
                 //writer.WriteStartArray();
                 //for (var i = 0; i < value._data.Length; i++) writer.WriteNumberValue(value._data[i]);
                 //writer.WriteEndArray();
-            }                                        
+            }
         }
     }
 }
