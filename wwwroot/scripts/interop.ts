@@ -1,6 +1,5 @@
 ﻿
 //TODO master list:
-//Missing: self.DApi.set_cursor
 //Keyboard: numbers
 //Config
 //GitHub page
@@ -32,6 +31,7 @@ class Interop {
         windowAny.DApi.current_save_id = this.currentSaveId;
         windowAny.DApi.exit_game = this.exitGame;
         windowAny.DApi.exit_error = this.exitError;
+        windowAny.DApi.set_cursor = this.setCursor;
     }
 
     public get webassembly(): Webassembly {
@@ -118,6 +118,10 @@ class Interop {
         element.click();
         element.removeAttribute('download');
         element.removeAttribute('href');
+    }
+
+    public setCursor = (x: number, y: number): void => {
+        this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
     }
 }
 

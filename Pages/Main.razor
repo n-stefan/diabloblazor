@@ -73,7 +73,7 @@
                         Or you can play the shareware version for free (25MB download).
                     </p>
                 }
-                <label for="mpqInput" class="startButton">Browse for MPQ</label>
+            <label for="mpqInput" class="startButton">Browse for DIABDAT.MPQ</label>
                 <div class="startButton" @onclick="() => Start()">Play Shareware</div>
                 @if (AppState.Saves.Count > 0)
                 {
@@ -127,6 +127,18 @@
     //{
     //    return document.pointerLockElement === this.canvas || document.mozPointerLockElement === this.canvas;
     //}
+
+    [JSInvokable]
+    public async Task SetCursorPos(double x, double y)
+    {
+        //const rect = this.canvas.getBoundingClientRect();
+        //this.cursorPos = {
+        //    x: rect.left + (rect.right - rect.left) * x / 640,
+        //    y: rect.top + (rect.bottom - rect.top) * y / 480,
+        //};
+
+        await Interop.DApiMouse(0, 0, 0, x, y);
+    }
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {

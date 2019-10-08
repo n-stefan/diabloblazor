@@ -1,15 +1,4 @@
 ﻿
-//const NoSound = () => {
-//    return {
-//        create_sound: () => 0,
-//        duplicate_sound: () => 0,
-//        play_sound: () => undefined,
-//        set_volume: () => undefined,
-//        stop_sound: () => undefined,
-//        delete_sound: () => undefined,
-//    };
-//}
-
 interface SoundDef {
     buffer: Promise<AudioBuffer>;
     gain: GainNode;
@@ -33,6 +22,7 @@ class Sound {
         windowAny.DApi.stop_sound = this.stopSound;
         windowAny.DApi.delete_sound = this.deleteSound;
         windowAny.DApi.set_volume = this.setVolume;
+        windowAny.DApi.duplicate_sound = this.duplicateSound;
 
         this.audioBatch = null;
         this.audioTransfer = null;
@@ -40,7 +30,7 @@ class Sound {
         this.maxBatchId = 0;
     }
 
-    public initSound = () => {
+    public initSound = (): void => {
         const AudioContext = window.AudioContext || windowAny.webkitAudioContext;
         //const StereoPannerNode = window.StereoPannerNode;
         if (!AudioContext) {
@@ -55,7 +45,7 @@ class Sound {
         this.sounds = new Map<number, SoundDef>();
     }
 
-    public createSound = (id, data) => {
+    public createSound = (id, data): void => {
         if (!this.context) {
             return;
         }
@@ -63,11 +53,11 @@ class Sound {
         this.sounds.set(id, {
             buffer,
             gain: this.context.createGain(),
-            panner: StereoPannerNode && new StereoPannerNode(this.context, { pan: 0 }),
+            panner: StereoPannerNode && new StereoPannerNode(this.context, { pan: 0 })
         });
     }
 
-    public createSoundRaw = (id, data, length, channels, rate) => {
+    public createSoundRaw = (id, data, length, channels, rate): void => {
         if (!this.context) {
             return;
         }
@@ -78,11 +68,26 @@ class Sound {
         this.sounds.set(id, {
             buffer: Promise.resolve(buffer),
             gain: this.context.createGain(),
-            panner: StereoPannerNode && new StereoPannerNode(this.context, { pan: 0 }),
+            panner: StereoPannerNode && new StereoPannerNode(this.context, { pan: 0 })
         });
     }
 
-    public playSound = (id, volume, pan, loop) => {
+    public duplicateSound = (id, srcId): void => {
+        if (!this.context) {
+            return;
+        }
+        const src = this.sounds.get(srcId);
+        if (!src) {
+            return;
+        }
+        this.sounds.set(id, {
+            buffer: src.buffer,
+            gain: this.context.createGain(),
+            panner: StereoPannerNode && new StereoPannerNode(this.context, { pan: 0 })
+        });
+    }
+
+    public playSound = (id, volume, pan, loop): void => {
         const src = this.sounds.get(id);
         if (src) {
             if (src.source) {
@@ -108,7 +113,7 @@ class Sound {
         }
     }
 
-    public stopSound = (id) => {
+    public stopSound = (id): void => {
         const src = this.sounds.get(id);
         if (src && src.source) {
             src.source.then(source => source.stop());
@@ -116,7 +121,7 @@ class Sound {
         }
     }
 
-    public deleteSound = (id) => {
+    public deleteSound = (id): void => {
         const src = this.sounds.get(id);
         if (src && src.source) {
             src.source.then(source => source.stop());
@@ -124,7 +129,7 @@ class Sound {
         this.sounds.delete(id);
     }
 
-    public setVolume = (id, volume) => {
+    public setVolume = (id, volume): void => {
         const src = this.sounds.get(id);
         if (src) {
             src.gain.gain.value = Math.pow(2.0, volume / 1000.0);
@@ -132,7 +137,7 @@ class Sound {
     }
 
     private decodeAudioData = (context, buffer): Promise<AudioBuffer> => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject): void => {
             context.decodeAudioData(buffer, resolve, reject);
         });
     }
