@@ -46,6 +46,11 @@ class FileStore {
         return Helper.fromUint8ArrayToBase64(array);
     }
 
+    public indexedDbHasFile = async (name: string): Promise<boolean> => {
+        const file = await this.store.get(name.toLowerCase());
+        return (file) ? true : false;
+    }
+
     public downloadFile = async (name: string): Promise<void> => {
         const file = await this.store.get(name.toLowerCase());
         if (!file)

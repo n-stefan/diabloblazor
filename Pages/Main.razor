@@ -5,7 +5,7 @@
 @inject Worker Worker
 @inject ExceptionHandler ExceptionHandler
 @*@inject HttpClient HttpClient
-@inject IndexedDBManager IndexedDBManager*@
+@inject IndexedDbManager IndexedDbManager*@
 
 <div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.DropZone == DropZone.Show ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
     <div class="Body">
@@ -26,13 +26,17 @@
                     {
                         @:There are no saves.
                     }
-                    else foreach (var save in AppState.Saves)
+                    else
                     {
-                        <li @key="save.Name">
-                            @save.ShortName <span class="info">@save.PlayerName (level @save.PlayerLevel @save.PlayerClass)</span>
-                            <i class="btnDownload fa fa-download" @onclick="() => DownloadSave(save.Name)"></i>
-                            <i class="btnRemove fa fa-times" @onclick="() => RemoveSave(save.Name, save.ShortName)"></i>
-                        </li>
+                        @:Saves:
+                        foreach (var save in AppState.Saves)
+                        {
+                            <li @key="save.Name">
+                                <div class="saveName">@save.ShortName</div><span class="info">@save.GameType</span>
+                                <i class="btnDownload fa fa-download" @onclick="() => DownloadSave(save.Name)"></i>
+                                <i class="btnRemove fa fa-times" @onclick="() => RemoveSave(save.Name, save.ShortName)"></i>
+                            </li>
+                        }
                     }
                 </ul>
                 <a @ref="downloadLink" class="hidden"></a>
@@ -234,17 +238,17 @@
 
     private async Task InitFileSystem()
     {
-        //var store = await IndexedDBManager.GetRecords<IndexedDbFile>("kv");
+        //var store = await IndexedDbManager.GetRecords<IndexedDbFile>("kv");
         //return store.ToDictionary(x => x.Name, x => x.Data);
 
-        await Interop.InitIndexedDB();
+        await Interop.InitIndexedDb();
     }
 
     private async Task InitSaves()
     {
         var filenames = await Interop.GetFilenames();
         var saveNames = filenames.Where(x => x.EndsWith(".sv")).ToList();
-        saveNames.ForEach(x => AppState.Saves.Add(new SaveGame { Name = x, ShortName = Path.GetFileNameWithoutExtension(x) }));
+        saveNames.ForEach(x => AppState.Saves.Add(new SaveGame(x)));
     }
 
     private void CompressMPQ() =>
@@ -271,10 +275,14 @@
             return;
         }
 
+        if (await Interop.IndexedDbHasFile(name))
+        {
+            Interop.Alert($"Save '{name}' already exists.");
+            return;
+        }
+
         await Interop.UploadFile();
-        AppState.Saves.Add(new SaveGame { Name = name, ShortName = Path.GetFileNameWithoutExtension(name) });
-        //TODO: UpdateSaves only for uploaded save
-        await UpdateSaves();
+        AppState.Saves.Add(new SaveGame(name));
     }
 
     private async Task ParseMpqFile(ChangeEventArgs e)
@@ -297,7 +305,7 @@
             return;
         }
 
-        gameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Spawn;
+        gameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Shareware;
 
         AppState.DropZone = isDrop ? DropZone.Hide : DropZone.None;
         AppState.Loading = true;
@@ -338,25 +346,8 @@
         }
     }
 
-    //TODO
-    private async Task UpdateSaves()
-    {
-        //return this.fs.then(fs => {
-        //  const saves = {};
-        //  [...fs.files.keys()].filter(name => name.match(/\.sv$/i)).forEach(name => {
-        //    saves[name] = getPlayerName(fs.files.get(name).buffer, name);
-        //  });
-        //  this.setState({save_names: saves});
-        //});
-    }
-
-    private async Task ShowSaves()
-    {
-        if (AppState.Saves.Count > 0)
-            await UpdateSaves();
-
+    private void ShowSaves() =>
         AppState.ShowSaves = !AppState.ShowSaves;
-    }
 
     private async Task LoadGame()
     {
@@ -395,7 +386,7 @@
         var filesize = await Interop.GetFilesize(spawnFilename);
         if (filesize != 0 && !spawnFilesizes.Contains(filesize))
         {
-            //await IndexedDBManager.DeleteRecord<string>("kv", spawnFilename);
+            //await IndexedDbManager.DeleteRecord<string>("kv", spawnFilename);
 
             await Interop.RemoveFile(spawnFilename);
             filesize = 0;
@@ -411,12 +402,12 @@
 
             //var indexedDBFile = new IndexedDbFile { Name = spawnFilename, Data = spawn };
             //var storeRecord = new StoreRecord<IndexedDbFile> { Storename = "kv", Data = indexedDBFile };
-            //await IndexedDBManager.UpdateRecord<IndexedDbFile>(storeRecord);
+            //await IndexedDbManager.UpdateRecord<IndexedDbFile>(storeRecord);
 
             //TODO: When serialization is fast enough
-            //await Interop.UpdateIndexedDB(spawnFilename, spawn);
+            //await Interop.UpdateIndexedDb(spawnFilename, spawn);
 
-            filesize = await Interop.DownloadAndUpdateIndexedDB(url, spawnFilename, spawnFilesizes);
+            filesize = await Interop.DownloadAndUpdateIndexedDb(url, spawnFilename, spawnFilesizes);
 
             if (!spawnFilesizes.Contains(filesize))
                 throw new Exception("Invalid spawn.mpq size. Try clearing the cache and refreshing the page.");
@@ -425,7 +416,7 @@
 
     [JSInvokable]
     public void SetSaveName(int id) =>
-        saveName = (id >= 0) ? (gameType == GameType.Spawn) ? $"spawn{id}.sv" : $"single_{id}.sv" : null;
+        saveName = (id >= 0) ? (gameType == GameType.Shareware) ? $"spawn{id}.sv" : $"single_{id}.sv" : null;
 
     [JSInvokable]
     public async Task OnExit()

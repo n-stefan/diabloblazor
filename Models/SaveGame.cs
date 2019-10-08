@@ -1,17 +1,21 @@
 ﻿using diabloblazor.Enums;
+using System.IO;
 
 namespace diabloblazor.Models
 {
     public struct SaveGame
     {
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public string ShortName { get; set; }
+        public string ShortName { get; }
 
-        public string PlayerName { get; set; }
+        public GameType GameType { get; }
 
-        public PlayerClass PlayerClass { get; set; }
-
-        public int PlayerLevel { get; set; }
+        public SaveGame(string name)
+        {
+            Name = name;
+            ShortName = Path.GetFileNameWithoutExtension(name);
+            GameType = name.ToLower().StartsWith("spawn") ? GameType.Shareware : GameType.Retail;
+        }
     }
 }

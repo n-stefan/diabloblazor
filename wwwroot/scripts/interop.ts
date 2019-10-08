@@ -1,6 +1,7 @@
 ﻿
 //TODO master list:
-//Manage saves
+//Missing: self.DApi.set_cursor
+//Keyboard: numbers
 //Config
 //GitHub page
 //Compress .mpq

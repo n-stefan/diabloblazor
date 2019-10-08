@@ -32,7 +32,7 @@ namespace diabloblazor.Services
         {
             //progress("Loading...");
 
-            int mpqLoaded = 0, /*mpqTotal = (mpq ? mpq.size : 0)*/ wasmLoaded = 0, wasmTotal = (app.GameType == GameType.Spawn ? _spawnWasmFilesize : _retailWasmFilesize);
+            int mpqLoaded = 0, /*mpqTotal = (mpq ? mpq.size : 0)*/ wasmLoaded = 0, wasmTotal = (app.GameType == GameType.Shareware ? _spawnWasmFilesize : _retailWasmFilesize);
             int wasmWeight = 5;
 
             //function updateProgress()
@@ -75,12 +75,12 @@ namespace diabloblazor.Services
         private async Task InitWasm(Main app /*progress*/)
         {
             //TODO: URL from app (config)
-            var url = $"http://localhost:53287/{ (app.GameType == GameType.Spawn ? _spawnWasmFilename : _retailWasmFilename) }";
+            var url = $"http://localhost:53287/{ (app.GameType == GameType.Shareware ? _spawnWasmFilename : _retailWasmFilename) }";
             
             var binary = await _httpClient.GetByteArrayAsync(url);
             //onDownloadProgress: progress
 
-            /*var result =*/ await _interop.InitWebAssembly(app.GameType == GameType.Spawn, binary);
+            /*var result =*/ await _interop.InitWebAssembly(app.GameType == GameType.Shareware, binary);
             //progress({ loaded: 2000000 });
            
             //return result;

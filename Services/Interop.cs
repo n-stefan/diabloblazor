@@ -24,89 +24,92 @@ namespace diabloblazor.Services
         public bool Confirm(string message) =>
             _jsInProcessRuntime.Invoke<bool>("confirm", message);
 
-        public async ValueTask Log(string message) =>
+        public async Task Log(string message) =>
             await _jsRuntime.InvokeVoidAsync("console.log", message);
 
-        public async ValueTask StoreDotNetReference(DotNetObjectReference<Main> reference) =>
+        public async Task StoreDotNetReference(DotNetObjectReference<Main> reference) =>
             await _jsRuntime.InvokeVoidAsync("interop.storeDotNetReference", reference);
 
-        public async ValueTask InitIndexedDB() =>
+        public async Task InitIndexedDb() =>
             await _jsRuntime.InvokeVoidAsync("interop.fileStore.initIndexedDb");
 
-        public async ValueTask UpdateIndexedDB(string name, byte[] data) =>
+        public async Task UpdateIndexedDb(string name, byte[] data) =>
             await _jsRuntime.InvokeVoidAsync("interop.fileStore.updateIndexedDb", name, new ByteArray(data));
 
-        public async ValueTask<int> DownloadAndUpdateIndexedDB(string url, string name, int[] sizes) =>
+        public async Task<int> DownloadAndUpdateIndexedDb(string url, string name, int[] sizes) =>
             await _jsRuntime.InvokeAsync<int>("interop.downloadAndUpdateIndexedDb", url, name, sizes);
 
-        public async ValueTask<ByteArray> ReadIndexedDbAsByteArray(string name) =>
+        public async Task<ByteArray> ReadIndexedDbAsByteArray(string name) =>
             await _jsRuntime.InvokeAsync<ByteArray>("interop.fileStore.readIndexedDb", name);
 
-        public async ValueTask<string> ReadIndexedDbAsBase64String(string name) =>
+        public async Task<string> ReadIndexedDbAsBase64String(string name) =>
             await _jsRuntime.InvokeAsync<string>("interop.fileStore.readIndexedDb", name);
 
-        public async ValueTask ClickDownloadLink(ElementReference link, string download, string href) =>
+        public async Task<bool> IndexedDbHasFile(string name) =>
+            await _jsRuntime.InvokeAsync<bool>("interop.fileStore.indexedDbHasFile", name);
+
+        public async Task ClickDownloadLink(ElementReference link, string download, string href) =>
             await _jsRuntime.InvokeVoidAsync("interop.clickDownloadLink", link, download, href);
 
-        public async ValueTask DownloadFile(string name) =>
+        public async Task DownloadFile(string name) =>
             await _jsRuntime.InvokeVoidAsync("interop.fileStore.downloadFile", name);
 
-        public async ValueTask UploadFile() =>
+        public async Task UploadFile() =>
             await _jsRuntime.InvokeVoidAsync("interop.fileStore.uploadFile");
 
-        public async ValueTask<bool> HasFile(string name, params int[] sizes) =>
+        public async Task<bool> HasFile(string name, params int[] sizes) =>
             await _jsRuntime.InvokeAsync<bool>("interop.fileStore.hasFile", name, sizes);
 
-        public async ValueTask<string[]> GetFilenames() =>
+        public async Task<string[]> GetFilenames() =>
             await _jsRuntime.InvokeAsync<string[]>("interop.fileStore.getFilenames");
 
-        public async ValueTask<int> GetFilesize(string name) =>
+        public async Task<int> GetFilesize(string name) =>
             await _jsRuntime.InvokeAsync<int>("interop.fileStore.getFilesize", name);
 
-        public async ValueTask RemoveFile(string name) =>
+        public async Task RemoveFile(string name) =>
             await _jsRuntime.InvokeVoidAsync("interop.fileStore.removeFile", name);
 
-        public async ValueTask SetInputFile() =>
+        public async Task SetInputFile() =>
             await _jsRuntime.InvokeVoidAsync("interop.fileStore.setInputFile");
 
-        public async ValueTask SetDropFile() =>
+        public async Task SetDropFile() =>
             await _jsRuntime.InvokeVoidAsync("interop.fileStore.setDropFile");
 
-        public async ValueTask InitWebAssembly(bool isSpawn, byte[] data) =>
+        public async Task InitWebAssembly(bool isSpawn, byte[] data) =>
             await _jsRuntime.InvokeVoidAsync("interop.webassembly.initWebAssembly", isSpawn, new ByteArray(data));
 
-        public async ValueTask InitGraphics(bool offscreen) =>
+        public async Task InitGraphics(bool offscreen) =>
             await _jsRuntime.InvokeVoidAsync("interop.graphics.initGraphics", offscreen);
 
-        public async ValueTask InitSound() =>
+        public async Task InitSound() =>
             await _jsRuntime.InvokeVoidAsync("interop.sound.initSound");
 
-        public async ValueTask SNetInitWebsocket() =>
+        public async Task SNetInitWebsocket() =>
             await _jsRuntime.InvokeVoidAsync("interop.webassembly.snetInitWebsocket");
 
-        public async ValueTask DApiInit(long currentDateTime, int offScreen, int version0, int version1, int version2) =>
+        public async Task DApiInit(long currentDateTime, int offScreen, int version0, int version1, int version2) =>
             await _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiInit", currentDateTime, offScreen, version0, version1, version2);
 
-        public async ValueTask DApiMouse(int action, int button, int eventModifiers, double x, double y) =>
+        public async Task DApiMouse(int action, int button, int eventModifiers, double x, double y) =>
             await _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiMouse", action, button, eventModifiers, x, y);
             //_jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiMouse", action, button, eventModifiers, x, y);
 
-        public async ValueTask DApiKey(int action, int eventModifiers, int key) =>
+        public async Task DApiKey(int action, int eventModifiers, int key) =>
             await _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiKey", action, eventModifiers, key);
 
-        public async ValueTask DApiChar(int chr) =>
+        public async Task DApiChar(int chr) =>
             await _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiChar", chr);
 
-        public async ValueTask CallApi(string api, params object[] args) =>
+        public async Task CallApi(string api, params object[] args) =>
             await _jsRuntime.InvokeVoidAsync("interop.webassembly.callApi", api, args);
 
-        public async ValueTask<ClientRect> GetCanvasRect() =>
+        public async Task<ClientRect> GetCanvasRect() =>
             await _jsRuntime.InvokeAsync<ClientRect>("interop.getCanvasRect");
 
-        public async ValueTask Reload() =>
+        public async Task Reload() =>
             await _jsRuntime.InvokeVoidAsync("interop.reload");
 
-        public async ValueTask AddEventListeners() =>
+        public async Task AddEventListeners() =>
             await _jsRuntime.InvokeVoidAsync("interop.addEventListeners");
     }
 }
