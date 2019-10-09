@@ -73,7 +73,7 @@
                         Or you can play the shareware version for free (25MB download).
                     </p>
                 }
-            <label for="mpqInput" class="startButton">Browse for DIABDAT.MPQ</label>
+                <label for="mpqInput" class="startButton">Browse for DIABDAT.MPQ</label>
                 <div class="startButton" @onclick="() => Start()">Play Shareware</div>
                 @if (AppState.Saves.Count > 0)
                 {
@@ -181,13 +181,23 @@
             throw new Exception($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs!");
     }
 
-    private int TranslateCode(KeyboardEventArgs e) =>
-        e.Code switch
+    private int GetKeyCode(KeyboardEventArgs e)
+    {
+        if (e.Key.Length > 1)
         {
-            "Backspace" => 8,
-            "Enter"     => 13,
-            _           => (int)e.Key[0] - 32
-        };
+            return e.Key switch
+            {
+                "Backspace" => 8,
+                "Enter"     => 13,
+                "Shift"     => 16
+            };
+        }
+        else
+        {
+            var chr = e.Key[0];
+            return (char.IsDigit(chr)) ? (int)chr + 48 : (int)chr - 32;
+        }
+    }
 
     private async Task OnMouseMove(MouseEventArgs e)
     {
@@ -215,10 +225,10 @@
         await Interop.DApiMouse(2, MouseButton(e), EventModifiers(e), x, y);
     }
 
-    //TODO: Check Backspace, numbers
+    //TODO: Check Backspace, try to simplify
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
-        var keyCode = TranslateCode(e);
+        var keyCode = GetKeyCode(e);
 
         await Interop.DApiKey(0, EventModifiers(e), keyCode);
 
@@ -235,7 +245,7 @@
     }
 
     private async Task OnKeyUp(KeyboardEventArgs e) =>
-        await Interop.DApiKey(1, EventModifiers(e), TranslateCode(e));
+        await Interop.DApiKey(1, EventModifiers(e), GetKeyCode(e));
 
     private void OnDragEnter(DragEventArgs e) =>
         AppState.DropZone = DropZone.Show;

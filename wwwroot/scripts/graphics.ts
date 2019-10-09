@@ -46,7 +46,7 @@ class Graphics {
         windowAny.DApi.draw_belt = this.drawBelt;
     }
 
-    public initGraphics = (offscreen: boolean) => {
+    public initGraphics = (offscreen: boolean): void => {
         const canvas = document.getElementById('theCanvas') as HTMLCanvasElement;
         this.context = (offscreen) ? canvas.getContext('bitmaprenderer') : canvas.getContext('2d', { alpha: false });
     }
