@@ -5,7 +5,7 @@
 @inject Worker Worker
 @inject ExceptionHandler ExceptionHandler
 @*@inject HttpClient HttpClient
-@inject IndexedDbManager IndexedDbManager*@
+    @inject IndexedDbManager IndexedDbManager*@
 
 <div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.DropZone == DropZone.Show ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
     <div class="Body">
@@ -181,23 +181,26 @@
             throw new Exception($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs!");
     }
 
-    private int GetKeyCode(KeyboardEventArgs e)
-    {
-        if (e.Key.Length > 1)
+    private int GetKeyCode(KeyboardEventArgs e) =>
+        e.Code switch
         {
-            return e.Key switch
-            {
-                "Backspace" => 8,
-                "Enter"     => 13,
-                "Shift"     => 16
-            };
-        }
-        else
-        {
-            var chr = e.Key[0];
-            return (char.IsDigit(chr)) ? (int)chr + 48 : (int)chr - 32;
-        }
-    }
+            string s when s.StartsWith("F") => int.Parse(s.Substring(1)) + 111,
+            string s when s.StartsWith("Key") => (int)s[s.Length - 1] - 32,
+            string s when s.StartsWith("Digit") => (int)s[s.Length - 1] + 48,
+            string s when s.StartsWith("Shift") => 16,
+            "Backspace" => 8,
+            "Tab" => 9,
+            "Enter" => 13,
+            "Escape" => 27,
+            "Space" => 32,
+            "ArrowLeft" => 37,
+            "ArrowUp" => 38,
+            "ArrowRight" => 39,
+            "ArrowDown" => 40,
+            "Equal" => 187,
+            "Minus" => 189,
+            _ => (int)e.Code[0]
+        };
 
     private async Task OnMouseMove(MouseEventArgs e)
     {
@@ -225,7 +228,7 @@
         await Interop.DApiMouse(2, MouseButton(e), EventModifiers(e), x, y);
     }
 
-    //TODO: Check Backspace, try to simplify
+    //TODO: Check Backspace, preventDefault
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
         var keyCode = GetKeyCode(e);
@@ -237,11 +240,8 @@
         else if (keyCode == 8 || keyCode == 13)
             await Interop.DApiChar(keyCode);
 
-        //if (!this.showKeyboard) {
-        //  if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119)) {
-        //    e.preventDefault();
-        //  }
-        //}
+        //if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119))
+        //  e.preventDefault();
     }
 
     private async Task OnKeyUp(KeyboardEventArgs e) =>
