@@ -54,19 +54,19 @@ class Interop {
     }
 
     public addEventListeners = (): void => {
+        //TODO: preventDefault in Blazor as soon as supported
         window.addEventListener('resize', () => this._dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
 
         const main = document.getElementById('main');
         main.addEventListener('drop', (e: DragEvent) => this._fileStore.onDropFile(e));
-        //TODO: Do this in Blazor as soon as supported
         main.addEventListener('dragover', (e: DragEvent) => e.preventDefault());
 
-        //TODO: Do this in Blazor as soon as supported
         const canvas = document.getElementById('canvas');
         canvas.addEventListener('keydown', (e: KeyboardEvent) => {
             if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119))
                 e.preventDefault();
         });
+        canvas.addEventListener('contextmenu', (e: Event) => e.preventDefault());
     }
 
     private download = async (url: string, sizes: number[]): Promise<ArrayBuffer> => {
