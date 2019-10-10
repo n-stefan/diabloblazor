@@ -47,7 +47,7 @@ class Graphics {
     }
 
     public initGraphics = (offscreen: boolean): void => {
-        const canvas = document.getElementById('theCanvas') as HTMLCanvasElement;
+        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
         this.context = (offscreen) ? canvas.getContext('bitmaprenderer') : canvas.getContext('2d', { alpha: false });
     }
 

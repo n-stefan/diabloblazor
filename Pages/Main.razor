@@ -5,14 +5,14 @@
 @inject Worker Worker
 @inject ExceptionHandler ExceptionHandler
 @*@inject HttpClient HttpClient
-    @inject IndexedDbManager IndexedDbManager*@
+@inject IndexedDbManager IndexedDbManager*@
 
 <div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.DropZone == DropZone.Show ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
     <div class="Body">
         <div class="inner">
             @if (!AppState.Error)
             {
-                <canvas id="theCanvas" width="640" height="480" tabindex="1"
+                <canvas id="canvas" width="640" height="480" tabindex="1"
                         @onmousemove="OnMouseMove" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp" @onkeydown="OnKeyDown" @onkeyup="OnKeyUp" />
             }
         </div>
@@ -228,7 +228,7 @@
         await Interop.DApiMouse(2, MouseButton(e), EventModifiers(e), x, y);
     }
 
-    //TODO: Check Backspace, preventDefault
+    //TODO: Check Backspace
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
         var keyCode = GetKeyCode(e);
@@ -239,9 +239,6 @@
             await Interop.DApiChar((int)e.Key[0]);
         else if (keyCode == 8 || keyCode == 13)
             await Interop.DApiChar(keyCode);
-
-        //if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119))
-        //  e.preventDefault();
     }
 
     private async Task OnKeyUp(KeyboardEventArgs e) =>

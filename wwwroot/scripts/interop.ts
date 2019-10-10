@@ -57,8 +57,16 @@ class Interop {
         window.addEventListener('resize', () => this._dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
 
         const main = document.getElementById('main');
-        main.addEventListener('drop', (event: DragEvent) => this._fileStore.onDropFile(event));
-        main.addEventListener('dragover', (event: DragEvent) => event.preventDefault());
+        main.addEventListener('drop', (e: DragEvent) => this._fileStore.onDropFile(e));
+        //TODO: Do this in Blazor as soon as supported
+        main.addEventListener('dragover', (e: DragEvent) => e.preventDefault());
+
+        //TODO: Do this in Blazor as soon as supported
+        const canvas = document.getElementById('canvas');
+        canvas.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119))
+                e.preventDefault();
+        });
     }
 
     private download = async (url: string, sizes: number[]): Promise<ArrayBuffer> => {
@@ -79,7 +87,7 @@ class Interop {
     }
 
     public getCanvasRect = (): ClientRect => {
-        const canvas = document.getElementById('theCanvas');
+        const canvas = document.getElementById('canvas');
         return canvas.getBoundingClientRect();
     }
 
