@@ -1,6 +1,5 @@
 ﻿
 //TODO master list:
-//Config
 //GitHub page
 //Compress .mpq
 //Move as much as possible from TS/JS to C#

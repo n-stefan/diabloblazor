@@ -1,6 +1,7 @@
 ﻿using diabloblazor.Enums;
 using diabloblazor.Models;
 using diabloblazor.Pages;
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -12,18 +13,18 @@ namespace diabloblazor.Services
     public class Worker
     {
         private const long _resolution = 10_000;
-
         private const string _spawnWasmFilename = "DiabloSpawn.wasm";
         private const string _retailWasmFilename = "Diablo.wasm";
-
+        //TODO: Needed? Move into config?
         private const int _spawnWasmFilesize = 1_390_365;
         private const int _retailWasmFilesize = 1_528_787;
-
+        private readonly NavigationManager _navigationManager;
         private readonly HttpClient _httpClient;
         private readonly Interop _interop;
 
-        public Worker(HttpClient httpClient, Interop interop)
+        public Worker(NavigationManager navigationManager, HttpClient httpClient, Interop interop)
         {
+            _navigationManager = navigationManager;
             _httpClient = httpClient;
             _interop = interop;
         }
@@ -61,11 +62,11 @@ namespace diabloblazor.Services
 
             //progress("Initializing...");
 
-            //TODO: version from app (config)
-            var version = Regex.Match("1.0.0", @"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled);
+            var version = Regex.Match(app.Configuration.Version, @"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled);
 
             //await _interop.SNetInitWebsocket();
-            await _interop.DApiInit(DateTime.Now.Ticks / _resolution, app.Offscreen ? 1 : 0, int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value));
+            await _interop.DApiInit(DateTime.Now.Ticks / _resolution, app.Offscreen ? 1 : 0,
+                int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value));
 
             app.Timer = new Timer(
                 async _ => await _interop.CallApi("DApi_Render", DateTime.Now.Ticks / _resolution),
@@ -74,8 +75,7 @@ namespace diabloblazor.Services
 
         private async Task InitWasm(Main app /*progress*/)
         {
-            //TODO: URL from app (config)
-            var url = $"http://localhost:53287/{ (app.GameType == GameType.Shareware ? _spawnWasmFilename : _retailWasmFilename) }";
+            var url = $"{_navigationManager.BaseUri}{(app.GameType == GameType.Shareware ? _spawnWasmFilename : _retailWasmFilename)}";
             
             var binary = await _httpClient.GetByteArrayAsync(url);
             //onDownloadProgress: progress

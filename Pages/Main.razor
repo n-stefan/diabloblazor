@@ -4,8 +4,9 @@
 @inject Interop Interop
 @inject Worker Worker
 @inject ExceptionHandler ExceptionHandler
-@*@inject HttpClient HttpClient
-@inject IndexedDbManager IndexedDbManager*@
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
+@*@inject IndexedDbManager IndexedDbManager*@
 
 <div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.DropZone == DropZone.Show ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
     <div class="Body">
@@ -89,12 +90,13 @@
 {
     //TODO: Modularize
 
-    private const string retailFilename = "diabdat.mpq";
-    private const string spawnFilename = "spawn.mpq";
     private static readonly int[] spawnFilesizes = { 50_274_091, 25_830_791 };
+    private const string spawnFilename = "spawn.mpq";
+    private const string retailFilename = "diabdat.mpq";
     private string saveName;
-    private ClientRect canvasRect;
     private bool offscreen;
+    private Configuration configuration;
+    private ClientRect canvasRect;
     private GameType gameType;
     private Timer timer;
     private ElementReference downloadLink;
@@ -102,11 +104,14 @@
     //private Dictionary<string, byte[]> fileSystem;
 
     public bool Offscreen { get => offscreen; }
+    public Configuration Configuration { get => configuration; }
     public GameType GameType { get => gameType; }
     public Timer Timer { set => timer = value; }
 
     protected override async Task OnInitializedAsync()
     {
+        configuration = await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}config.json");
+
         await InitFileSystem();
 
         if (await Interop.HasFile(spawnFilename, spawnFilesizes))
@@ -411,8 +416,7 @@
         if (filesize == 0)
         {
             //HttpClient.DefaultRequestHeaders.Add("Cache-Control", "max-age=31536000");
-            //TODO: URL from config
-            var url = $"http://localhost:53287/{spawnFilename}";
+            var url = $"{NavigationManager.BaseUri}{spawnFilename}";
             //var spawn = await HttpClient.GetByteArrayAsync(url);
 
             //fileSystem[spawnFilename] = spawn;
