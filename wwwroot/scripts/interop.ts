@@ -1,6 +1,7 @@
 ﻿
 //TODO master list:
-//GitHub page
+//Drop zone
+//Add to Awesome Blazor
 //Compress .mpq
 //Move as much as possible from TS/JS to C#
 //Add more TS type annotations (noImplicitAny)

@@ -117,8 +117,10 @@ class FileStore {
 
     public onDropFile = (event: DragEvent): void => {
         this.dropFile = this.getDropFile(event);
-        if (this.dropFile)
+        if (this.dropFile) {
+            event.preventDefault();
             getInterop().dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase(), true);
+        }
     }
 
     public hasFile = (name: string, sizes: number[]): boolean => {

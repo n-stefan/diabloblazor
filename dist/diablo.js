@@ -137,8 +137,10 @@ class FileStore {
         };
         this.onDropFile = (event) => {
             this.dropFile = this.getDropFile(event);
-            if (this.dropFile)
+            if (this.dropFile) {
+                event.preventDefault();
                 getInterop().dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase(), true);
+            }
         };
         this.hasFile = (name, sizes) => {
             const file = this.files.get(name.toLowerCase());

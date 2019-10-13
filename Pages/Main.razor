@@ -49,7 +49,7 @@
         else if (AppState.Loading && !AppState.Started)
         {
             <div class="loading">
-                @(AppState.Progress.Message ?? "Loading...")
+                @(AppState.Progress.Message ?? "Initializing...")
                 @if (AppState.Progress.Total != 0)
                 {
                     <span class="progressBar"><span><span style="width: @ProgressBarWidth%" /></span></span>
