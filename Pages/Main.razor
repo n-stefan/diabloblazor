@@ -94,6 +94,7 @@
     private const string spawnFilename = "spawn.mpq";
     private const string retailFilename = "diabdat.mpq";
     private string saveName;
+    private bool isDrop;
     private bool offscreen;
     private Configuration configuration;
     private ClientRect canvasRect;
@@ -327,14 +328,15 @@
         if (name != null && !name.EndsWith(".mpq"))
         {
             Interop.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
-            AppState.Dropping = -1;
+            AppState.Dropping = 0;
             StateHasChanged();
             return;
         }
 
         gameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Shareware;
 
-        AppState.Dropping = isDrop ? 0 : -1;
+        this.isDrop = isDrop;
+        AppState.Dropping = 0;
         AppState.Loading = true;
 
         await LoadGame();
@@ -345,7 +347,7 @@
 
         //document.addEventListener('pointerlockchange', this.onPointerLockChange);
 
-        AppState.Dropping = -1;
+        this.isDrop = false;
         AppState.Started = true;
 
         StateHasChanged();
@@ -400,7 +402,7 @@
     private async Task LoadRetail()
     {
         if (!await Interop.HasFile(retailFilename))
-            if (AppState.Dropping == 0)
+            if (isDrop)
                 await Interop.SetDropFile();
             else
                 await Interop.SetInputFile();
