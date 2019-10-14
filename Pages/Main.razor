@@ -250,8 +250,8 @@
     private async Task OnKeyUp(KeyboardEventArgs e) =>
         await Interop.DApiKey(1, EventModifiers(e), GetKeyCode(e));
 
-    private void SetDropping(int inc) =>
-        AppState.Dropping = Max(AppState.Dropping + inc, 0);
+    private void SetDropping(int change) =>
+        AppState.Dropping = Max(AppState.Dropping + change, 0);
 
     private void OnDragEnter(DragEventArgs e) =>
         //e.preventDefault();
