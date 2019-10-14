@@ -1,6 +1,5 @@
 ﻿
 //TODO master list:
-//Drop zone
 //Add to Awesome Blazor
 //Compress .mpq
 //Move as much as possible from TS/JS to C#
