@@ -8,7 +8,7 @@
 @inject HttpClient HttpClient
 @*@inject IndexedDbManager IndexedDbManager*@
 
-<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.DropZone == DropZone.Show ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
+<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
     <div class="Body">
         <div class="inner">
             @if (!AppState.Error)
@@ -35,7 +35,7 @@
                             <li @key="save.Name">
                                 <div class="saveName">@save.ShortName</div><span class="info">@save.GameType</span>
                                 <i class="btnDownload fa fa-download" @onclick="() => DownloadSave(save.Name)"></i>
-                                <i class="btnRemove fa fa-times" @onclick="() => RemoveSave(save.Name, save.ShortName)"></i>
+                                <i class="btnRemove fa fa-times" @onclick="() => RemoveSave(save)"></i>
                             </li>
                         }
                     }
@@ -249,12 +249,15 @@
     private async Task OnKeyUp(KeyboardEventArgs e) =>
         await Interop.DApiKey(1, EventModifiers(e), GetKeyCode(e));
 
-    private void OnDragEnter(DragEventArgs e) =>
-        AppState.DropZone = DropZone.Show;
+    private void SetDropping(int inc) =>
+        AppState.Dropping = Max(AppState.Dropping + inc, 0);
 
-    //TODO: Check
+    private void OnDragEnter(DragEventArgs e) =>
+        //e.preventDefault();
+        SetDropping(1);
+
     private void OnDragLeave(DragEventArgs e) =>
-        AppState.DropZone = DropZone.Hide;
+        SetDropping(-1);
 
     [JSInvokable]
     public void OnResize(ClientRect rect) =>
@@ -324,14 +327,14 @@
         if (name != null && !name.EndsWith(".mpq"))
         {
             Interop.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
-            AppState.DropZone = DropZone.None;
+            AppState.Dropping = -1;
             StateHasChanged();
             return;
         }
 
         gameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Shareware;
 
-        AppState.DropZone = isDrop ? DropZone.Hide : DropZone.None;
+        AppState.Dropping = isDrop ? 0 : -1;
         AppState.Loading = true;
 
         await LoadGame();
@@ -342,7 +345,7 @@
 
         //document.addEventListener('pointerlockchange', this.onPointerLockChange);
 
-        AppState.DropZone = DropZone.None;
+        AppState.Dropping = -1;
         AppState.Started = true;
 
         StateHasChanged();
@@ -358,12 +361,12 @@
         //await Interop.DownloadFile(name);
     }
 
-    private async Task RemoveSave(string name, string shortName)
+    private async Task RemoveSave(SaveGame saveGame)
     {
-        if (Interop.Confirm($"Are you sure you want to delete {shortName}?"))
+        if (Interop.Confirm($"Are you sure you want to delete {saveGame.ShortName}?"))
         {
-            await Interop.RemoveFile(name);
-            var saveToRemove = AppState.Saves.FirstOrDefault(x => x.Name == name);
+            await Interop.RemoveFile(saveGame.Name);
+            var saveToRemove = AppState.Saves.FirstOrDefault(x => x.Name == saveGame.Name);
             AppState.Saves.Remove(saveToRemove);
         }
     }
@@ -397,7 +400,7 @@
     private async Task LoadRetail()
     {
         if (!await Interop.HasFile(retailFilename))
-            if (AppState.DropZone == DropZone.Hide)
+            if (AppState.Dropping == 0)
                 await Interop.SetDropFile();
             else
                 await Interop.SetInputFile();
