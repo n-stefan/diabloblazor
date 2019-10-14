@@ -111,7 +111,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        configuration = await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}config.json");
+        configuration = await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}appconfig.json");
 
         await InitFileSystem();
 
