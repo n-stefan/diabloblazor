@@ -34,8 +34,4 @@
     <!--<PackageReference Include="TG.Blazor.IndexedDB" Version="1.1.0-preview" />-->
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\dist\" />
-  </ItemGroup>
-
 </Project>

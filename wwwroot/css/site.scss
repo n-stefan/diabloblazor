@@ -448,14 +448,20 @@
     width: 100px;
 }
 
-@font-face {
+/*@font-face {
     font-family: 'Diablo Light';
-    src: url('/fonts/diablolight.ttf') format('truetype');
-}
+    //Deploy locally
+    src: url('/dist/diablolight.ttf') format('truetype');
+    //Deploy on GitHub Pages
+    //src: url('/diabloblazor/dist/diablolight.ttf') format('truetype');
+}*/
 
 @font-face {
     font-family: 'Diablo Heavy';
-    src: url('/fonts/diabloheavy.ttf') format('truetype');
+    //Deploy locally
+    src: url('/dist/diabloheavy.ttf') format('truetype');
+    //Deploy on GitHub Pages
+    //src: url('/diabloblazor/dist/diabloheavy.ttf') format('truetype');
 }
 
 body {

@@ -332,8 +332,8 @@ ASALocalRun/
 # Libraries
 /wwwroot/libs
 
-# Style and script bundles
-/wwwroot/dist
+# Scripts
+/wwwroot/scripts
 
 # Styles (generated from sass)
 /wwwroot/css/site.css
