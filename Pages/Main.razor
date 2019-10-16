@@ -129,36 +129,15 @@
         await Interop.StoreDotNetReference(DotNetObjectReference.Create<Main>(this));
     }
 
-    //private bool PointerLocked()
-    //{
-    //    return document.pointerLockElement === this.canvas || document.mozPointerLockElement === this.canvas;
-    //}
-
     [JSInvokable]
-    public void SetCursorPos(double x, double y)
-    {
-        //const rect = this.canvas.getBoundingClientRect();
-        //this.cursorPos = {
-        //    x: rect.left + (rect.right - rect.left) * x / 640,
-        //    y: rect.top + (rect.bottom - rect.top) * y / 480,
-        //};
-
+    public void SetCursorPos(double x, double y) =>
         Interop.DApiMouse(0, 0, 0, x, y);
-    }
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {
         double tx = 0, ty = 0;
-        //if (PointerLocked())
-        //{
         tx = Max(canvasRect.Left, Min(canvasRect.Right, tx + e.ClientX));
         ty = Max(canvasRect.Top, Min(canvasRect.Bottom, ty + e.ClientY));
-        //}
-        //else
-        //{
-        //    tx = e.ClientX;
-        //    ty = e.ClientY;
-        //}
         return (
             x: Max(0, Min(Round((tx - canvasRect.Left) / (canvasRect.Right - canvasRect.Left) * 640), 639)),
             y: Max(0, Min(Round((ty - canvasRect.Top) / (canvasRect.Bottom - canvasRect.Top) * 480), 479))
@@ -217,14 +196,6 @@
     private void OnMouseDown(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
-
-        //if (window.screen && window.innerHeight === window.screen.height) {
-        //  // we're in fullscreen, let's get pointer lock!
-        //  if (!this.pointerLocked()) {
-        //    this.canvas.requestPointerLock();
-        //  }
-        //}
-
         Interop.DApiMouse(1, MouseButton(e), EventModifiers(e), x, y);
     }
 
@@ -344,8 +315,6 @@
         //document.addEventListener('touchstart', this.onTouchStart, { passive: false, capture: true});
         //document.addEventListener('touchmove', this.onTouchMove, { passive: false, capture: true});
         //document.addEventListener('touchend', this.onTouchEnd, { passive: false, capture: true});
-
-        //document.addEventListener('pointerlockchange', this.onPointerLockChange);
 
         this.isDrop = false;
         AppState.Started = true;

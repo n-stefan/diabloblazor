@@ -14,6 +14,7 @@ class Interop {
     private _graphics: Graphics;
     private _sound: Sound;
     private _fileStore: FileStore;
+    private _canvas: HTMLCanvasElement;
     private _dotNetReference;
 
     constructor() {
@@ -46,6 +47,12 @@ class Interop {
         return this._fileStore;
     }
 
+    private get canvas(): HTMLCanvasElement {
+        if (!this._canvas)
+            this._canvas = document.getElementById('canvas') as HTMLCanvasElement;
+        return this._canvas;
+    }
+
     public get dotNetReference() {
         return this._dotNetReference;
     }
@@ -58,12 +65,11 @@ class Interop {
         main.addEventListener('drop', (e: DragEvent) => this._fileStore.onDropFile(e));
         main.addEventListener('dragover', (e: DragEvent) => e.preventDefault());
 
-        const canvas = document.getElementById('canvas');
-        canvas.addEventListener('keydown', (e: KeyboardEvent) => {
+        this.canvas.addEventListener('keydown', (e: KeyboardEvent) => {
             if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119))
                 e.preventDefault();
         });
-        canvas.addEventListener('contextmenu', (e: Event) => e.preventDefault());
+        this.canvas.addEventListener('contextmenu', (e: Event) => e.preventDefault());
     }
 
     private download = async (url: string, sizes: number[]): Promise<ArrayBuffer> => {
@@ -84,8 +90,7 @@ class Interop {
     }
 
     public getCanvasRect = (): ClientRect => {
-        const canvas = document.getElementById('canvas');
-        return canvas.getBoundingClientRect();
+        return this.canvas.getBoundingClientRect();
     }
 
     public reload = (): void => {
@@ -116,16 +121,16 @@ class Interop {
         this._dotNetReference = dotNetReference;
     }
 
+    public setCursor = (x: number, y: number): void => {
+        this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
+    }
+
     public clickDownloadLink = (element: HTMLElement, download: string, href: string): void => {
         element.setAttribute('download', download);
         element.setAttribute('href', href);
         element.click();
         element.removeAttribute('download');
         element.removeAttribute('href');
-    }
-
-    public setCursor = (x: number, y: number): void => {
-        this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
     }
 }
 
