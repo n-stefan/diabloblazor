@@ -90,9 +90,9 @@ namespace diabloblazor.Services
         public async Task DApiInit(long currentDateTime, int offScreen, int version0, int version1, int version2) =>
             await _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiInit", currentDateTime, offScreen, version0, version1, version2);
 
-        public async Task DApiMouse(int action, int button, int eventModifiers, double x, double y) =>
-            await _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiMouse", action, button, eventModifiers, x, y);
-            //_jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiMouse", action, button, eventModifiers, x, y);
+        public void DApiMouse(int action, int button, int eventModifiers, double x, double y) =>
+            _jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiMouse", action, button, eventModifiers, x, y);
+            //await _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiMouse", action, button, eventModifiers, x, y);
 
         public async Task DApiKey(int action, int eventModifiers, int key) =>
             await _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiKey", action, eventModifiers, key);

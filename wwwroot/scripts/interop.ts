@@ -1,10 +1,9 @@
 ﻿
 //TODO master list:
 //Compress .mpq
-//Move as much as possible from TS/JS to C#
+//Move as much as possible from TS to C#
 //Add more TS type annotations (noImplicitAny)
 //Use AOT compilation/non-Mono runtime/threads (Worker) when available
-//Memory leak?
 //Multiplayer?
 //Touch? Low priority
 

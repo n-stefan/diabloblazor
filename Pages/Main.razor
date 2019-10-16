@@ -135,7 +135,7 @@
     //}
 
     [JSInvokable]
-    public async Task SetCursorPos(double x, double y)
+    public void SetCursorPos(double x, double y)
     {
         //const rect = this.canvas.getBoundingClientRect();
         //this.cursorPos = {
@@ -143,7 +143,7 @@
         //    y: rect.top + (rect.bottom - rect.top) * y / 480,
         //};
 
-        await Interop.DApiMouse(0, 0, 0, x, y);
+        Interop.DApiMouse(0, 0, 0, x, y);
     }
 
     private (double x, double y) MousePos(MouseEventArgs e)
@@ -208,13 +208,13 @@
             _ => (int)e.Code[0]
         };
 
-    private async Task OnMouseMove(MouseEventArgs e)
+    private void OnMouseMove(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
-        await Interop.DApiMouse(0, 0, EventModifiers(e), x, y);
+        Interop.DApiMouse(0, 0, EventModifiers(e), x, y);
     }
 
-    private async Task OnMouseDown(MouseEventArgs e)
+    private void OnMouseDown(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
 
@@ -225,13 +225,13 @@
         //  }
         //}
 
-        await Interop.DApiMouse(1, MouseButton(e), EventModifiers(e), x, y);
+        Interop.DApiMouse(1, MouseButton(e), EventModifiers(e), x, y);
     }
 
-    private async Task OnMouseUp(MouseEventArgs e)
+    private void OnMouseUp(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
-        await Interop.DApiMouse(2, MouseButton(e), EventModifiers(e), x, y);
+        Interop.DApiMouse(2, MouseButton(e), EventModifiers(e), x, y);
     }
 
     //TODO: Check Backspace
