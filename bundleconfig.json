@@ -2,7 +2,7 @@
   {
     //Deploy locally
     "outputFileName": "wwwroot/dist/external.min.css",
-    //Deploy on GitHub Pages
+    //Deploy to GitHub Pages
     //"outputFileName": "dist/external.min.css",
     "inputFiles": [
       "wwwroot/css/reset.css"
@@ -11,7 +11,7 @@
   {
     //Deploy locally
     "outputFileName": "wwwroot/dist/diablo.min.css",
-    //Deploy on GitHub Pages
+    //Deploy to GitHub Pages
     //"outputFileName": "dist/diablo.min.css",
     "inputFiles": [
       "wwwroot/css/site.css"
@@ -20,7 +20,7 @@
   {
     //Deploy locally
     "outputFileName": "wwwroot/dist/external.min.js",
-    //Deploy on GitHub Pages
+    //Deploy to GitHub Pages
     //"outputFileName": "dist/external.min.js",
     "inputFiles": [
       "wwwroot/libs/idb-kv-store/idbkvstore.min.js",
@@ -36,7 +36,7 @@
   {
     //Deploy locally
     "outputFileName": "wwwroot/dist/diablo.min.js",
-    //Deploy on GitHub Pages
+    //Deploy to GitHub Pages
     //"outputFileName": "dist/diablo.min.js",
     "inputFiles": [
       "wwwroot/scripts/Diablo.js",
@@ -55,7 +55,7 @@
   {
     //Deploy locally
     "outputFileName": "wwwroot/dist/diablo.js",
-    //Deploy on GitHub Pages
+    //Deploy to GitHub Pages
     //"outputFileName": "dist/diablo.js",
     "inputFiles": [
       "wwwroot/scripts/webassembly.js",
