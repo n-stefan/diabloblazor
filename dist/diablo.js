@@ -188,18 +188,17 @@ class Interop {
             const main = document.getElementById('main');
             main.addEventListener('drop', (e) => this._fileStore.onDropFile(e));
             main.addEventListener('dragover', (e) => e.preventDefault());
-            const canvas = document.getElementById('canvas');
-            canvas.addEventListener('keydown', (e) => {
+            this.canvas.addEventListener('keydown', (e) => {
                 if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119))
                     e.preventDefault();
             });
-            canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+            this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
         };
         this.download = async (url, sizes) => {
             const response = await axios.request({
                 url: url,
                 responseType: 'arraybuffer',
-                onDownloadProgress: e => this._dotNetReference.invokeMethodAsync('OnProgress', new Progress('Downloading...', e.loaded, e.total || sizes[1])),
+                onDownloadProgress: (e) => this._dotNetReference.invokeMethodAsync('OnProgress', new Progress('Downloading...', e.loaded, e.total || sizes[1])),
                 headers: { 'Cache-Control': 'max-age=31536000' }
             });
             return response.data;
@@ -211,8 +210,7 @@ class Interop {
             return arrayBuffer.byteLength;
         };
         this.getCanvasRect = () => {
-            const canvas = document.getElementById('canvas');
-            return canvas.getBoundingClientRect();
+            return this.canvas.getBoundingClientRect();
         };
         this.reload = () => {
             window.location.reload();
@@ -233,15 +231,15 @@ class Interop {
         this.storeDotNetReference = (dotNetReference) => {
             this._dotNetReference = dotNetReference;
         };
+        this.setCursor = (x, y) => {
+            this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
+        };
         this.clickDownloadLink = (element, download, href) => {
             element.setAttribute('download', download);
             element.setAttribute('href', href);
             element.click();
             element.removeAttribute('download');
             element.removeAttribute('href');
-        };
-        this.setCursor = (x, y) => {
-            this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
         };
         this._webassembly = new Webassembly();
         this._graphics = new Graphics();
@@ -265,6 +263,11 @@ class Interop {
     }
     get fileStore() {
         return this._fileStore;
+    }
+    get canvas() {
+        if (!this._canvas)
+            this._canvas = document.getElementById('canvas');
+        return this._canvas;
     }
     get dotNetReference() {
         return this._dotNetReference;
