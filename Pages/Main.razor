@@ -205,7 +205,6 @@
         Interop.DApiMouse(2, MouseButton(e), EventModifiers(e), x, y);
     }
 
-    //TODO: Check Backspace
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
         var keyCode = GetKeyCode(e);
@@ -214,7 +213,7 @@
 
         if (keyCode >= 32 && e.Key.Length == 1)
             await Interop.DApiChar((int)e.Key[0]);
-        else if (keyCode == 8 || keyCode == 13)
+        else if (/*keyCode == 8 ||*/ keyCode == 13)
             await Interop.DApiChar(keyCode);
     }
 
