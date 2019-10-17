@@ -3,7 +3,7 @@ declare const Diablo: any;
 declare const DiabloSpawn: any;
 
 class Webassembly {
-    private wasm;
+    private wasm: any;
 
     public initWebAssembly = async (isSpawn: boolean, base64: string): Promise<void> => {
         const arrayBuffer = Helper.fromBase64ToUint8Array(base64).buffer;
@@ -30,8 +30,8 @@ class Webassembly {
         this.wasm._DApi_Char(chr);
     }
 
-    public callApi = (func, ...params): void => {
-        Helper.tryApi(() => {
+    public callApi = (func: string, ...params: string[]): void => {
+        Helper.tryApi((): void => {
             const sound = getInterop().sound;
             const nested = (sound.audioBatch != null);
             if (!nested) {

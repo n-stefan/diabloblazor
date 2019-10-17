@@ -2,7 +2,6 @@
 //TODO master list:
 //Compress .mpq
 //Move as much as possible from TS to C#
-//Add more TS type annotations (noImplicitAny)
 //Use AOT compilation/non-Mono runtime/threads (Worker) when available
 //Multiplayer?
 //Touch? Low priority
@@ -15,7 +14,7 @@ class Interop {
     private _sound: Sound;
     private _fileStore: FileStore;
     private _canvas: HTMLCanvasElement;
-    private _dotNetReference;
+    private _dotNetReference: any;
 
     constructor() {
         this._webassembly = new Webassembly();
@@ -59,24 +58,24 @@ class Interop {
 
     public addEventListeners = (): void => {
         //TODO: preventDefault in Blazor as soon as supported
-        window.addEventListener('resize', () => this._dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
+        window.addEventListener('resize', (): void => this._dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
 
         const main = document.getElementById('main');
-        main.addEventListener('drop', (e: DragEvent) => this._fileStore.onDropFile(e));
-        main.addEventListener('dragover', (e: DragEvent) => e.preventDefault());
+        main.addEventListener('drop', (e: DragEvent): void => this._fileStore.onDropFile(e));
+        main.addEventListener('dragover', (e: DragEvent): void => e.preventDefault());
 
-        this.canvas.addEventListener('keydown', (e: KeyboardEvent) => {
+        this.canvas.addEventListener('keydown', (e: KeyboardEvent): void => {
             if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119))
                 e.preventDefault();
         });
-        this.canvas.addEventListener('contextmenu', (e: Event) => e.preventDefault());
+        this.canvas.addEventListener('contextmenu', (e: Event): void => e.preventDefault());
     }
 
     private download = async (url: string, sizes: number[]): Promise<ArrayBuffer> => {
         const response = await axios.request({
             url: url,
             responseType: 'arraybuffer',
-            onDownloadProgress: e => this._dotNetReference.invokeMethodAsync('OnProgress', new Progress('Downloading...', e.loaded, e.total || sizes[1])),
+            onDownloadProgress: (e: ProgressEvent): void => this._dotNetReference.invokeMethodAsync('OnProgress', new Progress('Downloading...', e.loaded, e.total || sizes[1])),
             headers: { 'Cache-Control': 'max-age=31536000' }
         });
         return response.data;
@@ -97,7 +96,7 @@ class Interop {
         window.location.reload();
     }
 
-    public openKeyboard = (...args): void => {
+    public openKeyboard = (...args: number[]): void => {
         //Do nothing
     }
 
@@ -105,7 +104,7 @@ class Interop {
         //Do nothing
     }
 
-    public exitError = (error): void => {
+    public exitError = (error: string): void => {
         throw Error(error);
     }
 
@@ -117,7 +116,7 @@ class Interop {
         this._dotNetReference.invokeMethodAsync('SetSaveName', id);
     }
 
-    public storeDotNetReference = (dotNetReference): void => {
+    public storeDotNetReference = (dotNetReference: any): void => {
         this._dotNetReference = dotNetReference;
     }
 

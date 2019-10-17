@@ -3,7 +3,7 @@ interface SoundDef {
     buffer: Promise<AudioBuffer>;
     gain: GainNode;
     panner: StereoPannerNode;
-    source?;
+    source?: Promise<AudioBufferSourceNode>;
 }
 
 class Sound {
@@ -45,7 +45,7 @@ class Sound {
         this.sounds = new Map<number, SoundDef>();
     }
 
-    public createSound = (id, data): void => {
+    public createSound = (id: number, data: Uint8Array): void => {
         if (!this.context) {
             return;
         }
@@ -57,7 +57,7 @@ class Sound {
         });
     }
 
-    public createSoundRaw = (id, data, length, channels, rate): void => {
+    public createSoundRaw = (id: number, data: Uint8Array, length: number, channels: number, rate: number): void => {
         if (!this.context) {
             return;
         }
@@ -72,7 +72,7 @@ class Sound {
         });
     }
 
-    public duplicateSound = (id, srcId): void => {
+    public duplicateSound = (id: number, srcId: number): void => {
         if (!this.context) {
             return;
         }
@@ -87,7 +87,7 @@ class Sound {
         });
     }
 
-    public playSound = (id, volume, pan, loop): void => {
+    public playSound = (id: number, volume: number, pan: number, loop: boolean): void => {
         const src = this.sounds.get(id);
         if (src) {
             if (src.source) {
@@ -113,7 +113,7 @@ class Sound {
         }
     }
 
-    public stopSound = (id): void => {
+    public stopSound = (id: number): void => {
         const src = this.sounds.get(id);
         if (src && src.source) {
             src.source.then(source => source.stop());
@@ -121,7 +121,7 @@ class Sound {
         }
     }
 
-    public deleteSound = (id): void => {
+    public deleteSound = (id: number): void => {
         const src = this.sounds.get(id);
         if (src && src.source) {
             src.source.then(source => source.stop());
@@ -129,14 +129,14 @@ class Sound {
         this.sounds.delete(id);
     }
 
-    public setVolume = (id, volume): void => {
+    public setVolume = (id: number, volume: number): void => {
         const src = this.sounds.get(id);
         if (src) {
             src.gain.gain.value = Math.pow(2.0, volume / 1000.0);
         }
     }
 
-    private decodeAudioData = (context, buffer): Promise<AudioBuffer> => {
+    private decodeAudioData = (context: AudioContext, buffer: ArrayBuffer): Promise<AudioBuffer> => {
         return new Promise((resolve, reject): void => {
             context.decodeAudioData(buffer, resolve, reject);
         });

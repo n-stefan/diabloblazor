@@ -7,7 +7,7 @@ interface FileDef {
 }
 
 class FileStore {
-    private store; //: IdbKvStore;
+    private store: any; //: IdbKvStore;
     private files: Map<string, Uint8Array>;
     private dropFile: File;
 
@@ -84,11 +84,11 @@ class FileStore {
         this.files.set(name.toLowerCase(), array);
     }
 
-    private readFile = (file: File) => new Promise<ArrayBuffer>((resolve, reject) => {
+    private readFile = (file: File): Promise<ArrayBuffer> => new Promise<ArrayBuffer>((resolve, reject): void => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as ArrayBuffer);
-        reader.onerror = () => reject(reader.error);
-        reader.onabort = () => reject();
+        reader.onload = (): void => resolve(reader.result as ArrayBuffer);
+        reader.onerror = (): void => reject(reader.error);
+        reader.onabort = (): void => reject();
         reader.onprogress = (event: ProgressEvent<FileReader>) =>
             getInterop().dotNetReference.invokeMethodAsync('OnProgress', new Progress('Loading...', event.loaded, event.total));
         reader.readAsArrayBuffer(file);

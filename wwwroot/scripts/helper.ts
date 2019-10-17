@@ -12,7 +12,7 @@ class Helper {
         return base64js.fromByteArray(array);
     }
 
-    public static onError = (err, action = "error") => {
+    public static onError = (err: Error | any, action = 'error'): void => {
         if (err instanceof Error) {
             alert(`Action: ${action} Error: ${err.toString()} Stack: ${err.stack}`);
         } else {
@@ -20,7 +20,7 @@ class Helper {
         }
     }
 
-    public static tryApi = (func) => {
+    public static tryApi = (func: Function): void => {
         try {
             func();
         } catch (e) {
