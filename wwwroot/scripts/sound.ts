@@ -10,11 +10,6 @@ class Sound {
     private context: AudioContext;
     private sounds: Map<number, SoundDef>;
 
-    public audioBatch: [];
-    public audioTransfer: [];
-    public maxSoundId: number;
-    public maxBatchId: number;
-
     constructor() {
         windowAny.DApi.create_sound = this.createSound;
         windowAny.DApi.create_sound_raw = this.createSoundRaw;
@@ -23,11 +18,6 @@ class Sound {
         windowAny.DApi.delete_sound = this.deleteSound;
         windowAny.DApi.set_volume = this.setVolume;
         windowAny.DApi.duplicate_sound = this.duplicateSound;
-
-        this.audioBatch = null;
-        this.audioTransfer = null;
-        this.maxSoundId = 0;
-        this.maxBatchId = 0;
     }
 
     public initSound = (): void => {

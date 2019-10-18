@@ -32,13 +32,6 @@ class Webassembly {
 
     public callApi = (func: string, ...params: string[]): void => {
         Helper.tryApi((): void => {
-            const sound = getInterop().sound;
-            const nested = (sound.audioBatch != null);
-            if (!nested) {
-                sound.audioBatch = [];
-                sound.audioTransfer = [];
-                //packetBatch = [];
-            }
             if (func !== "text") {
                 this.wasm["_" + func](...params);
             } else {
@@ -51,19 +44,6 @@ class Webassembly {
                 }
                 heap[ptr + length] = 0;
                 this.wasm._DApi_SyncText(params[1]);
-            }
-            if (!nested) {
-                if (sound.audioBatch.length) {
-                    sound.maxSoundId = sound.maxBatchId;
-                    //TODO
-                    //worker.postMessage({ action: "audioBatch", batch: audioBatch }, audioTransfer);
-                }
-                //if (packetBatch.length) {
-                //    worker.postMessage({ action: "packetBatch", batch: packetBatch }, packetBatch);
-                //}
-                sound.audioBatch = null;
-                sound.audioTransfer = null;
-                //packetBatch = null;
             }
         });
     }
