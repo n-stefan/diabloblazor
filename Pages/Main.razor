@@ -88,18 +88,16 @@
 
 @code
 {
-    //TODO: Modularize
-
     private static readonly int[] spawnFilesizes = { 50_274_091, 25_830_791 };
     private const string spawnFilename = "spawn.mpq";
     private const string retailFilename = "diabdat.mpq";
-    private string saveName;
+    private string? saveName;
     private bool isDrop;
     private bool offscreen;
     private Configuration configuration;
     private ClientRect canvasRect;
     private GameType gameType;
-    private Timer timer;
+    private Timer? timer;
     private ElementReference downloadLink;
 
     //private Dictionary<string, byte[]> fileSystem;
@@ -224,7 +222,6 @@
         AppState.Dropping = Max(AppState.Dropping + change, 0);
 
     private void OnDragEnter(DragEventArgs e) =>
-        //e.preventDefault();
         SetDropping(1);
 
     private void OnDragLeave(DragEventArgs e) =>
@@ -267,7 +264,10 @@
 
     private async Task Upload(string name)
     {
-        if (name != null && !name.EndsWith(".sv"))
+        if (name is null)
+            throw new ArgumentNullException(nameof(name));
+
+        if (!name.EndsWith(".sv"))
         {
             Interop.Alert("Please select an SV file.");
             return;
@@ -290,7 +290,7 @@
     }
 
     [JSInvokable]
-    public async Task Start(string name = null, bool isDrop = false)
+    public async Task Start(string? name = null, bool isDrop = false)
     {
         //if (this.compressMpq)
         //    this.compressMpq.start(file);
@@ -417,7 +417,7 @@
     {
         if (!AppState.Error)
         {
-            timer.Dispose();
+            timer?.Dispose();
             timer = null;
 
             await Interop.Reload();
@@ -428,7 +428,6 @@
     public void OnProgress(Progress progress)
     {
         AppState.Progress = progress;
-
         StateHasChanged();
     }
 

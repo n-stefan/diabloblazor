@@ -10,7 +10,7 @@ namespace diabloblazor.Services
 
         public override Encoding Encoding => Encoding.UTF8;
 
-        public event EventHandler<string> OnException;
+        public event EventHandler<string>? OnException;
 
         public ExceptionHandler()
         {
