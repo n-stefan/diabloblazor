@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="manifest.json" />
     <link rel="shortcut icon" href="dist/favicon.ico" />
     <link href="dist/external.min.css" rel="stylesheet" />
     <link href="dist/diablo.min.css" rel="stylesheet" />
@@ -19,6 +20,7 @@
     <!-- Minify-sensitive part -->
     <script src="dist/diablo.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
     <div id="root">
         <app><i class="fa fa-circle-o-notch fa-spin font-48"></i></app>
     </div>
