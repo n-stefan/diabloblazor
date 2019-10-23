@@ -1,6 +1,7 @@
 ﻿
 //TODO master list:
-//Compress .mpq
+//PWA: https://github.com/dotnet-presentations/blazor-workshop/blob/master/docs/09-progressive-web-app.md
+//Compress .mpq?
 //Move as much as possible from TS to C#
 //Use AOT compilation/non-Mono runtime/threads (Worker) when available
 //Multiplayer?
