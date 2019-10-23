@@ -1,0 +1,26 @@
+{
+  "short_name": "DIABLO",
+  "name": "DIABLO",
+  "icons": [
+    {
+      "src": "dist/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "dist/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "dist/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".", //"/"
+  "display": "standalone", //"fullscreen"
+  //"scope": "/",
+  "theme_color": "#ffffff",
+  "background_color": "#000000"
+}
