@@ -61,7 +61,7 @@
             <div class="start">
                 <p>
                     Based on the excellent <a href="https://github.com/d07RiV/diabloweb">DiabloWeb</a> which, in turn, is based on the likewise excellent <a href="https://github.com/diasurgical/devilution">Devilution</a>.
-                    The project page with information and links can be found over here: <a href="https://github.com/n-stefan/diabloblazor">https://github.com/n-stefan/diabloblazor</a>.
+                    The project page with information and links can be found over here: <a href="https://github.com/n-stefan/diabloblazor">DiabloBlazor</a>.
                 </p>
                 <p>
                     If you own the original game, you can drop the original DIABDAT.MPQ onto this page or click the button below to start playing.
@@ -231,12 +231,12 @@
     public void OnResize(ClientRect rect) =>
         canvasRect = rect;
 
-    private async Task InitFileSystem()
+    private Task InitFileSystem()
     {
         //var store = await IndexedDbManager.GetRecords<IndexedDbFile>("kv");
         //return store.ToDictionary(x => x.Name, x => x.Data);
 
-        await Interop.InitIndexedDb();
+        return Interop.InitIndexedDb();
     }
 
     private async Task InitSaves()
