@@ -5,6 +5,6 @@ As the name implies, DiabloBlazor swaps out React used in DiabloWeb for Blazor, 
 
 You can go to [DiabloBlazor on GitHub Pages](https://n-stefan.github.io/diabloblazor) to try it out.
 
-The server can be found here: [DiabloBlazorServer](https://github.com/n-stefan/diabloblazorserver).
+The development server can be found here: [DiabloBlazorServer](https://github.com/n-stefan/diabloblazorserver).
 
 WIP
