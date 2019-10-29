@@ -4,7 +4,7 @@ const cacheName: string = 'Diablo';
 self.addEventListener('install', async event => {
     //No PWA offline capability for GitHub Pages as initial caching takes too long
     //console.log('Installing service worker...');
-    //(event as any).skipWaiting();
+    //(self as any).skipWaiting();
     //return;
     //Comment the above lines for local deployment
 
