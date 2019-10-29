@@ -2,6 +2,12 @@
 const cacheName: string = 'Diablo';
 
 self.addEventListener('install', async event => {
+    //No PWA offline capability for GitHub Pages as initial caching takes too long
+    //console.log('Installing service worker...');
+    //(event as any).skipWaiting();
+    //return;
+    //Comment the above lines for local deployment
+
     console.log('Installing service worker and populating cache...');
     (event as any).waitUntil(caches.open(cacheName).then(cache => {
         return cache.addAll([
@@ -60,6 +66,10 @@ self.addEventListener('install', async event => {
 });
 
 self.addEventListener('fetch', (event: any) => {
+    //No PWA offline capability for GitHub Pages as initial caching takes too long
+    //return null;
+    //Comment the above line for local deployment
+
     event.respondWith(caches.match(event.request).then(cacheResponse => {
         if (cacheResponse) {
             console.log(`From the offline cache: ${event.request.url}`);
