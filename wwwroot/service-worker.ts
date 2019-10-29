@@ -6,6 +6,19 @@ self.addEventListener('install', async event => {
     (event as any).waitUntil(caches.open(cacheName).then(cache => {
         return cache.addAll([
             '/',
+            'dist/diablo.min.css',
+            'dist/diablo.min.js',
+            'dist/diablo.js',
+            'dist/external.min.css',
+            'dist/external.min.js',
+            'dist/diabloheavy.ttf',
+            'dist/favicon.ico',
+            'dist/icon-192.png',
+            'dist/icon-512.png',
+            'dist/manifest.json',
+            'dist/appconfig.json',
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0',
             '_framework/_bin/Microsoft.AspNetCore.Authorization.dll',
             '_framework/_bin/Microsoft.AspNetCore.Blazor.HttpClient.dll',
             '_framework/_bin/Microsoft.AspNetCore.Blazor.dll',
@@ -39,39 +52,27 @@ self.addEventListener('install', async event => {
             '_framework/blazor.webassembly.js',
             '_framework/wasm/mono.js',
             '_framework/wasm/mono.wasm',
-            'appconfig.json',
-            'dist/diablo.js',
-            'dist/diablo.min.css',
-            'dist/diablo.min.js',
-            'dist/diabloheavy.ttf',
-            'dist/external.min.css',
-            'dist/external.min.js',
-            'dist/favicon.ico',
-            'dist/icon-192.png',
-            'dist/icon-512.png',
-            'manifest.json',
-            'spawn.mpq',
+            'spawn.mpq', //25MB
             'Diablo.wasm',
-            'DiabloSpawn.wasm',
-            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
-            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0'
+            'DiabloSpawn.wasm'
         ]);
     }));
 });
 
 self.addEventListener('fetch', (event: any) => {
-    event.respondWith(
-        caches.match(event.request).then(cacheResponse => {
-            return cacheResponse || fetch(event.request).then(webResponse => {
-                let responseClone = webResponse.clone();
-                caches.open(cacheName).then(cache => {
-                    cache.put(event.request, responseClone);
-                });
-                return webResponse;
-            });
+    event.respondWith(caches.match(event.request).then(cacheResponse => {
+        if (cacheResponse) {
+            console.log(`From the offline cache: ${event.request.url}`);
+            return cacheResponse;
+        }
+        else return fetch(event.request).then(netResponse => {
+            const responseClone = netResponse.clone();
+            caches.open(cacheName).then(cache => cache.put(event.request, responseClone));
+            console.log(`From the internet: ${event.request.url}`);
+            return netResponse;
         }).catch(() => {
-            console.error(`Could not fetch ${event.request.url} from either the web or the cache!`);
+            console.error(`Could not fetch ${event.request.url} from either the offline cache or the internet!`);
             return null;
         })
-    );
+    }));
 });
