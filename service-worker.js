@@ -1,7 +1,7 @@
 const cacheName = 'Diablo';
 self.addEventListener('install', async (event) => {
     console.log('Installing service worker...');
-    event.skipWaiting();
+    self.skipWaiting();
     return;
     console.log('Installing service worker and populating cache...');
     event.waitUntil(caches.open(cacheName).then(cache => {
