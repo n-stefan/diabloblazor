@@ -1,9 +1,12 @@
 const cacheName = 'Diablo';
 self.addEventListener('install', async (event) => {
+    console.log('Installing service worker...');
+    event.skipWaiting();
+    return;
     console.log('Installing service worker and populating cache...');
     event.waitUntil(caches.open(cacheName).then(cache => {
         return cache.addAll([
-            '',
+            '/',
             'dist/diablo.min.css',
             'dist/diablo.min.js',
             'dist/diablo.js',
@@ -50,13 +53,14 @@ self.addEventListener('install', async (event) => {
             '_framework/blazor.webassembly.js',
             '_framework/wasm/mono.js',
             '_framework/wasm/mono.wasm',
-            //'spawn.mpq',
+            'spawn.mpq',
             'Diablo.wasm',
             'DiabloSpawn.wasm'
         ]);
     }));
 });
 self.addEventListener('fetch', (event) => {
+    return null;
     event.respondWith(caches.match(event.request).then(cacheResponse => {
         if (cacheResponse) {
             console.log(`From the offline cache: ${event.request.url}`);
