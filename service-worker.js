@@ -3,7 +3,7 @@ self.addEventListener('install', async (event) => {
     console.log('Installing service worker and populating cache...');
     event.waitUntil(caches.open(cacheName).then(cache => {
         return cache.addAll([
-            //'/',
+            'diabloblazor/',
             'dist/diablo.min.css',
             'dist/diablo.min.js',
             'dist/diablo.js',
@@ -50,7 +50,7 @@ self.addEventListener('install', async (event) => {
             '_framework/blazor.webassembly.js',
             '_framework/wasm/mono.js',
             '_framework/wasm/mono.wasm',
-            'spawn.mpq',
+            //'spawn.mpq',
             'Diablo.wasm',
             'DiabloSpawn.wasm'
         ]);
