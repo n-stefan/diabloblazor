@@ -182,7 +182,7 @@
             "ArrowDown" => 40,
             "Equal" => 187,
             "Minus" => 189,
-            _ => (int)e.Code[0]
+            _ => -1
         };
 
     private void OnMouseMove(MouseEventArgs e)
@@ -206,6 +206,9 @@
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
         var keyCode = GetKeyCode(e);
+
+        if (keyCode == -1)
+            return;
 
         await Interop.DApiKey(0, EventModifiers(e), keyCode);
 
