@@ -16,8 +16,8 @@ class Sound {
         windowAny.DApi.play_sound = this.playSound;
         windowAny.DApi.stop_sound = this.stopSound;
         windowAny.DApi.delete_sound = this.deleteSound;
-        windowAny.DApi.set_volume = this.setVolume;
         windowAny.DApi.duplicate_sound = this.duplicateSound;
+        windowAny.DApi.set_volume = this.setVolume;
     }
 
     public initSound = (): void => {

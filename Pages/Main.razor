@@ -61,7 +61,7 @@
             <div class="start">
                 <p>
                     Based on the excellent <a href="https://github.com/d07RiV/diabloweb">DiabloWeb</a> which, in turn, is based on the likewise excellent <a href="https://github.com/diasurgical/devilution">Devilution</a>.
-                    The project page with information and links can be found over here: <a href="https://github.com/n-stefan/diabloblazor">DiabloBlazor</a>.
+                    The project page with information and links can be found here: <a href="https://github.com/n-stefan/diabloblazor">DiabloBlazor</a>.
                 </p>
                 <p>
                     If you own the original game, you can drop the original DIABDAT.MPQ onto this page or click the button below to start playing.
@@ -106,30 +106,6 @@
     public Configuration Configuration { get => configuration; }
     public GameType GameType { get => gameType; }
     public Timer Timer { set => timer = value; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        configuration = await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
-
-        await InitFileSystem();
-
-        if (await Interop.HasFile(spawnFilename, spawnFilesizes))
-            AppState.HasSpawn = true;
-
-        await InitSaves();
-
-        canvasRect = await Interop.GetCanvasRect();
-
-        ExceptionHandler.OnException += (_, message) => Interop.Alert($"An error has occured: {message}");
-
-        await Interop.AddEventListeners();
-
-        await Interop.StoreDotNetReference(DotNetObjectReference.Create<Main>(this));
-    }
-
-    [JSInvokable]
-    public void SetCursorPos(double x, double y) =>
-        Interop.DApiMouse(0, 0, 0, x, y);
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {
@@ -185,6 +161,26 @@
             _ => -1
         };
 
+    protected override async Task OnInitializedAsync()
+    {
+        configuration = await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
+
+        await InitFileSystem();
+
+        if (await Interop.HasFile(spawnFilename, spawnFilesizes))
+            AppState.HasSpawn = true;
+
+        await InitSaves();
+
+        canvasRect = await Interop.GetCanvasRect();
+
+        ExceptionHandler.OnException += (_, message) => Interop.Alert($"An error has occured: {message}");
+
+        await Interop.AddEventListeners();
+
+        await Interop.StoreDotNetReference(DotNetObjectReference.Create<Main>(this));
+    }
+
     private void OnMouseMove(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
@@ -221,18 +217,14 @@
     private async Task OnKeyUp(KeyboardEventArgs e) =>
         await Interop.DApiKey(1, EventModifiers(e), GetKeyCode(e));
 
-    private void SetDropping(int change) =>
-        AppState.Dropping = Max(AppState.Dropping + change, 0);
-
     private void OnDragEnter(DragEventArgs e) =>
         SetDropping(1);
 
     private void OnDragLeave(DragEventArgs e) =>
         SetDropping(-1);
 
-    [JSInvokable]
-    public void OnResize(ClientRect rect) =>
-        canvasRect = rect;
+    private void SetDropping(int change) =>
+        AppState.Dropping = Max(AppState.Dropping + change, 0);
 
     private Task InitFileSystem()
     {
@@ -290,38 +282,6 @@
     {
         var name = ExtractFilename(e.Value.ToString()).ToLower();
         await Start(name);
-    }
-
-    [JSInvokable]
-    public async Task Start(string? name = null, bool isDrop = false)
-    {
-        //if (this.compressMpq)
-        //    this.compressMpq.start(file);
-
-        if (name != null && !name.EndsWith(".mpq"))
-        {
-            Interop.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
-            AppState.Dropping = 0;
-            StateHasChanged();
-            return;
-        }
-
-        gameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Shareware;
-
-        this.isDrop = isDrop;
-        AppState.Dropping = 0;
-        AppState.Loading = true;
-
-        await LoadGame();
-
-        //document.addEventListener('touchstart', this.onTouchStart, { passive: false, capture: true});
-        //document.addEventListener('touchmove', this.onTouchMove, { passive: false, capture: true});
-        //document.addEventListener('touchend', this.onTouchEnd, { passive: false, capture: true});
-
-        this.isDrop = false;
-        AppState.Started = true;
-
-        StateHasChanged();
     }
 
     private void GoBack() =>
@@ -411,9 +371,59 @@
         }
     }
 
+    private double ProgressBarWidth =>
+        AppState.Progress.Total != 0 ? Round(100d * AppState.Progress.Loaded / AppState.Progress.Total) : 100d;
+
+    [JSInvokable]
+    public async Task Start(string? name = null, bool isDrop = false)
+    {
+        //if (this.compressMpq)
+        //    this.compressMpq.start(file);
+
+        if (name != null && !name.EndsWith(".mpq"))
+        {
+            Interop.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
+            AppState.Dropping = 0;
+            StateHasChanged();
+            return;
+        }
+
+        gameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Shareware;
+
+        this.isDrop = isDrop;
+        AppState.Dropping = 0;
+        AppState.Loading = true;
+
+        await LoadGame();
+
+        //document.addEventListener('touchstart', this.onTouchStart, { passive: false, capture: true});
+        //document.addEventListener('touchmove', this.onTouchMove, { passive: false, capture: true});
+        //document.addEventListener('touchend', this.onTouchEnd, { passive: false, capture: true});
+
+        this.isDrop = false;
+        AppState.Started = true;
+
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void SetCursorPos(double x, double y) =>
+        Interop.DApiMouse(0, 0, 0, x, y);
+
     [JSInvokable]
     public void SetSaveName(int id) =>
         saveName = (id >= 0) ? (gameType == GameType.Shareware) ? $"spawn{id}.sv" : $"single_{id}.sv" : null;
+
+    [JSInvokable]
+    public void OnResize(ClientRect rect) =>
+        canvasRect = rect;
+
+    [JSInvokable]
+    public void OnProgress(Progress progress)
+    {
+        AppState.Progress = progress;
+        StateHasChanged();
+    }
 
     [JSInvokable]
     public async Task OnExit()
@@ -426,14 +436,4 @@
             await Interop.Reload();
         }
     }
-
-    [JSInvokable]
-    public void OnProgress(Progress progress)
-    {
-        AppState.Progress = progress;
-        StateHasChanged();
-    }
-
-    private double ProgressBarWidth =>
-        AppState.Progress.Total != 0 ? Round(100d * AppState.Progress.Loaded / AppState.Progress.Total) : 100d;
 }
