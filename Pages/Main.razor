@@ -226,7 +226,7 @@
     private void SetDropping(int change) =>
         AppState.Dropping = Max(AppState.Dropping + change, 0);
 
-    private Task InitFileSystem()
+    private ValueTask InitFileSystem()
     {
         //var store = await IndexedDbManager.GetRecords<IndexedDbFile>("kv");
         //return store.ToDictionary(x => x.Name, x => x.Data);
