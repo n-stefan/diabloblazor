@@ -23,7 +23,7 @@
         {
             <div class="start">
                 <ul class="saveList">
-                    @if (AppState.Saves.Count == 0)
+                    @if (!AppState.Saves.Any())
                     {
                         @:There are no saves.
                     }
@@ -76,7 +76,7 @@
                 }
                 <label for="mpqInput" class="startButton">Browse for DIABDAT.MPQ</label>
                 <div class="startButton" @onclick="() => Start()">Play Shareware</div>
-                @if (AppState.Saves.Count > 0)
+                @if (AppState.Saves.Any())
                 {
                     <div class="startButton" @onclick="ShowSaves">Manage Saves</div>
                 }
@@ -93,19 +93,15 @@
     private const string retailFilename = "diabdat.mpq";
     private string? saveName;
     private bool isDrop;
-    private bool offscreen;
-    private Configuration configuration;
     private ClientRect canvasRect;
-    private GameType gameType;
-    private Timer? timer;
     private ElementReference downloadLink;
-
     //private Dictionary<string, byte[]> fileSystem;
 
-    public bool Offscreen { get => offscreen; }
-    public Configuration Configuration { get => configuration; }
-    public GameType GameType { get => gameType; }
-    public Timer Timer { set => timer = value; }
+    public bool Offscreen { get; private set; }
+    public Configuration Configuration { get; private set; }
+    public GameType GameType { get; private set; }
+    public Timer? Timer { private get; set; }
+    public GCHandle GameWasmHandle { private get; set; }
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {
@@ -163,7 +159,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        configuration = await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
+        Configuration = await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
 
         await InitFileSystem();
 
@@ -309,14 +305,14 @@
 
     private async Task LoadGame()
     {
-        await Interop.InitGraphics(offscreen);
+        await Interop.InitGraphics(Offscreen);
         await Interop.InitSound();
         await DoLoadGame();
     }
 
     private async Task DoLoadGame()
     {
-        if (gameType == GameType.Retail)
+        if (GameType == GameType.Retail)
             await LoadRetail();
         else
             await LoadSpawn();
@@ -388,7 +384,7 @@
             return;
         }
 
-        gameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Shareware;
+        GameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Shareware;
 
         this.isDrop = isDrop;
         AppState.Dropping = 0;
@@ -412,7 +408,7 @@
 
     [JSInvokable]
     public void SetSaveName(int id) =>
-        saveName = (id >= 0) ? (gameType == GameType.Shareware) ? $"spawn{id}.sv" : $"single_{id}.sv" : null;
+        saveName = (id >= 0) ? (GameType == GameType.Shareware) ? $"spawn{id}.sv" : $"single_{id}.sv" : null;
 
     [JSInvokable]
     public void OnResize(ClientRect rect) =>
@@ -428,12 +424,18 @@
     [JSInvokable]
     public async Task OnExit()
     {
-        if (!AppState.Error)
-        {
-            timer?.Dispose();
-            timer = null;
+        if (AppState.Error)
+            return;
 
-            await Interop.Reload();
-        }
+        Timer?.Dispose();
+        Timer = null;
+
+        GameWasmHandle.Free();
+
+        await Interop.Reload();
     }
+
+    [JSInvokable]
+    public async Task InitWebAssemblyUnmarshalledEnd() =>
+        await Worker.InitWebAssemblyUnmarshalledEnd(this);
 }

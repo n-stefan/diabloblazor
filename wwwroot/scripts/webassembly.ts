@@ -10,27 +10,41 @@ class Webassembly {
         this.wasm = await (isSpawn ? DiabloSpawn : Diablo)({ wasmBinary: arrayBuffer }).ready;
     }
 
+    public initWebAssemblyUnmarshalledBegin = async (isSpawn: boolean, address: number, length: number): Promise<void> => {
+        const array = windowAny.Module.HEAPU8.subarray(address, address + length);
+        this.wasm = await (isSpawn ? DiabloSpawn : Diablo)({ wasmBinary: array }).ready;
+        getInterop().dotNetReference.invokeMethodAsync('InitWebAssemblyUnmarshalledEnd');
+    }
+
     public snetInitWebsocket = (): void => {
-        this.wasm._SNet_InitWebsocket();
+        if (this.wasm)
+            this.wasm._SNet_InitWebsocket();
     }
 
     public dapiInit = (currentDateTime: number, offScreen: number, version0: number, version1: number, version2: number): void => {
-        this.wasm._DApi_Init(currentDateTime, offScreen, version0, version1, version2);
+        if (this.wasm)
+            this.wasm._DApi_Init(currentDateTime, offScreen, version0, version1, version2);
     }
 
     public dapiMouse = (action: number, button: number, eventModifiers: number, x: number, y: number): void => {
-        this.wasm._DApi_Mouse(action, button, eventModifiers, x, y);
+        if (this.wasm)
+            this.wasm._DApi_Mouse(action, button, eventModifiers, x, y);
     }
 
     public dapiKey = (action: number, eventModifiers: number, key: number): void => {
-        this.wasm._DApi_Key(action, eventModifiers, key);
+        if (this.wasm)
+            this.wasm._DApi_Key(action, eventModifiers, key);
     }
 
     public dapiChar = (chr: number): void => {
-        this.wasm._DApi_Char(chr);
+        if (this.wasm)
+            this.wasm._DApi_Char(chr);
     }
 
     public callApi = (func: string, ...params: string[]): void => {
+        if (!this.wasm)
+            return;
+
         Helper.tryApi((): void => {
             if (func !== "text") {
                 this.wasm["_" + func](...params);

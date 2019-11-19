@@ -30,12 +30,20 @@ namespace diabloblazor.Services
         {
             app.OnProgress(new Progress { Message = "Launching..." });
 
-            await InitWasm(app);
+            var url = $"{_navigationManager.BaseUri}{(app.GameType == GameType.Shareware ? _spawnWasmFilename : _retailWasmFilename)}";
+            var binary = await _httpClient.GetByteArrayAsync(url);
 
-            var version = Regex.Match(app.Configuration.Version, @"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled);
+            app.GameWasmHandle = _interop.InitWebAssemblyUnmarshalledBegin(app.GameType == GameType.Shareware, binary);
 
+            //await _interop.InitWebAssembly(app.GameType == GameType.Shareware, binary);
+            //await RunGame(app);
+        }
+
+        private async Task RunGame(Main app)
+        {
             //await _interop.SNetInitWebsocket();
 
+            var version = Regex.Match(app.Configuration.Version, @"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled);
             await _interop.DApiInit(DateTime.Now.Ticks / _resolution, app.Offscreen ? 1 : 0,
                 int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value));
 
@@ -44,13 +52,7 @@ namespace diabloblazor.Services
             null, 0, 50);
         }
 
-        private async Task InitWasm(Main app)
-        {
-            var url = $"{_navigationManager.BaseUri}{(app.GameType == GameType.Shareware ? _spawnWasmFilename : _retailWasmFilename)}";
-            
-            var binary = await _httpClient.GetByteArrayAsync(url);
-
-            await _interop.InitWebAssembly(app.GameType == GameType.Shareware, binary);
-        }
+        public Task InitWebAssemblyUnmarshalledEnd(Main app) =>
+            RunGame(app);
     }
 }

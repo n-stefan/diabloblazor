@@ -3,6 +3,9 @@ using diabloblazor.Models;
 using diabloblazor.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Mono.WebAssembly.Interop;
+using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace diabloblazor.Services
@@ -11,11 +14,13 @@ namespace diabloblazor.Services
     {
         private readonly IJSRuntime _jsRuntime;
         private readonly IJSInProcessRuntime _jsInProcessRuntime;
+        private readonly MonoWebAssemblyJSRuntime _monoWebAssemblyJSRuntime;
 
         public Interop(IJSRuntime jsRuntime)
         {
             _jsRuntime = jsRuntime;
-            _jsInProcessRuntime = (_jsRuntime as IJSInProcessRuntime)!;
+            _jsInProcessRuntime = (jsRuntime as IJSInProcessRuntime)!;
+            _monoWebAssemblyJSRuntime = (jsRuntime as MonoWebAssemblyJSRuntime)!;
         }
 
         public void Alert(string message) =>
@@ -77,6 +82,14 @@ namespace diabloblazor.Services
 
         public ValueTask InitWebAssembly(bool isSpawn, byte[] data) =>
             _jsRuntime.InvokeVoidAsync("interop.webassembly.initWebAssembly", isSpawn, new ByteArray(data));
+
+        public GCHandle InitWebAssemblyUnmarshalledBegin(bool isSpawn, byte[] data)
+        {
+            var gameWasmHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            _monoWebAssemblyJSRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
+                isSpawn, gameWasmHandle.AddrOfPinnedObject(), data.Length);
+            return gameWasmHandle;
+        }
 
         public ValueTask InitGraphics(bool offscreen) =>
             _jsRuntime.InvokeVoidAsync("interop.graphics.initGraphics", offscreen);
