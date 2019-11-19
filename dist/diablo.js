@@ -4,22 +4,34 @@ class Webassembly {
             const arrayBuffer = Helper.fromBase64ToUint8Array(base64).buffer;
             this.wasm = await (isSpawn ? DiabloSpawn : Diablo)({ wasmBinary: arrayBuffer }).ready;
         };
+        this.initWebAssemblyUnmarshalledBegin = async (isSpawn, address, length) => {
+            const array = windowAny.Module.HEAPU8.subarray(address, address + length);
+            this.wasm = await (isSpawn ? DiabloSpawn : Diablo)({ wasmBinary: array }).ready;
+            getInterop().dotNetReference.invokeMethodAsync('InitWebAssemblyUnmarshalledEnd');
+        };
         this.snetInitWebsocket = () => {
-            this.wasm._SNet_InitWebsocket();
+            if (this.wasm)
+                this.wasm._SNet_InitWebsocket();
         };
         this.dapiInit = (currentDateTime, offScreen, version0, version1, version2) => {
-            this.wasm._DApi_Init(currentDateTime, offScreen, version0, version1, version2);
+            if (this.wasm)
+                this.wasm._DApi_Init(currentDateTime, offScreen, version0, version1, version2);
         };
         this.dapiMouse = (action, button, eventModifiers, x, y) => {
-            this.wasm._DApi_Mouse(action, button, eventModifiers, x, y);
+            if (this.wasm)
+                this.wasm._DApi_Mouse(action, button, eventModifiers, x, y);
         };
         this.dapiKey = (action, eventModifiers, key) => {
-            this.wasm._DApi_Key(action, eventModifiers, key);
+            if (this.wasm)
+                this.wasm._DApi_Key(action, eventModifiers, key);
         };
         this.dapiChar = (chr) => {
-            this.wasm._DApi_Char(chr);
+            if (this.wasm)
+                this.wasm._DApi_Char(chr);
         };
         this.callApi = (func, ...params) => {
+            if (!this.wasm)
+                return;
             Helper.tryApi(() => {
                 if (func !== "text") {
                     this.wasm["_" + func](...params);
