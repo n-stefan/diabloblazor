@@ -100,7 +100,7 @@ namespace diabloblazor.Services
         public ValueTask SNetInitWebsocket() =>
             _jsRuntime.InvokeVoidAsync("interop.webassembly.snetInitWebsocket");
 
-        public ValueTask DApiInit(long currentDateTime, int offScreen, int version0, int version1, int version2) =>
+        public ValueTask DApiInit(double currentDateTime, int offScreen, int version0, int version1, int version2) =>
             _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiInit", currentDateTime, offScreen, version0, version1, version2);
 
         public void DApiMouse(int action, int button, int eventModifiers, double x, double y) =>

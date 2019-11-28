@@ -12,7 +12,7 @@ namespace diabloblazor.Services
 {
     public class Worker
     {
-        private const long _resolution = 10_000;
+        private DateTime _startTime;
         private const string _spawnWasmFilename = "DiabloSpawn.wasm";
         private const string _retailWasmFilename = "Diablo.wasm";
         private readonly NavigationManager _navigationManager;
@@ -43,12 +43,14 @@ namespace diabloblazor.Services
         {
             //await _interop.SNetInitWebsocket();
 
+            _startTime = DateTime.Now;
+
             var version = Regex.Match(app.Configuration.Version, @"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled);
-            await _interop.DApiInit(DateTime.Now.Ticks / _resolution, app.Offscreen ? 1 : 0,
+            await _interop.DApiInit((DateTime.Now - _startTime).TotalMilliseconds, app.Offscreen ? 1 : 0,
                 int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value));
 
             app.Timer = new Timer(
-                async _ => await _interop.CallApi("DApi_Render", DateTime.Now.Ticks / _resolution),
+                async _ => await _interop.CallApi("DApi_Render", (DateTime.Now - _startTime).TotalMilliseconds),
             null, 0, 50);
         }
 
