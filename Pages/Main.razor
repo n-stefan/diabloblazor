@@ -139,9 +139,9 @@
     private int GetKeyCode(KeyboardEventArgs e) =>
         e.Code switch
         {
-            string s when s.StartsWith("F") => int.Parse(s.Substring(1)) + 111,
-            string s when s.StartsWith("Key") => (int)s[s.Length - 1] - 32,
-            string s when s.StartsWith("Digit") => (int)s[s.Length - 1] + 48,
+            string s when s.StartsWith("F") => int.Parse(s[1..]) + 111,
+            string s when s.StartsWith("Key") => (int)s[^1] - 32,
+            string s when s.StartsWith("Digit") => (int)s[^1] + 48,
             string s when s.StartsWith("Shift") => 16,
             "Backspace" => 8,
             "Tab" => 9,
@@ -244,7 +244,7 @@
     {
         //Path.GetFileName doesn't seem to do the trick
         var index = path.LastIndexOf(@"\");
-        return (index != -1) ? path.Substring(index + 1) : path;
+        return (index != -1) ? path[(index + 1)..] : path;
     }
 
     private async Task ParseSaveFile(ChangeEventArgs e)
@@ -292,12 +292,12 @@
 
     private async Task RemoveSave(SaveGame saveGame)
     {
-        if (Interop.Confirm($"Are you sure you want to delete {saveGame.ShortName}?"))
-        {
-            await Interop.RemoveFile(saveGame.Name);
-            var saveToRemove = AppState.Saves.FirstOrDefault(x => x.Name == saveGame.Name);
-            AppState.Saves.Remove(saveToRemove);
-        }
+        if (!Interop.Confirm($"Are you sure you want to delete {saveGame.ShortName}?"))
+            return;
+
+        await Interop.RemoveFile(saveGame.Name);
+        var saveToRemove = AppState.Saves.FirstOrDefault(x => x.Name == saveGame.Name);
+        AppState.Saves.Remove(saveToRemove);
     }
 
     private void ShowSaves() =>
@@ -316,12 +316,6 @@
             await LoadRetail();
         else
             await LoadSpawn();
-
-        //let packetQueue = [];
-        //const webrtc = webrtc_open(data =>
-        //{
-        //    packetQueue.push(data);
-        //});
 
         await Worker.InitGame(this);
     }
