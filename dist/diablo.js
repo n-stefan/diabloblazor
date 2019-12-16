@@ -172,6 +172,13 @@ class FileStore {
             this.files.delete(name);
             await this.store.remove(name);
         };
+        this.getRenderInterval = () => {
+            const value = localStorage.getItem('DiabloRenderInterval');
+            return value ? parseInt(value) : 50;
+        };
+        this.setRenderInterval = (value) => {
+            localStorage.setItem('DiabloRenderInterval', value.toString());
+        };
         this.files = new Map();
         windowAny.DApi.get_file_size = this.getFilesize;
         windowAny.DApi.get_file_contents = this.getFileContents;
