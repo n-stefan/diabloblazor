@@ -161,4 +161,13 @@ class FileStore {
         this.files.delete(name);
         await this.store.remove(name);
     }
+
+    public getRenderInterval = (): number => {
+        const value = localStorage.getItem('DiabloRenderInterval');
+        return value ? parseInt(value) : 50;
+    }
+
+    public setRenderInterval = (value: number): void => {
+        localStorage.setItem('DiabloRenderInterval', value.toString());
+    }
 }

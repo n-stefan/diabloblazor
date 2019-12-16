@@ -80,6 +80,8 @@
                 {
                     <div class="startButton" @onclick="ShowSaves">Manage Saves</div>
                 }
+                <p>Game render interval (milliseconds): @RenderInterval</p>
+                <p><input type="range" min="25" max="100" step="1" @bind="RenderInterval" @bind:event="oninput" @onchange="OnRenderIntervalChange" /></p>
             </div>
         }
         <input accept=".mpq" type="file" id="mpqInput" class="hidden" @onchange="ParseMpqFile" />
@@ -98,6 +100,7 @@
     //private Dictionary<string, byte[]> fileSystem;
 
     public bool Offscreen { get; private set; }
+    public int RenderInterval { get; private set; }
     public Configuration Configuration { get; private set; }
     public GameType GameType { get; private set; }
     public Timer? Timer { private get; set; }
@@ -161,6 +164,8 @@
     {
         Configuration = await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
 
+        RenderInterval = await Interop.GetRenderInterval();
+
         await InitFileSystem();
 
         if (await Interop.HasFile(spawnFilename, spawnFilesizes))
@@ -176,6 +181,9 @@
 
         await Interop.StoreDotNetReference(DotNetObjectReference.Create<Main>(this));
     }
+
+    private async Task OnRenderIntervalChange(ChangeEventArgs e) =>
+        await Interop.SetRenderInterval(RenderInterval);
 
     private void OnMouseMove(MouseEventArgs e)
     {

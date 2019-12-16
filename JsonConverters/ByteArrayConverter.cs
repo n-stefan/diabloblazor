@@ -17,21 +17,18 @@ namespace diabloblazor.JsonConverters
             public override ByteArray Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
                 new ByteArray(reader.GetBytesFromBase64());
 
-            public override void Write(Utf8JsonWriter writer, ByteArray value, JsonSerializerOptions options)
-            {
+            // Too slow currently; AOT/.NET 5 should help
+            // Filesize: 50_274_091
+            //             
+            // writer.WriteStringValue(Convert.ToBase64String(value._data));
+            // Duration: 20:59 -> 24:04
+            // 
+            // writer.WriteStartArray();
+            // for (var i = 0; i < value._data.Length; i++) writer.WriteNumberValue(value._data[i]);
+            // writer.WriteEndArray();
+            // Duration: 41:44 -> 49:43
+            public override void Write(Utf8JsonWriter writer, ByteArray value, JsonSerializerOptions options) =>
                 writer.WriteBase64StringValue(value.Data);
-
-                //Too slow currently; AOT/.NET 5 should help
-                //Filesize: 50_274_091
-
-                //Duration: 20:59 -> 24:04
-                //writer.WriteStringValue(Convert.ToBase64String(value._data));
-
-                //Duration: 41:44 -> 49:43
-                //writer.WriteStartArray();
-                //for (var i = 0; i < value._data.Length; i++) writer.WriteNumberValue(value._data[i]);
-                //writer.WriteEndArray();
-            }
         }
     }
 }

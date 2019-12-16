@@ -80,6 +80,12 @@ namespace diabloblazor.Services
         public ValueTask SetDropFile() =>
             _jsRuntime.InvokeVoidAsync("interop.fileStore.setDropFile");
 
+        public ValueTask<int> GetRenderInterval() =>
+            _jsRuntime.InvokeAsync<int>("interop.fileStore.getRenderInterval");
+
+        public ValueTask SetRenderInterval(int renderInterval) =>
+            _jsRuntime.InvokeVoidAsync("interop.fileStore.setRenderInterval", renderInterval);
+
         public ValueTask InitWebAssembly(bool isSpawn, byte[] data) =>
             _jsRuntime.InvokeVoidAsync("interop.webassembly.initWebAssembly", isSpawn, new ByteArray(data));
 

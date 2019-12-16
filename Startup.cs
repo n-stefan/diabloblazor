@@ -9,11 +9,8 @@ namespace diabloblazor
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<AppState>();
-
             services.AddScoped<Interop>();
-
             services.AddScoped<Worker>();
-
             services.AddSingleton<ExceptionHandler>();
 
             //services.AddIndexedDB(db =>
@@ -28,9 +25,7 @@ namespace diabloblazor
             //});
         }
 
-        public void Configure(IComponentsApplicationBuilder app)
-        {
+        public void Configure(IComponentsApplicationBuilder app) =>
             app.AddComponent<App>("app");
-        }
     }
 }
