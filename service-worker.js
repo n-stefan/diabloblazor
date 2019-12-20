@@ -1,5 +1,5 @@
 const serviceWorker = self;
-const cacheName = 'Diablo';
+const cacheName = 'DiabloOfflineCache';
 const gitHubPagesHostname = 'n-stefan.github.io';
 let handleAsOfflineUntil = 0;
 serviceWorker.addEventListener('install', async (event) => {
