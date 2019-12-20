@@ -8,13 +8,13 @@
 @inject HttpClient HttpClient
 @*@inject IndexedDbManager IndexedDbManager*@
 
-<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnDragEnter" @ondragleave="OnDragLeave">
+<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnMainDragEnter" @ondragleave="OnMainDragLeave">
     <div class="Body">
         <div class="inner">
             @if (!AppState.Error)
             {
-                <canvas id="canvas" width="640" height="480" tabindex="1"
-                        @onmousemove="OnMouseMove" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp" @onkeydown="OnKeyDown" @onkeyup="OnKeyUp" />
+                <canvas id="canvas" width="640" height="480" tabindex="1" @onkeydown="OnCanvasKeyDown" @onkeyup="OnCanvasKeyUp"
+                        @onmousemove="OnCanvasMouseMove" @onmousedown="OnCanvasMouseDown" @onmouseup="OnCanvasMouseUp" />
             }
         </div>
     </div>
@@ -80,8 +80,9 @@
                 {
                     <div class="startButton" @onclick="ShowSaves">Manage Saves</div>
                 }
-                <p>Game render interval (milliseconds): @RenderInterval</p>
-                <p><input type="range" min="25" max="100" step="1" @bind="RenderInterval" @bind:event="oninput" @onchange="OnRenderIntervalChange" /></p>
+                <p>Game render interval (milliseconds): <span class="highlight">@RenderInterval</span></p>
+                <p>FPS target: <span class="highlight">@FPSTarget</span></p>
+                <p><input type="range" min="15" max="100" step="1" @bind="RenderInterval" @bind:event="oninput" @onchange="OnRenderIntervalChange" /></p>
             </div>
         }
         <input accept=".mpq" type="file" id="mpqInput" class="hidden" @onchange="ParseMpqFile" />
@@ -90,6 +91,7 @@
 
 @code
 {
+    //TODO: Move some into AppState
     private static readonly int[] spawnFilesizes = { 50_274_091, 25_830_791 };
     private const string spawnFilename = "spawn.mpq";
     private const string retailFilename = "diabdat.mpq";
@@ -105,6 +107,9 @@
     public GameType GameType { get; private set; }
     public Timer? Timer { private get; set; }
     public GCHandle GameWasmHandle { private get; set; }
+
+    private string FPSTarget =>
+        (RenderInterval != 0) ? (1000.0 / RenderInterval).ToString("N2") : "0";
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {
@@ -185,25 +190,25 @@
     private async Task OnRenderIntervalChange(ChangeEventArgs e) =>
         await Interop.SetRenderInterval(RenderInterval);
 
-    private void OnMouseMove(MouseEventArgs e)
+    private void OnCanvasMouseMove(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
         Interop.DApiMouse(0, 0, EventModifiers(e), x, y);
     }
 
-    private void OnMouseDown(MouseEventArgs e)
+    private void OnCanvasMouseDown(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
         Interop.DApiMouse(1, MouseButton(e), EventModifiers(e), x, y);
     }
 
-    private void OnMouseUp(MouseEventArgs e)
+    private void OnCanvasMouseUp(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
         Interop.DApiMouse(2, MouseButton(e), EventModifiers(e), x, y);
     }
 
-    private async Task OnKeyDown(KeyboardEventArgs e)
+    private async Task OnCanvasKeyDown(KeyboardEventArgs e)
     {
         var keyCode = GetKeyCode(e);
 
@@ -218,13 +223,13 @@
             await Interop.DApiChar(keyCode);
     }
 
-    private async Task OnKeyUp(KeyboardEventArgs e) =>
+    private async Task OnCanvasKeyUp(KeyboardEventArgs e) =>
         await Interop.DApiKey(1, EventModifiers(e), GetKeyCode(e));
 
-    private void OnDragEnter(DragEventArgs e) =>
+    private void OnMainDragEnter(DragEventArgs e) =>
         SetDropping(1);
 
-    private void OnDragLeave(DragEventArgs e) =>
+    private void OnMainDragLeave(DragEventArgs e) =>
         SetDropping(-1);
 
     private void SetDropping(int change) =>

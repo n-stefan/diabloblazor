@@ -1,6 +1,6 @@
 ﻿
 const serviceWorker: any = self; //as unknown as ServiceWorkerGlobalScope;
-const cacheName: string = 'Diablo';
+const cacheName: string = 'DiabloOfflineCache';
 const gitHubPagesHostname: string = 'n-stefan.github.io';
 let handleAsOfflineUntil: number = 0;
 
