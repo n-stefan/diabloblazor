@@ -433,12 +433,13 @@
     {
         if (AppState.Error)
             return;
-
+        
+        Timer?.Change(Timeout.Infinite, Timeout.Infinite);
         Timer?.Dispose();
         Timer = null;
-
+        
         GameWasmHandle.Free();
-
+        
         await Interop.Reload();
     }
 
