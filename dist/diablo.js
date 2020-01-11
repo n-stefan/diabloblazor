@@ -71,6 +71,14 @@ class FileStore {
             await this.store.set(name, array);
             return array;
         };
+        this.storeSpawnUnmarshalledBegin = async (address, length) => {
+            const arrayBuffer = windowAny.Module.HEAPU8.subarray(address, address + length);
+            const array = new Uint8Array(arrayBuffer);
+            const name = 'spawn.mpq';
+            await this.store.set(name, array);
+            this.files.set(name, array);
+            getInterop().dotNetReference.invokeMethodAsync('StoreSpawnUnmarshalledEnd');
+        };
         this.readIndexedDb = async (name) => {
             const array = await this.store.get(name.toLowerCase());
             return Helper.fromUint8ArrayToBase64(array);
@@ -199,21 +207,6 @@ class Interop {
                     e.preventDefault();
             });
             this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-        };
-        this.download = async (url, sizes) => {
-            const response = await axios.request({
-                url: url,
-                responseType: 'arraybuffer',
-                onDownloadProgress: (e) => this._dotNetReference.invokeMethodAsync('OnProgress', new Progress('Downloading...', e.loaded, e.total || sizes[1])),
-                headers: { 'Cache-Control': 'max-age=31536000' }
-            });
-            return response.data;
-        };
-        this.downloadAndUpdateIndexedDb = async (url, name, sizes) => {
-            const arrayBuffer = await this.download(url, sizes);
-            const array = await this._fileStore.updateIndexedDbFromArrayBuffer(name, arrayBuffer);
-            this._fileStore.setFile(name, array);
-            return arrayBuffer.byteLength;
         };
         this.getCanvasRect = () => {
             return this.canvas.getBoundingClientRect();
