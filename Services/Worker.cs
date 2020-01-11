@@ -38,7 +38,7 @@ namespace diabloblazor.Services
             //await RunGame(app);
         }
 
-        private async Task RunGame(Main app)
+        public async Task RunGame(Main app)
         {
             //await _interop.SNetInitWebsocket();
 
@@ -52,8 +52,5 @@ namespace diabloblazor.Services
                 async _ => await _interop.CallApi("DApi_Render", (DateTime.Now - startTime).TotalMilliseconds),
             null, 0, app.RenderInterval);
         }
-
-        public Task InitWebAssemblyUnmarshalledEnd(Main app) =>
-            RunGame(app);
     }
 }

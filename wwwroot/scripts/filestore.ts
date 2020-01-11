@@ -41,6 +41,15 @@ class FileStore {
         return array;
     }
 
+    public storeSpawnUnmarshalledBegin = async (address: number, length: number): Promise<void> => {
+        const arrayBuffer = windowAny.Module.HEAPU8.subarray(address, address + length);
+        const array = new Uint8Array(arrayBuffer);
+        const name = 'spawn.mpq';
+        await this.store.set(name, array);
+        this.files.set(name, array);
+        getInterop().dotNetReference.invokeMethodAsync('StoreSpawnUnmarshalledEnd');
+    }
+
     public readIndexedDb = async (name: string): Promise<string> => {
         const array = await this.store.get(name.toLowerCase());
         return Helper.fromUint8ArrayToBase64(array);

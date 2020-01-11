@@ -99,6 +99,7 @@
     private bool isDrop;
     private ClientRect canvasRect;
     private ElementReference downloadLink;
+    private GCHandle? spawnMpqHandle;
     //private Dictionary<string, byte[]> fileSystem;
 
     public bool Offscreen { get; private set; }
@@ -106,7 +107,7 @@
     public Configuration Configuration { get; private set; }
     public GameType GameType { get; private set; }
     public Timer? Timer { private get; set; }
-    public GCHandle GameWasmHandle { private get; set; }
+    public GCHandle? GameWasmHandle { private get; set; }
 
     private string FPSTarget =>
         (RenderInterval != 0) ? (1000.0 / RenderInterval).ToString("N2") : "0";
@@ -326,11 +327,18 @@
     private async Task DoLoadGame()
     {
         if (GameType == GameType.Retail)
+        {
             await LoadRetail();
+            await Worker.InitGame(this);
+        }
         else
+        {
             await LoadSpawn();
-
-        await Worker.InitGame(this);
+            if (AppState.HasSpawn)
+            {
+                await Worker.InitGame(this);
+            }
+        }
     }
 
     private async Task LoadRetail()
@@ -367,10 +375,13 @@
             //TODO: When serialization is fast enough
             //await Interop.UpdateIndexedDb(spawnFilename, spawn);
 
-            filesize = await Interop.DownloadAndUpdateIndexedDb(url, spawnFilename, spawnFilesizes);
+            //filesize = await Interop.DownloadAndUpdateIndexedDb(url, spawnFilename, spawnFilesizes);
 
-            if (!spawnFilesizes.Contains(filesize))
-                throw new Exception("Invalid spawn.mpq size. Try clearing the cache and refreshing the page.");
+            //if (!spawnFilesizes.Contains(filesize))
+            //    throw new Exception("Invalid spawn.mpq size. Try clearing the cache and refreshing the page.");
+
+            var binary = await HttpClient.GetWithProgressAsync(url, "Downloading...", spawnFilesizes[1], 524_288, OnProgress);
+            spawnMpqHandle = Interop.StoreSpawnUnmarshalledBegin(binary);
         }
     }
 
@@ -433,17 +444,22 @@
     {
         if (AppState.Error)
             return;
-        
+
         Timer?.Change(Timeout.Infinite, Timeout.Infinite);
         Timer?.Dispose();
         Timer = null;
-        
-        GameWasmHandle.Free();
-        
+
+        GameWasmHandle?.Free();
+        spawnMpqHandle?.Free();
+
         await Interop.Reload();
     }
 
     [JSInvokable]
     public async Task InitWebAssemblyUnmarshalledEnd() =>
-        await Worker.InitWebAssemblyUnmarshalledEnd(this);
+        await Worker.RunGame(this);
+
+    [JSInvokable]
+    public async Task StoreSpawnUnmarshalledEnd() =>
+        await Worker.InitGame(this);
 }

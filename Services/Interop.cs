@@ -41,8 +41,8 @@ namespace diabloblazor.Services
         public ValueTask UpdateIndexedDb(string name, byte[] data) =>
             _jsRuntime.InvokeVoidAsync("interop.fileStore.updateIndexedDb", name, new ByteArray(data));
 
-        public ValueTask<int> DownloadAndUpdateIndexedDb(string url, string name, int[] sizes) =>
-            _jsRuntime.InvokeAsync<int>("interop.downloadAndUpdateIndexedDb", url, name, sizes);
+        //public ValueTask<int> DownloadAndUpdateIndexedDb(string url, string name, int[] sizes) =>
+        //    _jsRuntime.InvokeAsync<int>("interop.downloadAndUpdateIndexedDb", url, name, sizes);
 
         public ValueTask<ByteArray> ReadIndexedDbAsByteArray(string name) =>
             _jsRuntime.InvokeAsync<ByteArray>("interop.fileStore.readIndexedDb", name);
@@ -95,6 +95,13 @@ namespace diabloblazor.Services
             _monoWebAssemblyJSRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
                 isSpawn, gameWasmHandle.AddrOfPinnedObject(), data.Length);
             return gameWasmHandle;
+        }
+
+        public GCHandle StoreSpawnUnmarshalledBegin(byte[] data)
+        {
+            var spawnMpqHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            _monoWebAssemblyJSRuntime.InvokeUnmarshalled<IntPtr, int, object>("interop.fileStore.storeSpawnUnmarshalledBegin", spawnMpqHandle.AddrOfPinnedObject(), data.Length);
+            return spawnMpqHandle;
         }
 
         public ValueTask InitGraphics(bool offscreen) =>
