@@ -1,17 +1,9 @@
 class Webassembly {
     constructor() {
-        this.initWebAssembly = async (isSpawn, base64) => {
-            const arrayBuffer = Helper.fromBase64ToUint8Array(base64).buffer;
-            this.wasm = await (isSpawn ? DiabloSpawn : Diablo)({ wasmBinary: arrayBuffer }).ready;
-        };
         this.initWebAssemblyUnmarshalledBegin = async (isSpawn, address, length) => {
             const array = windowAny.Module.HEAPU8.subarray(address, address + length);
             this.wasm = await (isSpawn ? DiabloSpawn : Diablo)({ wasmBinary: array }).ready;
             getInterop().dotNetReference.invokeMethodAsync('InitWebAssemblyUnmarshalledEnd');
-        };
-        this.snetInitWebsocket = () => {
-            if (this.wasm)
-                this.wasm._SNet_InitWebsocket();
         };
         this.dapiInit = (currentDateTime, offScreen, version0, version1, version2) => {
             if (this.wasm)
@@ -59,17 +51,8 @@ class FileStore {
             for (let [name, data] of Object.entries(await this.store.json()))
                 this.files.set(name.toLowerCase(), data);
         };
-        this.updateIndexedDb = async (name, base64) => {
-            const array = Helper.fromBase64ToUint8Array(base64);
-            await this.store.set(name, array);
-        };
         this.updateIndexedDbFromUint8Array = async (name, array) => {
             await this.store.set(name, array);
-        };
-        this.updateIndexedDbFromArrayBuffer = async (name, buffer) => {
-            const array = new Uint8Array(buffer);
-            await this.store.set(name, array);
-            return array;
         };
         this.storeSpawnUnmarshalledBegin = async (address, length) => {
             const arrayBuffer = windowAny.Module.HEAPU8.subarray(address, address + length);
@@ -87,34 +70,17 @@ class FileStore {
             const file = await this.store.get(name.toLowerCase());
             return (file) ? true : false;
         };
-        this.downloadFile = async (name) => {
-            const file = await this.store.get(name.toLowerCase());
-            if (!file)
-                return;
-            const blob = new Blob([file], { type: 'binary/octet-stream' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = name;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        };
-        this.setFileFromInput = async (name) => {
+        this.getFileFromInput = async (name) => {
             const input = document.getElementById(name);
             const file = input.files[0];
-            const array = new Uint8Array(await this.readFile(file));
             const filename = file.name.toLowerCase();
-            this.files.set(filename, array);
+            const array = new Uint8Array(await this.readFile(file));
             return { name: filename, data: array };
         };
         this.uploadFile = async () => {
-            const fileDef = await this.setFileFromInput('saveInput');
+            const fileDef = await this.getFileFromInput('saveInput');
+            this.files.set(fileDef.name, fileDef.data);
             this.store.set(fileDef.name, fileDef.data);
-        };
-        this.setFile = (name, array) => {
-            this.files.set(name.toLowerCase(), array);
         };
         this.readFile = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -135,7 +101,8 @@ class FileStore {
                 return files[0];
         };
         this.setInputFile = async () => {
-            await this.setFileFromInput('mpqInput');
+            const fileDef = await this.getFileFromInput('mpqInput');
+            this.files.set(fileDef.name, fileDef.data);
         };
         this.setDropFile = async () => {
             const array = new Uint8Array(await this.readFile(this.dropFile));
