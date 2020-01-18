@@ -26,20 +26,20 @@ class FileStore {
             this.files.set(name.toLowerCase(), data as Uint8Array);
     }
 
-    public updateIndexedDb = async (name: string, base64: string): Promise<void> => {
-        const array = Helper.fromBase64ToUint8Array(base64);
-        await this.store.set(name, array);
-    }
+    //public updateIndexedDb = async (name: string, base64: string): Promise<void> => {
+    //    const array = Helper.fromBase64ToUint8Array(base64);
+    //    await this.store.set(name, array);
+    //}
 
     public updateIndexedDbFromUint8Array = async (name: string, array: Uint8Array): Promise<void> => {
         await this.store.set(name, array);
     }
 
-    public updateIndexedDbFromArrayBuffer = async (name: string, buffer: ArrayBuffer): Promise<Uint8Array> => {
-        const array = new Uint8Array(buffer);
-        await this.store.set(name, array);
-        return array;
-    }
+    //public updateIndexedDbFromArrayBuffer = async (name: string, buffer: ArrayBuffer): Promise<Uint8Array> => {
+    //    const array = new Uint8Array(buffer);
+    //    await this.store.set(name, array);
+    //    return array;
+    //}
 
     public storeSpawnUnmarshalledBegin = async (address: number, length: number): Promise<void> => {
         const arrayBuffer = windowAny.Module.HEAPU8.subarray(address, address + length);
@@ -60,38 +60,38 @@ class FileStore {
         return (file) ? true : false;
     }
 
-    public downloadFile = async (name: string): Promise<void> => {
-        const file = await this.store.get(name.toLowerCase());
-        if (!file)
-            return;
-        const blob = new Blob([file], { type: 'binary/octet-stream' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = name;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    }
+    //public downloadFile = async (name: string): Promise<void> => {
+    //    const file = await this.store.get(name.toLowerCase());
+    //    if (!file)
+    //        return;
+    //    const blob = new Blob([file], { type: 'binary/octet-stream' });
+    //    const url = URL.createObjectURL(blob);
+    //    const link = document.createElement('a');
+    //    link.href = url;
+    //    link.download = name;
+    //    document.body.appendChild(link);
+    //    link.click();
+    //    document.body.removeChild(link);
+    //    URL.revokeObjectURL(url);
+    //}
 
-    private setFileFromInput = async (name: string): Promise<FileDef> => {
+    private getFileFromInput = async (name: string): Promise<FileDef> => {
         const input = document.getElementById(name) as HTMLInputElement;
         const file = input.files[0];
-        const array = new Uint8Array(await this.readFile(file));
         const filename = file.name.toLowerCase();
-        this.files.set(filename, array);
+        const array = new Uint8Array(await this.readFile(file));
         return { name: filename, data: array };
     }
 
     public uploadFile = async (): Promise<void> => {
-        const fileDef = await this.setFileFromInput('saveInput');
+        const fileDef = await this.getFileFromInput('saveInput');
+        this.files.set(fileDef.name, fileDef.data);
         this.store.set(fileDef.name, fileDef.data);
     }
 
-    public setFile = (name: string, array: Uint8Array): void => {
-        this.files.set(name.toLowerCase(), array);
-    }
+    //public setFile = (name: string, array: Uint8Array): void => {
+    //    this.files.set(name.toLowerCase(), array);
+    //}
 
     private readFile = (file: File): Promise<ArrayBuffer> => new Promise<ArrayBuffer>((resolve, reject): void => {
         const reader = new FileReader();
@@ -115,7 +115,8 @@ class FileStore {
     }
 
     public setInputFile = async (): Promise<void> => {
-        await this.setFileFromInput('mpqInput');
+        const fileDef = await this.getFileFromInput('mpqInput');
+        this.files.set(fileDef.name, fileDef.data);
     }
 
     public setDropFile = async (): Promise<void> => {

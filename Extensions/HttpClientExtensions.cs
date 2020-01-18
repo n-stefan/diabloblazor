@@ -20,7 +20,7 @@ namespace diabloblazor.Extensions
                 var count = (totalBytesRead + bufferSize > totalSize) ? totalSize - totalBytesRead : bufferSize;
                 bytesRead = await stream.ReadAsync(data, totalBytesRead, count);
                 totalBytesRead += bytesRead;
-                onProgress?.Invoke(new Progress { Message = message, Loaded = totalBytesRead, Total = totalSize });
+                onProgress?.Invoke(new Progress { Message = message, BytesLoaded = totalBytesRead, Total = totalSize });
                 await Task.Delay(5);
             }
             while (bytesRead != 0);

@@ -52,7 +52,7 @@
                 @(AppState.Progress.Message ?? "Initializing...")
                 @if (AppState.Progress.Total != 0)
                 {
-                    <span class="progressBar"><span><span style="width: @ProgressBarWidth%" /></span></span>
+                    <span class="progressBar"><span><span style="width: @AppState.Progress.PercentLoaded%" /></span></span>
                 }
             </div>
         }
@@ -385,9 +385,6 @@
         }
     }
 
-    private double ProgressBarWidth =>
-        AppState.Progress.Total != 0 ? Round(100d * AppState.Progress.Loaded / AppState.Progress.Total) : 100d;
-
     [JSInvokable]
     public async Task Start(string? name = null, bool isDrop = false)
     {
@@ -450,7 +447,9 @@
         Timer = null;
 
         GameWasmHandle?.Free();
+        GameWasmHandle = null;
         spawnMpqHandle?.Free();
+        spawnMpqHandle = null;
 
         await Interop.Reload();
     }

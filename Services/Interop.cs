@@ -1,5 +1,4 @@
-﻿using diabloblazor.JsonConverters;
-using diabloblazor.Models;
+﻿using diabloblazor.Models;
 using diabloblazor.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -38,14 +37,14 @@ namespace diabloblazor.Services
         public ValueTask InitIndexedDb() =>
             _jsRuntime.InvokeVoidAsync("interop.fileStore.initIndexedDb");
 
-        public ValueTask UpdateIndexedDb(string name, byte[] data) =>
-            _jsRuntime.InvokeVoidAsync("interop.fileStore.updateIndexedDb", name, new ByteArray(data));
+        //public ValueTask UpdateIndexedDb(string name, byte[] data) =>
+        //    _jsRuntime.InvokeVoidAsync("interop.fileStore.updateIndexedDb", name, new ByteArray(data));
 
         //public ValueTask<int> DownloadAndUpdateIndexedDb(string url, string name, int[] sizes) =>
         //    _jsRuntime.InvokeAsync<int>("interop.downloadAndUpdateIndexedDb", url, name, sizes);
 
-        public ValueTask<ByteArray> ReadIndexedDbAsByteArray(string name) =>
-            _jsRuntime.InvokeAsync<ByteArray>("interop.fileStore.readIndexedDb", name);
+        //public ValueTask<ByteArray> ReadIndexedDbAsByteArray(string name) =>
+        //    _jsRuntime.InvokeAsync<ByteArray>("interop.fileStore.readIndexedDb", name);
 
         public ValueTask<string> ReadIndexedDbAsBase64String(string name) =>
             _jsRuntime.InvokeAsync<string>("interop.fileStore.readIndexedDb", name);
@@ -56,8 +55,8 @@ namespace diabloblazor.Services
         public ValueTask ClickDownloadLink(ElementReference link, string download, string href) =>
             _jsRuntime.InvokeVoidAsync("interop.clickDownloadLink", link, download, href);
 
-        public ValueTask DownloadFile(string name) =>
-            _jsRuntime.InvokeVoidAsync("interop.fileStore.downloadFile", name);
+        //public ValueTask DownloadFile(string name) =>
+        //    _jsRuntime.InvokeVoidAsync("interop.fileStore.downloadFile", name);
 
         public ValueTask UploadFile() =>
             _jsRuntime.InvokeVoidAsync("interop.fileStore.uploadFile");
@@ -86,8 +85,8 @@ namespace diabloblazor.Services
         public ValueTask SetRenderInterval(int renderInterval) =>
             _jsRuntime.InvokeVoidAsync("interop.fileStore.setRenderInterval", renderInterval);
 
-        public ValueTask InitWebAssembly(bool isSpawn, byte[] data) =>
-            _jsRuntime.InvokeVoidAsync("interop.webassembly.initWebAssembly", isSpawn, new ByteArray(data));
+        //public ValueTask InitWebAssembly(bool isSpawn, byte[] data) =>
+        //    _jsRuntime.InvokeVoidAsync("interop.webassembly.initWebAssembly", isSpawn, new ByteArray(data));
 
         public GCHandle InitWebAssemblyUnmarshalledBegin(bool isSpawn, byte[] data)
         {
@@ -110,8 +109,8 @@ namespace diabloblazor.Services
         public ValueTask InitSound() =>
             _jsRuntime.InvokeVoidAsync("interop.sound.initSound");
 
-        public ValueTask SNetInitWebsocket() =>
-            _jsRuntime.InvokeVoidAsync("interop.webassembly.snetInitWebsocket");
+        //public ValueTask SNetInitWebsocket() =>
+        //    _jsRuntime.InvokeVoidAsync("interop.webassembly.snetInitWebsocket");
 
         public ValueTask DApiInit(double currentDateTime, int offScreen, int version0, int version1, int version2) =>
             _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiInit", currentDateTime, offScreen, version0, version1, version2);
