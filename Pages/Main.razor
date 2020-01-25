@@ -99,7 +99,7 @@
     private bool isDrop;
     private ClientRect canvasRect;
     private ElementReference downloadLink;
-    private GCHandle? spawnMpqHandle;
+    private GCHandle spawnMpqHandle;
     //private Dictionary<string, byte[]> fileSystem;
 
     public bool Offscreen { get; private set; }
@@ -107,10 +107,10 @@
     public Configuration Configuration { get; private set; }
     public GameType GameType { get; private set; }
     public Timer? Timer { private get; set; }
-    public GCHandle? GameWasmHandle { private get; set; }
+    public GCHandle GameWasmHandle { private get; set; }
 
     private string FPSTarget =>
-        (RenderInterval != 0) ? (1000.0 / RenderInterval).ToString("N2") : "0";
+        (RenderInterval != 0) ? (1000d / RenderInterval).ToString("N2") : "0";
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {
@@ -335,9 +335,7 @@
         {
             await LoadSpawn();
             if (AppState.HasSpawn)
-            {
                 await Worker.InitGame(this);
-            }
         }
     }
 
@@ -446,19 +444,24 @@
         Timer?.Dispose();
         Timer = null;
 
-        GameWasmHandle?.Free();
-        GameWasmHandle = null;
-        spawnMpqHandle?.Free();
-        spawnMpqHandle = null;
-
         await Interop.Reload();
     }
 
     [JSInvokable]
-    public async Task InitWebAssemblyUnmarshalledEnd() =>
+    public async Task InitWebAssemblyUnmarshalledEnd()
+    {
         await Worker.RunGame(this);
 
+        if (GameWasmHandle.IsAllocated)
+            GameWasmHandle.Free();
+    }
+
     [JSInvokable]
-    public async Task StoreSpawnUnmarshalledEnd() =>
+    public async Task StoreSpawnUnmarshalledEnd()
+    {
         await Worker.InitGame(this);
+
+        if (spawnMpqHandle.IsAllocated)
+            spawnMpqHandle.Free();
+    }
 }

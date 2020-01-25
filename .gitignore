@@ -333,7 +333,10 @@ ASALocalRun/
 /wwwroot/libs
 
 # Scripts
-/wwwroot/scripts
+# /wwwroot/scripts
+
+# Dist
+/wwwroot/dist
 
 # Styles (generated from sass)
 /wwwroot/css/site.css
