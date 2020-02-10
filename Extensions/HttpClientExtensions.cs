@@ -21,7 +21,7 @@ namespace diabloblazor.Extensions
                 bytesRead = await stream.ReadAsync(data, totalBytesRead, count);
                 totalBytesRead += bytesRead;
                 onProgress?.Invoke(new Progress { Message = message, BytesLoaded = totalBytesRead, Total = totalSize });
-                await Task.Delay(5);
+                await Task.Delay(10);
             }
             while (bytesRead != 0);
             return data;
