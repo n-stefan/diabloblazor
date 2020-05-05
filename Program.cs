@@ -1,5 +1,5 @@
 ﻿using diabloblazor.Services;
-using Microsoft.AspNetCore.Blazor.Hosting;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
@@ -11,6 +11,7 @@ namespace diabloblazor
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
+            builder.Services.AddBaseAddressHttpClient();
             builder.Services.AddScoped<AppState>();
             builder.Services.AddScoped<Interop>();
             builder.Services.AddScoped<Worker>();

@@ -2,7 +2,7 @@
 using diabloblazor.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Mono.WebAssembly.Interop;
+using Microsoft.JSInterop.WebAssembly;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -13,13 +13,13 @@ namespace diabloblazor.Services
     {
         private readonly IJSRuntime _jsRuntime;
         private readonly IJSInProcessRuntime _jsInProcessRuntime;
-        private readonly MonoWebAssemblyJSRuntime _monoWebAssemblyJSRuntime;
+        private readonly WebAssemblyJSRuntime _webAssemblyJSRuntime;
 
         public Interop(IJSRuntime jsRuntime)
         {
             _jsRuntime = jsRuntime;
             _jsInProcessRuntime = (jsRuntime as IJSInProcessRuntime)!;
-            _monoWebAssemblyJSRuntime = (jsRuntime as MonoWebAssemblyJSRuntime)!;
+            _webAssemblyJSRuntime = (jsRuntime as WebAssemblyJSRuntime)!;
         }
 
         public void Alert(string message) =>
@@ -91,7 +91,7 @@ namespace diabloblazor.Services
         public GCHandle InitWebAssemblyUnmarshalledBegin(bool isSpawn, byte[] data)
         {
             var gameWasmHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            _monoWebAssemblyJSRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
+            _webAssemblyJSRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
                 isSpawn, gameWasmHandle.AddrOfPinnedObject(), data.Length);
             return gameWasmHandle;
         }
@@ -99,7 +99,7 @@ namespace diabloblazor.Services
         public GCHandle StoreSpawnUnmarshalledBegin(byte[] data)
         {
             var spawnMpqHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            _monoWebAssemblyJSRuntime.InvokeUnmarshalled<IntPtr, int, object>("interop.fileStore.storeSpawnUnmarshalledBegin", spawnMpqHandle.AddrOfPinnedObject(), data.Length);
+            _webAssemblyJSRuntime.InvokeUnmarshalled<IntPtr, int, object>("interop.fileStore.storeSpawnUnmarshalledBegin", spawnMpqHandle.AddrOfPinnedObject(), data.Length);
             return spawnMpqHandle;
         }
 
