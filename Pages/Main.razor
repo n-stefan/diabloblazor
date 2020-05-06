@@ -6,6 +6,7 @@
 @inject ExceptionHandler ExceptionHandler
 @inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
+@inject IConfiguration Config
 @*@inject IndexedDbManager IndexedDbManager*@
 
 <div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnMainDragEnter" @ondragleave="OnMainDragLeave">
@@ -168,7 +169,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Configuration = await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
+        Configuration = new Configuration(Config["Version"]); //await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
 
         RenderInterval = await Interop.GetRenderInterval();
 

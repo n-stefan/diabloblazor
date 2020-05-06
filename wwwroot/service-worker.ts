@@ -15,7 +15,7 @@ serviceWorker.addEventListener('install', async (event: any /*InstallEvent*/) =>
         await (await caches.open(cacheName)).addAll([
             '_framework/blazor.boot.json',
             '_framework/blazor.webassembly.js',
-            '_framework/wasm/dotnet.3.2.0-preview2.20159.2.js',
+            '_framework/wasm/dotnet.3.2.0-preview3.20168.1.js',
             '/',
             'dist/diablo.min.css',
             'dist/diablo.min.js',
@@ -26,7 +26,7 @@ serviceWorker.addEventListener('install', async (event: any /*InstallEvent*/) =>
             'dist/favicon.ico',
             'dist/icon-192.png',
             'dist/icon-512.png',
-            'dist/appconfig.json',
+            'appsettings.json',
             'manifest.json',
             'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
             'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0',
