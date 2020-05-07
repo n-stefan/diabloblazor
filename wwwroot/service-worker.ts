@@ -15,7 +15,7 @@ serviceWorker.addEventListener('install', async (event: any /*InstallEvent*/) =>
         await (await caches.open(cacheName)).addAll([
             '_framework/blazor.boot.json',
             '_framework/blazor.webassembly.js',
-            '_framework/wasm/dotnet.3.2.0-preview3.20168.1.js',
+            '_framework/wasm/dotnet.3.2.0-preview5.20210.1.js',
             '/',
             'dist/diablo.min.css',
             'dist/diablo.min.js',
