@@ -1,4 +1,5 @@
 ﻿using diabloblazor.Models;
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -9,7 +10,10 @@ namespace diabloblazor.Extensions
     {
         public static async Task<byte[]> GetWithProgressAsync(this HttpClient httpClient, string url, string message, int totalSize, int bufferSize, Action<Progress> onProgress)
         {
-            using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            var request = new HttpRequestMessage { Method = HttpMethod.Get, RequestUri = new Uri(url) };
+            request.SetBrowserResponseStreamingEnabled(true);
+            using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            //using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             using var stream = await response.Content.ReadAsStreamAsync();
             var bytesRead = 0;

@@ -31,8 +31,7 @@ namespace diabloblazor
 
             builder.RootComponents.Add<App>("app");
 
-            var host = builder.Build();
-            await host.RunAsync();
+            await builder.Build().RunAsync();
         }
     }
 }
