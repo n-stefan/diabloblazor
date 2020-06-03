@@ -90,6 +90,16 @@ class FileStore {
             reader.onprogress = (event) => getInterop().dotNetReference.invokeMethodAsync('OnProgress', new Progress('Loading...', event.loaded, event.total));
             reader.readAsArrayBuffer(file);
         });
+        this.isDropFile = (event) => {
+            const items = event.dataTransfer.items;
+            if (items)
+                for (let i = 0; i < items.length; ++i)
+                    if (items[i].kind === 'file')
+                        return true;
+            if (event.dataTransfer.files.length)
+                return true;
+            return false;
+        };
         this.getDropFile = (event) => {
             const items = event.dataTransfer.items;
             if (items)
@@ -100,14 +110,14 @@ class FileStore {
             if (files.length)
                 return files[0];
         };
-        this.setInputFile = async () => {
-            const fileDef = await this.getFileFromInput('mpqInput');
-            this.files.set(fileDef.name, fileDef.data);
-        };
         this.setDropFile = async () => {
             const array = new Uint8Array(await this.readFile(this.dropFile));
             this.files.set(this.dropFile.name.toLowerCase(), array);
             this.dropFile = null;
+        };
+        this.setInputFile = async () => {
+            const fileDef = await this.getFileFromInput('mpqInput');
+            this.files.set(fileDef.name, fileDef.data);
         };
         this.onDropFile = (event) => {
             this.dropFile = this.getDropFile(event);
@@ -168,7 +178,10 @@ class Interop {
             window.addEventListener('resize', () => this._dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
             const main = document.getElementById('main');
             main.addEventListener('drop', (e) => this._fileStore.onDropFile(e));
-            main.addEventListener('dragover', (e) => e.preventDefault());
+            main.addEventListener('dragover', (e) => {
+                if (this._fileStore.isDropFile(e))
+                    e.preventDefault();
+            });
             this.canvas.addEventListener('keydown', (e) => {
                 if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119))
                     e.preventDefault();
