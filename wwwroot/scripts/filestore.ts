@@ -103,6 +103,17 @@ class FileStore {
         reader.readAsArrayBuffer(file);
     });
 
+    public isDropFile = (event: DragEvent): boolean => {
+        const items = event.dataTransfer.items;
+        if (items)
+            for (let i = 0; i < items.length; ++i)
+                if (items[i].kind === 'file')
+                    return true;
+        if (event.dataTransfer.files.length)
+            return true;
+        return false;
+    }
+
     private getDropFile = (event: DragEvent): File => {
         const items = event.dataTransfer.items;
         if (items)
@@ -114,15 +125,15 @@ class FileStore {
             return files[0];
     }
 
-    public setInputFile = async (): Promise<void> => {
-        const fileDef = await this.getFileFromInput('mpqInput');
-        this.files.set(fileDef.name, fileDef.data);
-    }
-
     public setDropFile = async (): Promise<void> => {
         const array = new Uint8Array(await this.readFile(this.dropFile));
         this.files.set(this.dropFile.name.toLowerCase(), array);
         this.dropFile = null;
+    }
+
+    public setInputFile = async (): Promise<void> => {
+        const fileDef = await this.getFileFromInput('mpqInput');
+        this.files.set(fileDef.name, fileDef.data);
     }
 
     public onDropFile = (event: DragEvent): void => {

@@ -62,7 +62,10 @@ class Interop {
 
         const main = document.getElementById('main');
         main.addEventListener('drop', (e: DragEvent): void => this._fileStore.onDropFile(e));
-        main.addEventListener('dragover', (e: DragEvent): void => e.preventDefault());
+        main.addEventListener('dragover', (e: DragEvent): void => {
+            if (this._fileStore.isDropFile(e))
+                e.preventDefault();
+        });
 
         this.canvas.addEventListener('keydown', (e: KeyboardEvent): void => {
             if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119))
