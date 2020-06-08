@@ -56,6 +56,10 @@ class Interop {
         return this._dotNetReference;
     }
 
+    public setDotNetReference = (dotNetReference: any): void => {
+        this._dotNetReference = dotNetReference;
+    }
+
     public addEventListeners = (): void => {
         //TODO: preventDefault in Blazor as soon as supported
         window.addEventListener('resize', (): void => this._dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
@@ -74,29 +78,8 @@ class Interop {
         this.canvas.addEventListener('contextmenu', (e: Event): void => e.preventDefault());
     }
 
-    //private download = async (url: string, sizes: number[]): Promise<ArrayBuffer> => {
-    //    const response = await axios.request({
-    //        url: url,
-    //        responseType: 'arraybuffer',
-    //        onDownloadProgress: (e: ProgressEvent): void => this._dotNetReference.invokeMethodAsync('OnProgress', new Progress('Downloading...', e.loaded, e.total || sizes[1])),
-    //        headers: { 'Cache-Control': 'max-age=31536000' }
-    //    });
-    //    return response.data;
-    //}
-
-    //public downloadAndUpdateIndexedDb = async (url: string, name: string, sizes: number[]): Promise<number> => {
-    //    const arrayBuffer = await this.download(url, sizes);
-    //    const array = await this._fileStore.updateIndexedDbFromArrayBuffer(name, arrayBuffer);
-    //    this._fileStore.setFile(name, array);
-    //    return arrayBuffer.byteLength;
-    //}
-
     public getCanvasRect = (): ClientRect => {
         return this.canvas.getBoundingClientRect();
-    }
-
-    public reload = (): void => {
-        window.location.reload();
     }
 
     public openKeyboard = (...args: number[]): void => {
@@ -119,12 +102,13 @@ class Interop {
         this._dotNetReference.invokeMethodAsync('SetSaveName', id);
     }
 
-    public storeDotNetReference = (dotNetReference: any): void => {
-        this._dotNetReference = dotNetReference;
+    public setCursor = (x: number, y: number): void => {
+        this._webassembly.dapiMouse(0, 0, 0, x, y);
+        //this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
     }
 
-    public setCursor = (x: number, y: number): void => {
-        this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
+    public reload = (): void => {
+        window.location.reload();
     }
 
     public clickDownloadLink = (element: HTMLElement, download: string, href: string): void => {
@@ -134,6 +118,23 @@ class Interop {
         element.removeAttribute('download');
         element.removeAttribute('href');
     }
+
+    //private download = async (url: string, sizes: number[]): Promise<ArrayBuffer> => {
+    //    const response = await axios.request({
+    //        url: url,
+    //        responseType: 'arraybuffer',
+    //        onDownloadProgress: (e: ProgressEvent): void => this._dotNetReference.invokeMethodAsync('OnProgress', new Progress('Downloading...', e.loaded, e.total || sizes[1])),
+    //        headers: { 'Cache-Control': 'max-age=31536000' }
+    //    });
+    //    return response.data;
+    //}
+
+    //public downloadAndUpdateIndexedDb = async (url: string, name: string, sizes: number[]): Promise<number> => {
+    //    const arrayBuffer = await this.download(url, sizes);
+    //    const array = await this._fileStore.updateIndexedDbFromArrayBuffer(name, arrayBuffer);
+    //    this._fileStore.setFile(name, array);
+    //    return arrayBuffer.byteLength;
+    //}
 }
 
 const windowAny = window as any;

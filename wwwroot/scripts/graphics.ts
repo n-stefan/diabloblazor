@@ -61,12 +61,23 @@ class Graphics {
         this.belt = null;
     }
 
+    //private frameTime: number = 0;
+    //private lastTime: number = 0;
+
+    //private getFPS = (): number => {
+    //    const time = performance.now();
+    //    if (!this.lastTime)
+    //        this.lastTime = time;
+    //    this.frameTime = time - this.lastTime; //0.9 * this.frameTime + 0.1 * (time - this.lastTime);
+    //    this.lastTime = time;
+    //    return this.frameTime ? 1000.0 / this.frameTime : 0.0;
+    //}
+
     public drawEnd = (): void => {
-        //DApi.draw_text(10, 10, `FPS: ${getFPS().toFixed(1)} (Transfer)`, 0xFFCC00);
-        const transfer = this.renderBatch.images.map(data => data.buffer);
-        if (this.renderBatch.belt) {
-            transfer.push(this.renderBatch.belt.buffer);
-        }
+        //this.drawText(2, 10, `FPS: ${this.getFPS().toFixed(1)}`, 0x7070FF);
+        //const transfer = this.renderBatch.images.map(data => data.buffer);
+        //if (this.renderBatch.belt)
+        //    transfer.push(this.renderBatch.belt.buffer);
         this.onRender();
         this.renderBatch = null;
     }
@@ -88,9 +99,9 @@ class Graphics {
     }
 
     private onRender = (): void => {
-        if (this.context instanceof ImageBitmapRenderingContext) { //(renderBatch.bitmap)
+        if (this.context instanceof ImageBitmapRenderingContext) //(renderBatch.bitmap)
             (this.context as ImageBitmapRenderingContext).transferFromImageBitmap(this.renderBatch.bitmap);
-        } else if (this.context instanceof CanvasRenderingContext2D) {
+        else if (this.context instanceof CanvasRenderingContext2D) {
             const ctx = this.context as CanvasRenderingContext2D;
             for (let i of this.renderBatch.images) {
                 const image = ctx.createImageData(i.width, i.height);
@@ -111,7 +122,7 @@ class Graphics {
                     const g = ((t.color >> 8) & 0xFF);
                     const b = (t.color & 0xFF);
                     ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-                    ctx.fillText(t.text, t.x, t.y + 22);
+                    ctx.fillText(t.text, t.x, t.y /* + 22*/);
                 }
                 ctx.restore();
             }

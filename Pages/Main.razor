@@ -186,7 +186,7 @@
 
         await Interop.AddEventListeners();
 
-        await Interop.StoreDotNetReference(DotNetObjectReference.Create<Main>(this));
+        await Interop.SetDotNetReference(DotNetObjectReference.Create<Main>(this));
     }
 
     private async Task OnRenderIntervalChange(ChangeEventArgs e) =>
@@ -417,10 +417,6 @@
     }
 
     [JSInvokable]
-    public void SetCursorPos(double x, double y) =>
-        Interop.DApiMouse(0, 0, 0, x, y);
-
-    [JSInvokable]
     public void SetSaveName(int id) =>
         saveName = (id >= 0) ? (GameType == GameType.Shareware) ? $"spawn{id}.sv" : $"single_{id}.sv" : null;
 
@@ -465,4 +461,8 @@
         if (spawnMpqHandle.IsAllocated)
             spawnMpqHandle.Free();
     }
+
+    //[JSInvokable]
+    //public void SetCursorPos(double x, double y) =>
+    //    Interop.DApiMouse(0, 0, 0, x, y);
 }

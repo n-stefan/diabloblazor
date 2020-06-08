@@ -7,7 +7,7 @@ interface FileDef {
 }
 
 class FileStore {
-    private store: any; //: IdbKvStore;
+    private store: typeof IdbKvStore;
     private files: Map<string, Uint8Array>;
     private dropFile: File;
 
@@ -26,28 +26,8 @@ class FileStore {
             this.files.set(name.toLowerCase(), data as Uint8Array);
     }
 
-    //public updateIndexedDb = async (name: string, base64: string): Promise<void> => {
-    //    const array = Helper.fromBase64ToUint8Array(base64);
-    //    await this.store.set(name, array);
-    //}
-
     public updateIndexedDbFromUint8Array = async (name: string, array: Uint8Array): Promise<void> => {
         await this.store.set(name, array);
-    }
-
-    //public updateIndexedDbFromArrayBuffer = async (name: string, buffer: ArrayBuffer): Promise<Uint8Array> => {
-    //    const array = new Uint8Array(buffer);
-    //    await this.store.set(name, array);
-    //    return array;
-    //}
-
-    public storeSpawnUnmarshalledBegin = async (address: number, length: number): Promise<void> => {
-        const arrayBuffer = windowAny.Module.HEAPU8.subarray(address, address + length);
-        const array = new Uint8Array(arrayBuffer);
-        const name = 'spawn.mpq';
-        await this.store.set(name, array);
-        this.files.set(name, array);
-        getInterop().dotNetReference.invokeMethodAsync('StoreSpawnUnmarshalledEnd');
     }
 
     public readIndexedDb = async (name: string): Promise<string> => {
@@ -60,38 +40,14 @@ class FileStore {
         return (file) ? true : false;
     }
 
-    //public downloadFile = async (name: string): Promise<void> => {
-    //    const file = await this.store.get(name.toLowerCase());
-    //    if (!file)
-    //        return;
-    //    const blob = new Blob([file], { type: 'binary/octet-stream' });
-    //    const url = URL.createObjectURL(blob);
-    //    const link = document.createElement('a');
-    //    link.href = url;
-    //    link.download = name;
-    //    document.body.appendChild(link);
-    //    link.click();
-    //    document.body.removeChild(link);
-    //    URL.revokeObjectURL(url);
-    //}
-
-    private getFileFromInput = async (name: string): Promise<FileDef> => {
-        const input = document.getElementById(name) as HTMLInputElement;
-        const file = input.files[0];
-        const filename = file.name.toLowerCase();
-        const array = new Uint8Array(await this.readFile(file));
-        return { name: filename, data: array };
+    public storeSpawnUnmarshalledBegin = async (address: number, length: number): Promise<void> => {
+        const arrayBuffer = windowAny.Module.HEAPU8.subarray(address, address + length);
+        const array = new Uint8Array(arrayBuffer);
+        const name = 'spawn.mpq';
+        await this.store.set(name, array);
+        this.files.set(name, array);
+        getInterop().dotNetReference.invokeMethodAsync('StoreSpawnUnmarshalledEnd');
     }
-
-    public uploadFile = async (): Promise<void> => {
-        const fileDef = await this.getFileFromInput('saveInput');
-        this.files.set(fileDef.name, fileDef.data);
-        this.store.set(fileDef.name, fileDef.data);
-    }
-
-    //public setFile = (name: string, array: Uint8Array): void => {
-    //    this.files.set(name.toLowerCase(), array);
-    //}
 
     private readFile = (file: File): Promise<ArrayBuffer> => new Promise<ArrayBuffer>((resolve, reject): void => {
         const reader = new FileReader();
@@ -103,6 +59,14 @@ class FileStore {
         reader.readAsArrayBuffer(file);
     });
 
+    private getFileFromInput = async (name: string): Promise<FileDef> => {
+        const input = document.getElementById(name) as HTMLInputElement;
+        const file = input.files[0];
+        const filename = file.name.toLowerCase();
+        const array = new Uint8Array(await this.readFile(file));
+        return { name: filename, data: array };
+    }
+
     public isDropFile = (event: DragEvent): boolean => {
         const items = event.dataTransfer.items;
         if (items)
@@ -112,6 +76,14 @@ class FileStore {
         if (event.dataTransfer.files.length)
             return true;
         return false;
+    }
+
+    public onDropFile = (event: DragEvent): void => {
+        this.dropFile = this.getDropFile(event);
+        if (this.dropFile) {
+            event.preventDefault();
+            getInterop().dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase(), true);
+        }
     }
 
     private getDropFile = (event: DragEvent): File => {
@@ -136,12 +108,10 @@ class FileStore {
         this.files.set(fileDef.name, fileDef.data);
     }
 
-    public onDropFile = (event: DragEvent): void => {
-        this.dropFile = this.getDropFile(event);
-        if (this.dropFile) {
-            event.preventDefault();
-            getInterop().dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase(), true);
-        }
+    public uploadFile = async (): Promise<void> => {
+        const fileDef = await this.getFileFromInput('saveInput');
+        this.files.set(fileDef.name, fileDef.data);
+        this.store.set(fileDef.name, fileDef.data);
     }
 
     public hasFile = (name: string, sizes: number[]): boolean => {
@@ -191,4 +161,34 @@ class FileStore {
     public setRenderInterval = (value: number): void => {
         localStorage.setItem('DiabloRenderInterval', value.toString());
     }
+
+    //public updateIndexedDb = async (name: string, base64: string): Promise<void> => {
+    //    const array = Helper.fromBase64ToUint8Array(base64);
+    //    await this.store.set(name, array);
+    //}
+
+    //public updateIndexedDbFromArrayBuffer = async (name: string, buffer: ArrayBuffer): Promise<Uint8Array> => {
+    //    const array = new Uint8Array(buffer);
+    //    await this.store.set(name, array);
+    //    return array;
+    //}
+
+    //public downloadFile = async (name: string): Promise<void> => {
+    //    const file = await this.store.get(name.toLowerCase());
+    //    if (!file)
+    //        return;
+    //    const blob = new Blob([file], { type: 'binary/octet-stream' });
+    //    const url = URL.createObjectURL(blob);
+    //    const link = document.createElement('a');
+    //    link.href = url;
+    //    link.download = name;
+    //    document.body.appendChild(link);
+    //    link.click();
+    //    document.body.removeChild(link);
+    //    URL.revokeObjectURL(url);
+    //}
+
+    //public setFile = (name: string, array: Uint8Array): void => {
+    //    this.files.set(name.toLowerCase(), array);
+    //}
 }

@@ -23,10 +23,8 @@ class Sound {
     public initSound = (): void => {
         const AudioContext = window.AudioContext || windowAny.webkitAudioContext;
         //const StereoPannerNode = window.StereoPannerNode;
-        if (!AudioContext) {
+        if (!AudioContext)
             return;
-        }
-
         this.context = null;
         try {
             this.context = new AudioContext();
@@ -36,9 +34,8 @@ class Sound {
     }
 
     public createSound = (id: number, data: Uint8Array): void => {
-        if (!this.context) {
+        if (!this.context)
             return;
-        }
         const buffer = this.decodeAudioData(this.context, data.buffer);
         this.sounds.set(id, {
             buffer,
@@ -48,13 +45,11 @@ class Sound {
     }
 
     public createSoundRaw = (id: number, data: Uint8Array, length: number, channels: number, rate: number): void => {
-        if (!this.context) {
+        if (!this.context)
             return;
-        }
         const buffer = this.context.createBuffer(channels, length, rate);
-        for (let i = 0; i < channels; ++i) {
+        for (let i = 0; i < channels; ++i)
             buffer.getChannelData(i).set(data.subarray(i * length, i * length + length));
-        }
         this.sounds.set(id, {
             buffer: Promise.resolve(buffer),
             gain: this.context.createGain(),
@@ -63,13 +58,11 @@ class Sound {
     }
 
     public duplicateSound = (id: number, srcId: number): void => {
-        if (!this.context) {
+        if (!this.context)
             return;
-        }
         const src = this.sounds.get(srcId);
-        if (!src) {
+        if (!src)
             return;
-        }
         this.sounds.set(id, {
             buffer: src.buffer,
             gain: this.context.createGain(),
@@ -80,22 +73,19 @@ class Sound {
     public playSound = (id: number, volume: number, pan: number, loop: boolean): void => {
         const src = this.sounds.get(id);
         if (src) {
-            if (src.source) {
+            if (src.source)
                 src.source.then(source => source.stop());
-            }
             src.gain.gain.value = Math.pow(2.0, volume / 1000.0);
             const relVolume = Math.pow(2.0, pan / 1000.0);
-            if (src.panner) {
+            if (src.panner)
                 src.panner.pan.value = 1.0 - 2.0 / (1.0 + relVolume);
-            }
             src.source = src.buffer.then(buffer => {
                 const source = this.context.createBufferSource();
                 source.buffer = buffer;
                 source.loop = !!loop;
                 let node = source.connect(src.gain);
-                if (src.panner) {
+                if (src.panner)
                     node = node.connect(src.panner);
-                }
                 node.connect(this.context.destination);
                 source.start();
                 return source;
@@ -113,17 +103,15 @@ class Sound {
 
     public deleteSound = (id: number): void => {
         const src = this.sounds.get(id);
-        if (src && src.source) {
+        if (src && src.source)
             src.source.then(source => source.stop());
-        }
         this.sounds.delete(id);
     }
 
     public setVolume = (id: number, volume: number): void => {
         const src = this.sounds.get(id);
-        if (src) {
+        if (src)
             src.gain.gain.value = Math.pow(2.0, volume / 1000.0);
-        }
     }
 
     private decodeAudioData = (context: AudioContext, buffer: ArrayBuffer): Promise<AudioBuffer> => {
