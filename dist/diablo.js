@@ -54,14 +54,6 @@ class FileStore {
         this.updateIndexedDbFromUint8Array = async (name, array) => {
             await this.store.set(name, array);
         };
-        this.storeSpawnUnmarshalledBegin = async (address, length) => {
-            const arrayBuffer = windowAny.Module.HEAPU8.subarray(address, address + length);
-            const array = new Uint8Array(arrayBuffer);
-            const name = 'spawn.mpq';
-            await this.store.set(name, array);
-            this.files.set(name, array);
-            getInterop().dotNetReference.invokeMethodAsync('StoreSpawnUnmarshalledEnd');
-        };
         this.readIndexedDb = async (name) => {
             const array = await this.store.get(name.toLowerCase());
             return Helper.fromUint8ArrayToBase64(array);
@@ -70,17 +62,13 @@ class FileStore {
             const file = await this.store.get(name.toLowerCase());
             return (file) ? true : false;
         };
-        this.getFileFromInput = async (name) => {
-            const input = document.getElementById(name);
-            const file = input.files[0];
-            const filename = file.name.toLowerCase();
-            const array = new Uint8Array(await this.readFile(file));
-            return { name: filename, data: array };
-        };
-        this.uploadFile = async () => {
-            const fileDef = await this.getFileFromInput('saveInput');
-            this.files.set(fileDef.name, fileDef.data);
-            this.store.set(fileDef.name, fileDef.data);
+        this.storeSpawnUnmarshalledBegin = async (address, length) => {
+            const arrayBuffer = windowAny.Module.HEAPU8.subarray(address, address + length);
+            const array = new Uint8Array(arrayBuffer);
+            const name = 'spawn.mpq';
+            await this.store.set(name, array);
+            this.files.set(name, array);
+            getInterop().dotNetReference.invokeMethodAsync('StoreSpawnUnmarshalledEnd');
         };
         this.readFile = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -90,6 +78,13 @@ class FileStore {
             reader.onprogress = (event) => getInterop().dotNetReference.invokeMethodAsync('OnProgress', new Progress('Loading...', event.loaded, event.total));
             reader.readAsArrayBuffer(file);
         });
+        this.getFileFromInput = async (name) => {
+            const input = document.getElementById(name);
+            const file = input.files[0];
+            const filename = file.name.toLowerCase();
+            const array = new Uint8Array(await this.readFile(file));
+            return { name: filename, data: array };
+        };
         this.isDropFile = (event) => {
             const items = event.dataTransfer.items;
             if (items)
@@ -99,6 +94,13 @@ class FileStore {
             if (event.dataTransfer.files.length)
                 return true;
             return false;
+        };
+        this.onDropFile = (event) => {
+            this.dropFile = this.getDropFile(event);
+            if (this.dropFile) {
+                event.preventDefault();
+                getInterop().dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase(), true);
+            }
         };
         this.getDropFile = (event) => {
             const items = event.dataTransfer.items;
@@ -119,12 +121,10 @@ class FileStore {
             const fileDef = await this.getFileFromInput('mpqInput');
             this.files.set(fileDef.name, fileDef.data);
         };
-        this.onDropFile = (event) => {
-            this.dropFile = this.getDropFile(event);
-            if (this.dropFile) {
-                event.preventDefault();
-                getInterop().dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase(), true);
-            }
+        this.uploadFile = async () => {
+            const fileDef = await this.getFileFromInput('saveInput');
+            this.files.set(fileDef.name, fileDef.data);
+            this.store.set(fileDef.name, fileDef.data);
         };
         this.hasFile = (name, sizes) => {
             const file = this.files.get(name.toLowerCase());
@@ -174,6 +174,9 @@ class FileStore {
 //# sourceMappingURL=filestore.js.map
 class Interop {
     constructor() {
+        this.setDotNetReference = (dotNetReference) => {
+            this._dotNetReference = dotNetReference;
+        };
         this.addEventListeners = () => {
             window.addEventListener('resize', () => this._dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
             const main = document.getElementById('main');
@@ -191,9 +194,6 @@ class Interop {
         this.getCanvasRect = () => {
             return this.canvas.getBoundingClientRect();
         };
-        this.reload = () => {
-            window.location.reload();
-        };
         this.openKeyboard = (...args) => {
         };
         this.closeKeyboard = () => {
@@ -207,11 +207,11 @@ class Interop {
         this.currentSaveId = (id) => {
             this._dotNetReference.invokeMethodAsync('SetSaveName', id);
         };
-        this.storeDotNetReference = (dotNetReference) => {
-            this._dotNetReference = dotNetReference;
-        };
         this.setCursor = (x, y) => {
-            this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
+            this._webassembly.dapiMouse(0, 0, 0, x, y);
+        };
+        this.reload = () => {
+            window.location.reload();
         };
         this.clickDownloadLink = (element, download, href) => {
             element.setAttribute('download', download);
