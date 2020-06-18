@@ -210,23 +210,23 @@
         Interop.DApiMouse(2, MouseButton(e), EventModifiers(e), x, y);
     }
 
-    private async Task OnCanvasKeyDown(KeyboardEventArgs e)
+    private void OnCanvasKeyDown(KeyboardEventArgs e)
     {
         var keyCode = GetKeyCode(e);
 
         if (keyCode == -1)
             return;
 
-        await Interop.DApiKey(0, EventModifiers(e), keyCode);
+        Interop.DApiKey(0, EventModifiers(e), keyCode);
 
         if (keyCode >= 32 && e.Key.Length == 1)
-            await Interop.DApiChar((int)e.Key[0]);
+            Interop.DApiChar((int)e.Key[0]);
         else if (/*keyCode == 8 ||*/ keyCode == 13)
-            await Interop.DApiChar(keyCode);
+            Interop.DApiChar(keyCode);
     }
 
-    private async Task OnCanvasKeyUp(KeyboardEventArgs e) =>
-        await Interop.DApiKey(1, EventModifiers(e), GetKeyCode(e));
+    private void OnCanvasKeyUp(KeyboardEventArgs e) =>
+        Interop.DApiKey(1, EventModifiers(e), GetKeyCode(e));
 
     private void OnMainDragEnter(DragEventArgs e) =>
         SetDropping(1);

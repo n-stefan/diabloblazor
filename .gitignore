@@ -329,14 +329,12 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 
-# Libraries
-/wwwroot/libs
-
-# Scripts
-# /wwwroot/scripts
-
-# Dist
+# Dist (BuildBundlerMinifier)
 /wwwroot/dist
 
-# Styles (generated from sass)
+# Libraries (LibMan)
+/wwwroot/libs/base64-js
+/wwwroot/libs/idb-kv-store
+
+# Styles (Web Compiler)
 /wwwroot/css/site.css

@@ -28,8 +28,9 @@ namespace diabloblazor.Services
         public bool Confirm(string message) =>
             _jsInProcessRuntime.Invoke<bool>("confirm", message);
 
-        public ValueTask Log(string message) =>
-            _jsRuntime.InvokeVoidAsync("console.log", message);
+        public void Log(string message) =>
+            _jsInProcessRuntime.InvokeVoid("console.log", message);
+            //_jsRuntime.InvokeVoidAsync("console.log", message);
 
         public ValueTask SetDotNetReference(DotNetObjectReference<Main> reference) =>
             _jsRuntime.InvokeVoidAsync("interop.setDotNetReference", reference);
@@ -101,11 +102,13 @@ namespace diabloblazor.Services
             _jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiMouse", action, button, eventModifiers, x, y);
             //_jsRuntime.InvokeVoidAsync("interop.webassembly.dapiMouse", action, button, eventModifiers, x, y);
 
-        public ValueTask DApiKey(int action, int eventModifiers, int key) =>
-            _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiKey", action, eventModifiers, key);
+        public void DApiKey(int action, int eventModifiers, int key) =>
+            _jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiKey", action, eventModifiers, key);
+            //_jsRuntime.InvokeVoidAsync("interop.webassembly.dapiKey", action, eventModifiers, key);
 
-        public ValueTask DApiChar(int chr) =>
-            _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiChar", chr);
+        public void DApiChar(int chr) =>
+            _jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiChar", chr);
+            //_jsRuntime.InvokeVoidAsync("interop.webassembly.dapiChar", chr);
 
         public ValueTask CallApi(string api, params object[] args) =>
             _jsRuntime.InvokeVoidAsync("interop.webassembly.callApi", api, args);

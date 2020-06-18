@@ -17,7 +17,7 @@
       "wwwroot/libs/idb-kv-store/idbkvstore.min.js",
       //"wwwroot/libs/axios/dist/axios.min.js",
       "wwwroot/libs/base64-js/base64js.min.js",
-      "wwwroot/decode.min.js"
+      "wwwroot/libs/decode/decode.min.js"
     ],
     "minify": {
       "enabled": false,

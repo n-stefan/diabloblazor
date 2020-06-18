@@ -75,9 +75,6 @@ class Graphics {
 
     public drawEnd = (): void => {
         //this.drawText(2, 10, `FPS: ${this.getFPS().toFixed(1)}`, 0x7070FF);
-        //const transfer = this.renderBatch.images.map(data => data.buffer);
-        //if (this.renderBatch.belt)
-        //    transfer.push(this.renderBatch.belt.buffer);
         this.onRender();
         this.renderBatch = null;
     }
