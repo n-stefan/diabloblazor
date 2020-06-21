@@ -27,7 +27,6 @@ interface RenderBatch {
     images: Image[];
     text: TextDef[];
     clip: Clip;
-    belt: Uint8Array;
 }
 
 type RenderContext = CanvasRenderingContext2D | ImageBitmapRenderingContext;
@@ -35,7 +34,6 @@ type RenderContext = CanvasRenderingContext2D | ImageBitmapRenderingContext;
 class Graphics {
     private context: RenderContext;
     private renderBatch: RenderBatch;
-    private belt: Uint8Array;
 
     constructor() {
         windowAny.DApi.draw_begin = this.drawBegin;
@@ -55,10 +53,8 @@ class Graphics {
         this.renderBatch = {
             images: [],
             text: [],
-            clip: null,
-            belt: this.belt
+            clip: null
         };
-        this.belt = null;
     }
 
     //private frameTime: number = 0;
@@ -92,7 +88,7 @@ class Graphics {
     }
 
     public drawBelt = (items: Uint8Array): void => {
-        this.belt = items.slice();
+        //Do nothing
     }
 
     private onRender = (): void => {
@@ -124,7 +120,5 @@ class Graphics {
                 ctx.restore();
             }
         }
-        //TODO: Call into .NET?
-        //api.updateBelt(belt);
     }
 }
