@@ -13,6 +13,11 @@
     {
       "library": "base64-js@1.3.1",
       "destination": "wwwroot/libs/base64-js"
+    },
+    {
+      "provider": "filesystem",
+      "library": "https://raw.githubusercontent.com/google/brotli/master/js/decode.js",
+      "destination": "wwwroot/libs/brotli"
     }
   ]
 }

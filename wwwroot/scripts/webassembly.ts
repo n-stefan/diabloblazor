@@ -36,16 +36,15 @@ class Webassembly {
             return;
 
         Helper.tryApi((): void => {
-            if (func !== "text") {
+            if (func !== "text")
                 this.wasm["_" + func](...params);
-            } else {
+            else {
                 const ptr = this.wasm._DApi_SyncTextPtr();
                 const text = params[0];
                 const length = Math.min(text.length, 255);
                 const heap = this.wasm.HEAPU8;
-                for (let i = 0; i < length; ++i) {
+                for (let i = 0; i < length; ++i)
                     heap[ptr + i] = text.charCodeAt(i);
-                }
                 heap[ptr + length] = 0;
                 this.wasm._DApi_SyncText(params[1]);
             }

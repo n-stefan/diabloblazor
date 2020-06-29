@@ -333,8 +333,7 @@ ASALocalRun/
 /wwwroot/dist
 
 # Libraries (LibMan)
-/wwwroot/libs/base64-js
-/wwwroot/libs/idb-kv-store
+/wwwroot/libs
 
 # Styles (Web Compiler)
 /wwwroot/css/site.css
