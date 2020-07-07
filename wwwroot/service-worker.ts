@@ -17,6 +17,7 @@ serviceWorker.addEventListener('install', async (event: any /*InstallEvent*/) =>
             '_framework/blazor.webassembly.js',
             '_framework/wasm/dotnet.3.2.0.js',
             '/',
+            'dist/brotli.decode.min.js',
             'dist/external.min.css',
             'dist/external.min.js',
             'dist/diablo.min.css',
