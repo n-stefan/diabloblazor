@@ -334,9 +334,10 @@
         }
         else
         {
-            await LoadSpawn();
             if (AppState.HasSpawn)
                 await Worker.InitGame(this);
+            else
+                await LoadSpawn();
         }
     }
 

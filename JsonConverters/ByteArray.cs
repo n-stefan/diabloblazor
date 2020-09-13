@@ -28,7 +28,7 @@ namespace diabloblazor.JsonConverters
             // writer.WriteEndArray();
             // Duration: 41:44 -> 49:43
             public override void Write(Utf8JsonWriter writer, ByteArray value, JsonSerializerOptions options) =>
-                writer.WriteBase64StringValue(value.Data);
+                writer.WriteBase64String("Data", value.Data);
         }
     }
 }
