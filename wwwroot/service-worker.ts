@@ -15,7 +15,7 @@ serviceWorker.addEventListener('install', async (event: any /*InstallEvent*/) =>
         await (await caches.open(cacheName)).addAll([
             '_framework/blazor.boot.json',
             '_framework/blazor.webassembly.js',
-            '_framework/wasm/dotnet.3.2.0.js',
+            '_framework/dotnet.5.0.0-rc.1.20451.14.js',
             '/',
             'dist/brotli.decode.min.js',
             'dist/external.min.css',

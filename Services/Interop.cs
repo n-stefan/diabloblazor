@@ -2,7 +2,6 @@
 using diabloblazor.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Microsoft.JSInterop.WebAssembly;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -13,13 +12,13 @@ namespace diabloblazor.Services
     {
         private readonly IJSRuntime _jsRuntime;
         private readonly IJSInProcessRuntime _jsInProcessRuntime;
-        private readonly WebAssemblyJSRuntime _webAssemblyJSRuntime;
+        private readonly IJSUnmarshalledRuntime _jsUnmarshalledRuntime;
 
         public Interop(IJSRuntime jsRuntime)
         {
             _jsRuntime = jsRuntime;
             _jsInProcessRuntime = (jsRuntime as IJSInProcessRuntime)!;
-            _webAssemblyJSRuntime = (jsRuntime as WebAssemblyJSRuntime)!;
+            _jsUnmarshalledRuntime = (jsRuntime as IJSUnmarshalledRuntime)!;
         }
 
         public void Alert(string message) =>
@@ -77,7 +76,7 @@ namespace diabloblazor.Services
         public GCHandle InitWebAssemblyUnmarshalledBegin(bool isSpawn, byte[] data)
         {
             var gameWasmHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            _webAssemblyJSRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
+            _jsUnmarshalledRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
                 isSpawn, gameWasmHandle.AddrOfPinnedObject(), data.Length);
             return gameWasmHandle;
         }
@@ -85,7 +84,7 @@ namespace diabloblazor.Services
         public GCHandle StoreSpawnUnmarshalledBegin(byte[] data)
         {
             var spawnMpqHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            _webAssemblyJSRuntime.InvokeUnmarshalled<IntPtr, int, object>("interop.fileStore.storeSpawnUnmarshalledBegin", spawnMpqHandle.AddrOfPinnedObject(), data.Length);
+            _jsUnmarshalledRuntime.InvokeUnmarshalled<IntPtr, int, object>("interop.fileStore.storeSpawnUnmarshalledBegin", spawnMpqHandle.AddrOfPinnedObject(), data.Length);
             return spawnMpqHandle;
         }
 
