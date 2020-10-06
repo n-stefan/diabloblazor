@@ -1,14 +1,15 @@
 ﻿
-self.addEventListener('install', (event: any) => event.waitUntil(onInstall(event)));
-self.addEventListener('fetch', (event: any) => event.respondWith(onFetch(event)));
+//No PWA offline capability for GitHub Pages as initial caching takes too long
+if (self.location.hostname === 'n-stefan.github.io') {
+    self.addEventListener('fetch', () => { });
+} else {
+    self.addEventListener('install', (event: any) => event.waitUntil(onInstall(event)));
+    self.addEventListener('fetch', (event: any) => event.respondWith(onFetch(event)));
+}
 
 const cacheName: string = 'DiabloOfflineCache';
-const gitHubPagesHostname: string = 'n-stefan.github.io';
 
 async function onInstall(event: any): Promise<void> {
-    //No PWA offline capability for GitHub Pages as initial caching takes too long
-    if (self.location.hostname === gitHubPagesHostname) return;
-
     console.info('Installing service worker');
 
     await caches.delete(cacheName);
@@ -39,9 +40,6 @@ async function onInstall(event: any): Promise<void> {
 }
 
 async function onFetch(event: any): Promise<Response> {
-    //No PWA offline capability for GitHub Pages as initial caching takes too long
-    if (self.location.hostname === gitHubPagesHostname) return null;
-
     if (event.request.method !== 'GET') return null;
 
     try {
