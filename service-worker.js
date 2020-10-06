@@ -1,10 +1,11 @@
-self.addEventListener('install', (event) => event.waitUntil(onInstall(event)));
-self.addEventListener('fetch', (event) => event.respondWith(onFetch(event)));
+if (self.location.hostname === 'n-stefan.github.io') {
+    self.addEventListener('fetch', () => { });
+} else {
+    self.addEventListener('install', (event) => event.waitUntil(onInstall(event)));
+    self.addEventListener('fetch', (event) => event.respondWith(onFetch(event)));
+}
 const cacheName = 'DiabloOfflineCache';
-const gitHubPagesHostname = 'n-stefan.github.io';
 async function onInstall(event) {
-    if (self.location.hostname === gitHubPagesHostname)
-        return;
     console.info('Installing service worker');
     await caches.delete(cacheName);
     await caches.open(cacheName).then(cache => cache.addAll([
@@ -31,8 +32,6 @@ async function onInstall(event) {
     ]));
 }
 async function onFetch(event) {
-    if (self.location.hostname === gitHubPagesHostname)
-        return null;
     if (event.request.method !== 'GET')
         return null;
     try {
