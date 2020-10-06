@@ -9,7 +9,7 @@ async function onInstall(event) {
         '/diabloblazor/_framework/blazor.boot.json',
         '/diabloblazor/_framework/blazor.webassembly.js',
         '/diabloblazor/_framework/dotnet.5.0.0-rc.1.20451.14.js',
-        '/diabloblazor/',
+        '/diabloblazor/index.html',
         '/diabloblazor/dist/brotli.decode.min.js',
         '/diabloblazor/dist/external.min.css',
         '/diabloblazor/dist/external.min.js',
@@ -40,7 +40,7 @@ async function onFetch(event) {
     }
     catch (e) {
         const shouldServeIndexHtml = event.request.mode === 'navigate';
-        const request = shouldServeIndexHtml ? '/' : event.request;
+        const request = shouldServeIndexHtml ? '/diabloblazor/index.html' : event.request;
         const cache = await caches.open(cacheName);
         const fromCache = await cache.match(request);
         if (fromCache) {
