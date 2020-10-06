@@ -6,26 +6,26 @@ async function onInstall(event) {
     console.info('Installing service worker');
     await caches.delete(cacheName);
     await caches.open(cacheName).then(cache => cache.addAll([
-        '/diabloblazor/_framework/blazor.boot.json',
-        '/diabloblazor/_framework/blazor.webassembly.js',
-        '/diabloblazor/_framework/dotnet.5.0.0-rc.1.20451.14.js',
-        '/diabloblazor/',
-        '/diabloblazor/dist/brotli.decode.min.js',
-        '/diabloblazor/dist/external.min.css',
-        '/diabloblazor/dist/external.min.js',
-        '/diabloblazor/dist/diablo.min.css',
-        '/diabloblazor/dist/diablo.min.js',
-        '/diabloblazor/dist/diablo.js',
-        '/diabloblazor/dist/diabloheavy.ttf',
-        '/diabloblazor/dist/favicon.ico',
-        '/diabloblazor/dist/icon-192.png',
-        '/diabloblazor/dist/icon-512.png',
-        '/diabloblazor/manifest.json',
-        '/diabloblazor/appsettings.json',
+        '_framework/blazor.boot.json',
+        '_framework/blazor.webassembly.js',
+        '_framework/dotnet.5.0.0-rc.1.20451.14.js',
+        '/',
+        'dist/brotli.decode.min.js',
+        'dist/external.min.css',
+        'dist/external.min.js',
+        'dist/diablo.min.css',
+        'dist/diablo.min.js',
+        'dist/diablo.js',
+        'dist/diabloheavy.ttf',
+        'dist/favicon.ico',
+        'dist/icon-192.png',
+        'dist/icon-512.png',
+        'manifest.json',
+        'appsettings.json',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0',
-        '/diabloblazor/Diablo.wasm',
-        '/diabloblazor/DiabloSpawn.wasm'
+        'Diablo.wasm',
+        'DiabloSpawn.wasm'
     ]));
 }
 async function onFetch(event) {
