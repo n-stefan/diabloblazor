@@ -7,7 +7,7 @@ const gitHubPagesHostname: string = 'n-stefan.github.io';
 
 async function onInstall(event: any): Promise<void> {
     //No PWA offline capability for GitHub Pages as initial caching takes too long
-    //if (self.location.hostname === gitHubPagesHostname) return;
+    if (self.location.hostname === gitHubPagesHostname) return;
 
     console.info('Installing service worker');
 
@@ -17,7 +17,7 @@ async function onInstall(event: any): Promise<void> {
         '_framework/blazor.boot.json',
         '_framework/blazor.webassembly.js',
         '_framework/dotnet.5.0.0-rc.1.20451.14.js',
-        '/',
+        'index.html',
         'dist/brotli.decode.min.js',
         'dist/external.min.css',
         'dist/external.min.js',
@@ -40,7 +40,7 @@ async function onInstall(event: any): Promise<void> {
 
 async function onFetch(event: any): Promise<Response> {
     //No PWA offline capability for GitHub Pages as initial caching takes too long
-    //if (self.location.hostname === gitHubPagesHostname) return null;
+    if (self.location.hostname === gitHubPagesHostname) return null;
 
     if (event.request.method !== 'GET') return null;
 
@@ -52,7 +52,7 @@ async function onFetch(event: any): Promise<Response> {
         }
     } catch (e) {
         const shouldServeIndexHtml = event.request.mode === 'navigate';
-        const request = shouldServeIndexHtml ? '/' : event.request;
+        const request = shouldServeIndexHtml ? 'index.html' : event.request;
         const cache = await caches.open(cacheName);
         const fromCache = await cache.match(request);
         if (fromCache) {
