@@ -9,3 +9,7 @@ You can go to [DiabloBlazor on GitHub Pages](https://n-stefan.github.io/diablobl
 The development server can be found here: [DiabloBlazorServer](https://github.com/n-stefan/diabloblazorserver).
 
 IDE: latest Visual Studio Community 2019 Preview with the Web Compiler extension installed.
+
+When running locally, make sure you have:
+1. Compiled site.scss with Web Compiler
+2. Restored client-side libraries with LibMan
