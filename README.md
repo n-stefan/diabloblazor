@@ -11,5 +11,5 @@ The development server can be found here: [DiabloBlazorServer](https://github.co
 IDE: latest Visual Studio Community 2019 Preview with the Web Compiler extension installed.
 
 When running locally, make sure you have:
-1. Compiled site.scss with Web Compiler
-2. Restored client-side libraries with LibMan
+- Compiled site.scss with Web Compiler
+- Restored client-side libraries with LibMan
