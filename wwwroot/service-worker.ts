@@ -3,13 +3,13 @@
 if (self.location.hostname === 'n-stefan.github.io') {
     self.addEventListener('fetch', () => { });
 } else {
-    self.addEventListener('install', (event: any) => event.waitUntil(onInstall(event)));
-    self.addEventListener('fetch', (event: any) => event.respondWith(onFetch(event)));
+    self.addEventListener('install', (event: /*ExtendableEvent*/any) => event.waitUntil(onInstall(event)));
+    self.addEventListener('fetch', (event: /*FetchEvent*/any) => event.respondWith(onFetch(event)));
 }
 
 const cacheName: string = 'DiabloOfflineCache';
 
-async function onInstall(event: any): Promise<void> {
+async function onInstall(event: /*ExtendableEvent*/any): Promise<void> {
     console.info('Installing service worker');
 
     await caches.delete(cacheName);
@@ -17,7 +17,7 @@ async function onInstall(event: any): Promise<void> {
     await caches.open(cacheName).then(cache => cache.addAll([
         '_framework/blazor.boot.json',
         '_framework/blazor.webassembly.js',
-        '_framework/dotnet.5.0.0-rc.1.20451.14.js',
+        '_framework/dotnet.5.0.0-rc.2.20475.5.js',
         'index.html',
         'dist/brotli.decode.min.js',
         'dist/external.min.css',
@@ -39,7 +39,7 @@ async function onInstall(event: any): Promise<void> {
     ]));
 }
 
-async function onFetch(event: any): Promise<Response> {
+async function onFetch(event: /*FetchEvent*/any): Promise<Response> {
     if (event.request.method !== 'GET') return null;
 
     try {

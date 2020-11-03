@@ -8,7 +8,7 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "lib": [ "dom", "esnext" ]
+    "lib": [ "dom", "esnext" ] //"WebWorker"
   },
   "exclude": [
     "node_modules"

@@ -43,7 +43,9 @@
       "wwwroot/scripts/helper.js",
       "wwwroot/scripts/graphics.js",
       "wwwroot/scripts/sound.js",
-      "wwwroot/scripts/progress.js"
+      "wwwroot/scripts/progress.js",
+      "wwwroot/scripts/webassembly.js",
+      "wwwroot/scripts/interop.js"
     ],
     "minify": {
       "enabled": true,
@@ -54,9 +56,7 @@
   {
     "outputFileName": "wwwroot/dist/diablo.js",
     "inputFiles": [
-      "wwwroot/scripts/webassembly.js",
-      "wwwroot/scripts/filestore.js",
-      "wwwroot/scripts/interop.js"
+      "wwwroot/scripts/filestore.js"
     ],
     "minify": {
       "enabled": false,
