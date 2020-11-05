@@ -1,6 +1,7 @@
 if (self.location.hostname === 'n-stefan.github.io') {
     self.addEventListener('fetch', () => { });
-} else {
+}
+else {
     self.addEventListener('install', (event) => event.waitUntil(onInstall(event)));
     self.addEventListener('fetch', (event) => event.respondWith(onFetch(event)));
 }
@@ -11,7 +12,7 @@ async function onInstall(event) {
     await caches.open(cacheName).then(cache => cache.addAll([
         '_framework/blazor.boot.json',
         '_framework/blazor.webassembly.js',
-        '_framework/dotnet.5.0.0-rc.1.20451.14.js',
+        '_framework/dotnet.5.0.0-rc.2.20475.5.js',
         'index.html',
         'dist/brotli.decode.min.js',
         'dist/external.min.css',
