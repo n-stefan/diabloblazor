@@ -47,8 +47,9 @@
       "System.Text.Json.dll": "sha256-r3XgYKY3tK0BKbH3xwszbGxs\/KOgoFalyIanLxH7Wnw=",
       "System.Text.RegularExpressions.dll": "sha256-zyP7Boopf0jcfEl+X\/z7v6S4OvN09OFU7l7uIiVFwAw=",
       "System.Threading.Tasks.dll": "sha256-xnfAifNArBRbFkdWOkpnjpq3wNFSTEDR6b26kwlNXM8=",
+      "System.Threading.Timer.dll": "sha256-CPPsrTadXanDggMqsuncs3WPTnV05IY7FIUG9XWVhsA=",
       "System.Threading.dll": "sha256-ciaW0SRQqIbnSVAwHVaYSky50q85exPEziNLnt1mo+k=",
-      "System.Private.CoreLib.dll": "sha256-b4NwA2BJMvigMHL+55Q1ov4KlGw7ur7p8vBQ1OXh9Tk="
+      "System.Private.CoreLib.dll": "sha256-4u1qlDWepF2DidaQ43Wk1LV8SHeingzCdWbo83kqiCc="
     },
     "lazyAssembly": null,
     "pdb": null,
