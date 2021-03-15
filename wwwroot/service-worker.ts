@@ -17,7 +17,7 @@ async function onInstall(event: /*ExtendableEvent*/any): Promise<void> {
     await caches.open(cacheName).then(cache => cache.addAll([
         '_framework/blazor.boot.json',
         '_framework/blazor.webassembly.js',
-        '_framework/dotnet.5.0.0.js',
+        '_framework/dotnet.5.0.4.js',
         'index.html',
         'dist/brotli.decode.min.js',
         'dist/external.min.css',
