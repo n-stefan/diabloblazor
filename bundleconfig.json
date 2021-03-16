@@ -12,6 +12,17 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/dist/brotli.decode.min.js",
+    "inputFiles": [
+      "wwwroot/libs/brotli/decode.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
     "outputFileName": "wwwroot/dist/external.min.js",
     "inputFiles": [
       "wwwroot/libs/idb-kv-store/idbkvstore.min.js",
@@ -25,17 +36,6 @@
     "sourceMap": false
   },
   {
-    "outputFileName": "wwwroot/dist/brotli.decode.min.js",
-    "inputFiles": [
-      "wwwroot/libs/brotli/decode.js"
-    ],
-    "minify": {
-      "enabled": true,
-      "renameLocals": true
-    },
-    "sourceMap": false
-  },
-  {
     "outputFileName": "wwwroot/dist/diablo.min.js",
     "inputFiles": [
       "wwwroot/scripts/Diablo.js",
@@ -45,22 +45,12 @@
       "wwwroot/scripts/sound.js",
       "wwwroot/scripts/progress.js",
       "wwwroot/scripts/webassembly.js",
+      "wwwroot/scripts/filestore.js",
       "wwwroot/scripts/interop.js"
     ],
     "minify": {
       "enabled": true,
       "renameLocals": true
-    },
-    "sourceMap": false
-  },
-  {
-    "outputFileName": "wwwroot/dist/diablo.js",
-    "inputFiles": [
-      "wwwroot/scripts/filestore.js"
-    ],
-    "minify": {
-      "enabled": false,
-      "renameLocals": false
     },
     "sourceMap": false
   }

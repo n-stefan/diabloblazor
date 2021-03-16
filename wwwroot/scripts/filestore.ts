@@ -20,7 +20,8 @@ class FileStore {
         windowAny.DApi.remove_file = this.removeFile;
     }
 
-    public initIndexedDb = async (): Promise<void> => {
+    //Dummy parameter for minification
+    public initIndexedDb = async (dummy: any): Promise<void> => {
         this.store = new IdbKvStore('diablo_fs');
         for (let [name, data] of Object.entries(await this.store.json()))
             this.files.set(name.toLowerCase(), data as Uint8Array);
@@ -97,18 +98,21 @@ class FileStore {
             return files[0];
     }
 
-    public setDropFile = async (): Promise<void> => {
+    //Dummy parameter for minification
+    public setDropFile = async (dummy: any): Promise<void> => {
         const array = new Uint8Array(await this.readFile(this.dropFile));
         this.files.set(this.dropFile.name.toLowerCase(), array);
         this.dropFile = null;
     }
 
-    public setInputFile = async (): Promise<void> => {
+    //Dummy parameter for minification
+    public setInputFile = async (dummy: any): Promise<void> => {
         const fileDef = await this.getFileFromInput('mpqInput');
         this.files.set(fileDef.name, fileDef.data);
     }
 
-    public uploadFile = async (): Promise<void> => {
+    //Dummy parameter for minification
+    public uploadFile = async (dummy: any): Promise<void> => {
         const fileDef = await this.getFileFromInput('saveInput');
         this.files.set(fileDef.name, fileDef.data);
         this.store.set(fileDef.name, fileDef.data);
