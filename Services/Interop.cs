@@ -27,10 +27,6 @@ namespace diabloblazor.Services
         public bool Confirm(string message) =>
             _jsInProcessRuntime.Invoke<bool>("confirm", message);
 
-        public void Log(string message) =>
-            _jsInProcessRuntime.InvokeVoid("console.log", message);
-            //_jsRuntime.InvokeVoidAsync("console.log", message);
-
         public ValueTask SetDotNetReference(DotNetObjectReference<Main> reference) =>
             _jsRuntime.InvokeVoidAsync("interop.setDotNetReference", reference);
 
