@@ -12,7 +12,7 @@
     ]
   },
   {
-    "outputFileName": "wwwroot/dist/brotli.decode.min.js",
+    "outputFileName": "wwwroot/libs/brotli/decode.min.js",
     "inputFiles": [
       "wwwroot/libs/brotli/decode.js"
     ],
@@ -27,7 +27,8 @@
     "inputFiles": [
       "wwwroot/libs/idb-kv-store/idbkvstore.min.js",
       //"wwwroot/libs/axios/dist/axios.min.js",
-      "wwwroot/libs/base64-js/base64js.min.js"
+      "wwwroot/libs/base64-js/base64js.min.js",
+      "wwwroot/libs/brotli/decode.min.js"
     ],
     "minify": {
       "enabled": false,
