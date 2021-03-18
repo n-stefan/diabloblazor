@@ -3,13 +3,24 @@
     "outputFileName": "wwwroot/dist/external.min.css",
     "inputFiles": [
       "wwwroot/css/reset.css"
-    ]
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
   },
   {
     "outputFileName": "wwwroot/dist/diablo.min.css",
     "inputFiles": [
       "wwwroot/css/site.css"
-    ]
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true,
+      "adjustRelativePaths": false
+    },
+    "sourceMap": false
   },
   {
     "outputFileName": "wwwroot/libs/brotli/decode.min.js",

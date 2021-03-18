@@ -458,10 +458,7 @@
 
 @font-face {
     font-family: 'Diablo Heavy';
-    //Deploy locally
-    src: url('/dist/diabloheavy.ttf') format('truetype');
-    //Deploy to GitHub Pages
-    //src: url('/diabloblazor/dist/diabloheavy.ttf') format('truetype');
+    src: url('diabloheavy.ttf') format('truetype');
 }
 
 body {
