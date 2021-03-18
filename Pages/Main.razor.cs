@@ -67,7 +67,7 @@ namespace diabloblazor.Pages
             );
         }
 
-        private int MouseButton(MouseEventArgs e) =>
+        private static int MouseButton(MouseEventArgs e) =>
             e.Button switch
             {
                 0 => 1,
@@ -78,23 +78,23 @@ namespace diabloblazor.Pages
                 _ => 1
             };
 
-        private int EventModifiers(EventArgs e)
+        private static int EventModifiers(EventArgs e)
         {
             //A common base class with at least ShiftKey, CtrlKey and AltKey would be nice
             if (e is MouseEventArgs me)
-                return ((me.ShiftKey /*|| this.touchMods[TOUCH_SHIFT]*/) ? 1 : 0) + (me.CtrlKey ? 2 : 0) + (me.AltKey ? 4 : 0) /*+ (e.touches ? 8 : 0)*/;
+                return (/*(*/me.ShiftKey /*|| this.touchMods[TOUCH_SHIFT])*/ ? 1 : 0) + (me.CtrlKey ? 2 : 0) + (me.AltKey ? 4 : 0) /*+ (e.touches ? 8 : 0)*/;
             else if (e is KeyboardEventArgs ke)
-                return ((ke.ShiftKey /*|| this.touchMods[TOUCH_SHIFT]*/) ? 1 : 0) + (ke.CtrlKey ? 2 : 0) + (ke.AltKey ? 4 : 0) /*+ (e.touches ? 8 : 0)*/;
+                return (/*(*/ke.ShiftKey /*|| this.touchMods[TOUCH_SHIFT])*/ ? 1 : 0) + (ke.CtrlKey ? 2 : 0) + (ke.AltKey ? 4 : 0) /*+ (e.touches ? 8 : 0)*/;
             else
                 throw new Exception($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs!");
         }
 
-        private int GetKeyCode(KeyboardEventArgs e) =>
+        private static int GetKeyCode(KeyboardEventArgs e) =>
             e.Code switch
             {
                 string s when s.StartsWith("F") => int.Parse(s[1..]) + 111,
-                string s when s.StartsWith("Key") => (int)s[^1] - 32,
-                string s when s.StartsWith("Digit") => (int)s[^1] + 48,
+                string s when s.StartsWith("Key") => s[^1] - 32,
+                string s when s.StartsWith("Digit") => s[^1] + 48,
                 string s when s.StartsWith("Shift") => 16,
                 "Backspace" => 8,
                 "Tab" => 9,
@@ -129,7 +129,7 @@ namespace diabloblazor.Pages
 
             await Interop.AddEventListeners();
 
-            await Interop.SetDotNetReference(DotNetObjectReference.Create<Main>(this));
+            await Interop.SetDotNetReference(DotNetObjectReference.Create(this));
         }
 
         private async Task OnRenderIntervalChange(ChangeEventArgs e) =>
@@ -163,7 +163,7 @@ namespace diabloblazor.Pages
             Interop.DApiKey(0, EventModifiers(e), keyCode);
 
             if (keyCode >= 32 && e.Key.Length == 1)
-                Interop.DApiChar((int)e.Key[0]);
+                Interop.DApiChar(e.Key[0]);
             else if (/*keyCode == 8 ||*/ keyCode == 13)
                 Interop.DApiChar(keyCode);
         }
@@ -198,7 +198,7 @@ namespace diabloblazor.Pages
         private void CompressMPQ() =>
             AppState.Compress = true;
 
-        private string ExtractFilename(string path)
+        private static string ExtractFilename(string path)
         {
             //Path.GetFileName doesn't seem to do the trick
             var index = path.LastIndexOf(@"\");
