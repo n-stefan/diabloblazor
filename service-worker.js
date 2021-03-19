@@ -1,10 +1,5 @@
-if (self.location.hostname === 'n-stefan.github.io') {
-    self.addEventListener('fetch', () => { });
-}
-else {
-    self.addEventListener('install', (event) => event.waitUntil(onInstall(event)));
-    self.addEventListener('fetch', (event) => event.respondWith(onFetch(event)));
-}
+self.addEventListener('install', (event) => event.waitUntil(onInstall(event)));
+self.addEventListener('fetch', (event) => event.respondWith(onFetch(event)));
 const cacheName = 'DiabloOfflineCache';
 async function onInstall(event) {
     console.info('Installing service worker');
