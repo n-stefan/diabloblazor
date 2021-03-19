@@ -1,11 +1,6 @@
 ﻿
-//No PWA offline capability for GitHub Pages as initial caching takes too long
-if (self.location.hostname === 'n-stefan.github.io') {
-    self.addEventListener('fetch', () => { });
-} else {
-    self.addEventListener('install', (event: /*ExtendableEvent*/any) => event.waitUntil(onInstall(event)));
-    self.addEventListener('fetch', (event: /*FetchEvent*/any) => event.respondWith(onFetch(event)));
-}
+self.addEventListener('install', (event: /*ExtendableEvent*/any) => event.waitUntil(onInstall(event)));
+self.addEventListener('fetch', (event: /*FetchEvent*/any) => event.respondWith(onFetch(event)));
 
 const cacheName: string = 'DiabloOfflineCache';
 
