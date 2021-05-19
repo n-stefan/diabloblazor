@@ -86,7 +86,7 @@ namespace diabloblazor.Pages
             else if (e is KeyboardEventArgs ke)
                 return (/*(*/ke.ShiftKey /*|| this.touchMods[TOUCH_SHIFT])*/ ? 1 : 0) + (ke.CtrlKey ? 2 : 0) + (ke.AltKey ? 4 : 0) /*+ (e.touches ? 8 : 0)*/;
             else
-                throw new Exception($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs!");
+                throw new ArgumentException($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs!");
         }
 
         private static int GetKeyCode(KeyboardEventArgs e) =>

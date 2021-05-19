@@ -7,7 +7,7 @@ class Webassembly {
 
     public initWebAssemblyUnmarshalledBegin = async (isSpawn: boolean, address: number, length: number): Promise<void> => {
         const array = windowAny.Module.HEAPU8.subarray(address, address + length);
-        this.wasm = await (isSpawn ? DiabloSpawn : Diablo)({ wasmBinary: array }).ready;
+        this.wasm = await (isSpawn ? DiabloSpawn : Diablo)({ wasmBinary: array });
         getInterop().dotNetReference.invokeMethodAsync('InitWebAssemblyUnmarshalledEnd');
     }
 
