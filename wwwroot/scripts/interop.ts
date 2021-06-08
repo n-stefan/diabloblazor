@@ -1,7 +1,7 @@
 ﻿
 //TODO master list:
 //Move as much as possible from TS to C#
-//Use AOT compilation/non-Mono runtime/threads (Worker) when available
+//Use threads (Worker) when available
 //Compress .mpq?
 //Multiplayer?
 //Touch? Low priority
