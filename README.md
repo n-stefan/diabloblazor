@@ -6,10 +6,18 @@ As the name implies, DiabloBlazor swaps out React used in DiabloWeb for Blazor, 
 
 You can try it out on [GitHub Pages](https://n-stefan.github.io/diabloblazor).
 
-The development server can be found here: [DiabloBlazorServer](https://github.com/n-stefan/diabloblazorserver).
+Development server: [DiabloBlazorServer](https://github.com/n-stefan/diabloblazorserver).
 
 IDE: latest Visual Studio Community 2019 Preview with the Web Compiler extension installed.
 
 When running locally, make sure that:
 - Web Compiler has compiled site.scss
 - LibMan has restored client-side libraries
+
+If you want to try out WebAssembly AOT compilation, install the following .NET SDK workload from an elevated command prompt:
+
+`dotnet workload install microsoft-net-sdk-blazorwebassembly-aot`
+
+Then publish the app:
+
+`dotnet publish -c Release`
