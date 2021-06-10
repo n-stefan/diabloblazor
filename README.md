@@ -10,10 +10,6 @@ Development server: [DiabloBlazorServer](https://github.com/n-stefan/diabloblazo
 
 IDE: latest Visual Studio Community 2019 Preview with the Web Compiler extension installed.
 
-When running locally, make sure that:
-- Web Compiler has compiled site.scss
-- LibMan has restored client-side libraries
-
 If you want to try out WebAssembly AOT compilation, install the following .NET SDK workload from an elevated command prompt:
 
 `dotnet workload install microsoft-net-sdk-blazorwebassembly-aot`
@@ -21,3 +17,7 @@ If you want to try out WebAssembly AOT compilation, install the following .NET S
 Then publish the app:
 
 `dotnet publish -c Release`
+
+When running locally, make sure that:
+- Web Compiler has compiled site.scss
+- Library Manager has restored client-side libraries
