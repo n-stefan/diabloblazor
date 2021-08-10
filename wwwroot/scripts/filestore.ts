@@ -31,9 +31,8 @@ class FileStore {
         await this.store.set(name, array);
     }
 
-    public readIndexedDb = async (name: string): Promise<string> => {
-        const array = await this.store.get(name.toLowerCase());
-        return Helper.fromUint8ArrayToBase64(array);
+    public readIndexedDb = async (name: string): Promise<Uint8Array> => {
+        return await this.store.get(name.toLowerCase());
     }
 
     public indexedDbHasFile = async (name: string): Promise<boolean> => {

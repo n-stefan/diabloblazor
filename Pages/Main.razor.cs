@@ -243,8 +243,9 @@ namespace diabloblazor.Pages
 
         private async Task DownloadSave(string name)
         {
-            var data = await Interop.ReadIndexedDbAsBase64String(name);
-            await Interop.ClickDownloadLink(downloadLink, name, $"data:application/octet-stream;base64,{data}");
+            var data = await Interop.ReadIndexedDb(name);
+            var base64 = Convert.ToBase64String(data);
+            await Interop.ClickDownloadLink(downloadLink, name, $"data:application/octet-stream;base64,{base64}");
             //await Interop.DownloadFile(name);
         }
 

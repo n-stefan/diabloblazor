@@ -33,8 +33,8 @@ namespace diabloblazor.Services
         public ValueTask InitIndexedDb() =>
             _jsRuntime.InvokeVoidAsync("interop.fileStore.initIndexedDb");
 
-        public ValueTask<string> ReadIndexedDbAsBase64String(string name) =>
-            _jsRuntime.InvokeAsync<string>("interop.fileStore.readIndexedDb", name);
+        public ValueTask<byte[]> ReadIndexedDb(string name) =>
+            _jsRuntime.InvokeAsync<byte[]>("interop.fileStore.readIndexedDb", name);
 
         public ValueTask<bool> IndexedDbHasFile(string name) =>
             _jsRuntime.InvokeAsync<bool>("interop.fileStore.indexedDbHasFile", name);
