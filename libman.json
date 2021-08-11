@@ -16,8 +16,8 @@
     //},
     {
       "provider": "filesystem",
-      "library": "https://raw.githubusercontent.com/google/brotli/master/js/decode.js",
-      "destination": "wwwroot/libs/brotli"
+      "library": "https://raw.githubusercontent.com/google/brotli/master/js/decode.min.js",
+      "destination": "wwwroot/dist"
     }
   ]
 }
