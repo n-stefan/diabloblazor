@@ -335,7 +335,7 @@ namespace diabloblazor.Pages
             //if (this.compressMpq)
             //    this.compressMpq.start(file);
 
-            if (name != null && !name.EndsWith(".mpq"))
+            if (name is not null && !name.EndsWith(".mpq"))
             {
                 Interop.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
                 AppState.Dropping = 0;
@@ -343,7 +343,7 @@ namespace diabloblazor.Pages
                 return;
             }
 
-            GameType = (name != null && name == retailFilename) ? GameType.Retail : GameType.Shareware;
+            GameType = (name == retailFilename) ? GameType.Retail : GameType.Shareware;
 
             this.isDrop = isDrop;
             AppState.Dropping = 0;
