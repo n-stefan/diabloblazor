@@ -1,7 +1,4 @@
-﻿using diabloblazor.Models;
-using System.Collections.Generic;
-
-namespace diabloblazor.Services
+﻿namespace diabloblazor.Services
 {
     public class AppState
     {

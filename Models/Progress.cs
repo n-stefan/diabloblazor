@@ -1,6 +1,4 @@
-﻿using static System.Math;
-
-namespace diabloblazor.Models
+﻿namespace diabloblazor.Models
 {
     public struct Progress
     {

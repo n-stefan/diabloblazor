@@ -1,7 +1,4 @@
-﻿using diabloblazor.Enums;
-using System.IO;
-
-namespace diabloblazor.Models
+﻿namespace diabloblazor.Models
 {
     public struct SaveGame
     {

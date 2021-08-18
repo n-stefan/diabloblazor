@@ -1,14 +1,4 @@
-﻿using diabloblazor.Enums;
-using diabloblazor.Models;
-using diabloblazor.Pages;
-using Microsoft.AspNetCore.Components;
-using System;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace diabloblazor.Services
+﻿namespace diabloblazor.Services
 {
     public class Worker
     {

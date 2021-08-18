@@ -1,0 +1,18 @@
+﻿global using diabloblazor;
+global using diabloblazor.Enums;
+global using diabloblazor.Extensions;
+global using diabloblazor.JsonConverters;
+global using diabloblazor.Models;
+global using diabloblazor.Pages;
+global using diabloblazor.Services;
+global using Microsoft.AspNetCore.Components;
+global using Microsoft.AspNetCore.Components.Web;
+global using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+global using Microsoft.AspNetCore.Components.WebAssembly.Http;
+global using Microsoft.JSInterop;
+global using System.Runtime.InteropServices;
+global using System.Text;
+global using System.Text.Json;
+global using System.Text.Json.Serialization;
+global using System.Text.RegularExpressions;
+global using static System.Math;

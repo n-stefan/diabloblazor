@@ -1,12 +1,4 @@
-﻿using diabloblazor.Models;
-using diabloblazor.Pages;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using System;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-
-namespace diabloblazor.Services
+﻿namespace diabloblazor.Services
 {
     public class Interop
     {

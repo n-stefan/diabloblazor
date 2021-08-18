@@ -1,20 +1,4 @@
-﻿using diabloblazor.Enums;
-using diabloblazor.Extensions;
-using diabloblazor.Models;
-using diabloblazor.Services;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Configuration;
-using Microsoft.JSInterop;
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
-using static System.Math;
-
-namespace diabloblazor.Pages
+﻿namespace diabloblazor.Pages
 {
     public partial class Main
     {

@@ -1,10 +1,4 @@
-﻿using diabloblazor.Models;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace diabloblazor.Extensions
+﻿namespace diabloblazor.Extensions
 {
     public static class HttpClientExtensions
     {

@@ -1,9 +1,4 @@
-﻿using diabloblazor.Models;
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace diabloblazor.JsonConverters
+﻿namespace diabloblazor.JsonConverters
 {
     public class ByteArrayConverter : JsonConverter<ByteArray>
     {
