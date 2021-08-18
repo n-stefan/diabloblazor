@@ -12,7 +12,7 @@ IDE: latest Visual Studio Community 2019 Preview with the Web Compiler extension
 
 If you want to try out WebAssembly AOT compilation, install the following .NET SDK workload from an elevated command prompt:
 
-`dotnet workload install microsoft-net-sdk-blazorwebassembly-aot`
+`dotnet workload install wasm-tools`
 
 Then publish the app:
 
