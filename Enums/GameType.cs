@@ -1,9 +1,7 @@
-﻿
-namespace diabloblazor.Enums
+﻿namespace diabloblazor.Enums;
+
+public enum GameType
 {
-    public enum GameType
-    {
-        Shareware,
-        Retail
-    }
+    Shareware,
+    Retail
 }

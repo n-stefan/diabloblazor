@@ -1,23 +1,22 @@
-﻿namespace diabloblazor.Services
+﻿namespace diabloblazor.Services;
+
+public class ExceptionHandler : TextWriter
 {
-    public class ExceptionHandler : TextWriter
+    private readonly TextWriter _consoleWriter;
+
+    public override Encoding Encoding => Encoding.UTF8;
+
+    public event EventHandler<string>? OnException;
+
+    public ExceptionHandler()
     {
-        private readonly TextWriter _consoleWriter;
+        _consoleWriter = Console.Error;
+        Console.SetError(this);
+    }
 
-        public override Encoding Encoding => Encoding.UTF8;
-
-        public event EventHandler<string>? OnException;
-
-        public ExceptionHandler()
-        {
-            _consoleWriter = Console.Error;
-            Console.SetError(this);
-        }
-
-        public override void WriteLine(string message)
-        {
-            OnException?.Invoke(this, message);
-            _consoleWriter.WriteLine(message);
-        }
+    public override void WriteLine(string message)
+    {
+        OnException?.Invoke(this, message);
+        _consoleWriter.WriteLine(message);
     }
 }
