@@ -19,12 +19,14 @@ public class Worker
     {
         app.OnProgress(new Progress { Message = "Launching..." });
 
-        var url = $"{_navigationManager.BaseUri}{(app.GameType == GameType.Shareware ? _spawnWasmFilename : _retailWasmFilename)}";
+        var isShareware = app.GameType == GameType.Shareware;
+        var url = $"{_navigationManager.BaseUri}{(isShareware ? _spawnWasmFilename : _retailWasmFilename)}";
+
         var binary = await _httpClient.GetByteArrayAsync(url);
 
-        app.GameWasmHandle = _interop.InitWebAssemblyUnmarshalledBegin(app.GameType == GameType.Shareware, binary);
+        app.GameWasmHandle = _interop.InitWebAssemblyUnmarshalledBegin(isShareware, binary);
 
-        //await _interop.InitWebAssembly(app.GameType == GameType.Shareware, binary);
+        //await _interop.InitWebAssembly(isShareware, binary);
         //await RunGame(app);
     }
 
@@ -35,6 +37,7 @@ public class Worker
         var startTime = DateTime.Now;
 
         var version = Regex.Match(app.Configuration.Version, @"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled);
+
         await _interop.DApiInit((DateTime.Now - startTime).TotalMilliseconds, app.Offscreen ? 1 : 0,
             int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value));
 
