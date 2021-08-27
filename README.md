@@ -8,7 +8,7 @@ You can try it out on [GitHub Pages](https://n-stefan.github.io/diabloblazor). I
 
 [DiabloBlazorServer](https://github.com/n-stefan/diabloblazorserver) is the development server. Clone or fork it also unless you want to use another server instead (doesn't have to be ASP.NET).
 
-IDE: latest Visual Studio Community 2022 Preview with the Web Compiler extension installed.
+IDE: latest Visual Studio Community 2022 Preview.
 
 If you want to try out WebAssembly AOT compilation, install the following .NET SDK workload from an elevated command prompt:
 
@@ -17,7 +17,3 @@ If you want to try out WebAssembly AOT compilation, install the following .NET S
 Then publish the app:
 
 `dotnet publish -c Release`
-
-When running locally, make sure that:
-- Web Compiler has compiled site.scss
-- Library Manager has restored client-side libraries
