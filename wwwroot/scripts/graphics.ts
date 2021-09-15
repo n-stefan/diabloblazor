@@ -5,7 +5,7 @@ interface Image {
     y: number;
     width: number;
     height: number;
-    data: Uint8Array;
+    data: Uint8ClampedArray;
 }
 
 interface TextDef {
@@ -75,7 +75,7 @@ class Graphics {
         this.renderBatch = null;
     }
 
-    public drawBlit = (x: number, y: number, width: number, height: number, data: Uint8Array): void => {
+    public drawBlit = (x: number, y: number, width: number, height: number, data: Uint8ClampedArray): void => {
         this.renderBatch.images.push({ x, y, width, height, data: data.slice() });
     }
 
@@ -87,7 +87,7 @@ class Graphics {
         this.renderBatch.text.push({ x, y, text, color });
     }
 
-    public drawBelt = (items: Uint8Array): void => {
+    public drawBelt = (items: number[]): void => {
         //Do nothing
     }
 
