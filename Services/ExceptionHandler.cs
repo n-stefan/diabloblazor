@@ -14,8 +14,10 @@ public class ExceptionHandler : TextWriter
         Console.SetError(this);
     }
 
-    public override void WriteLine(string message)
+    public override void WriteLine(string? message)
     {
+        if (message is null)
+            throw new ArgumentNullException(nameof(message));
         OnException?.Invoke(this, message);
         _consoleWriter.WriteLine(message);
     }

@@ -24,21 +24,21 @@ public partial class Main
         (RenderInterval != 0) ? (1000d / RenderInterval).ToString("N2") : "0";
 
     [Inject]
-    private AppState AppState { get; set; }
+    private AppState AppState { get; set; } = default!;
     [Inject]
-    private Interop Interop { get; set; }
+    private Interop Interop { get; set; } = default!;
     [Inject]
-    private Worker Worker { get; set; }
+    private Worker Worker { get; set; } = default!;
     [Inject]
-    private ExceptionHandler ExceptionHandler { get; set; }
+    private ExceptionHandler ExceptionHandler { get; set; } = default!;
     [Inject]
-    private NavigationManager NavigationManager { get; set; }
+    private NavigationManager NavigationManager { get; set; } = default!;
     [Inject]
-    private HttpClient HttpClient { get; set; }
+    private HttpClient HttpClient { get; set; } = default!;
     [Inject]
-    private IConfiguration Config { get; set; }
+    private IConfiguration Config { get; set; } = default!;
     //[Inject]
-    //private IndexedDbManager IndexedDbManager { get; set; }
+    //private IndexedDbManager IndexedDbManager { get; set; } = default!;
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {
@@ -191,7 +191,10 @@ public partial class Main
 
     private async Task ParseSaveFile(ChangeEventArgs e)
     {
-        var name = ExtractFilename(e.Value.ToString()).ToLower();
+        var value = e.Value?.ToString();
+        if (value is null)
+            throw new NullReferenceException(nameof(value));
+        var name = ExtractFilename(value).ToLower();
         await Upload(name);
     }
 
@@ -218,7 +221,10 @@ public partial class Main
 
     private async Task ParseMpqFile(ChangeEventArgs e)
     {
-        var name = ExtractFilename(e.Value.ToString()).ToLower();
+        var value = e.Value?.ToString();
+        if (value is null)
+            throw new NullReferenceException(nameof(value));
+        var name = ExtractFilename(value).ToLower();
         await Start(name);
     }
 
