@@ -66,11 +66,14 @@ public partial class Main
     {
         //A common base class with at least ShiftKey, CtrlKey and AltKey would be nice
         if (e is MouseEventArgs me)
+        {
             return (/*(*/me.ShiftKey /*|| this.touchMods[TOUCH_SHIFT])*/ ? 1 : 0) + (me.CtrlKey ? 2 : 0) + (me.AltKey ? 4 : 0) /*+ (e.touches ? 8 : 0)*/;
-        else if (e is KeyboardEventArgs ke)
+        }
+        if (e is KeyboardEventArgs ke)
+        {
             return (/*(*/ke.ShiftKey /*|| this.touchMods[TOUCH_SHIFT])*/ ? 1 : 0) + (ke.CtrlKey ? 2 : 0) + (ke.AltKey ? 4 : 0) /*+ (e.touches ? 8 : 0)*/;
-        else
-            throw new ArgumentException($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs!");
+        }
+        throw new ArgumentException($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs!");
     }
 
     private static int GetKeyCode(KeyboardEventArgs e) =>
@@ -103,7 +106,9 @@ public partial class Main
         await InitFileSystem();
 
         if (await Interop.HasFile(spawnFilename, spawnFilesizes))
+        {
             AppState.HasSpawn = true;
+        }
 
         await InitSaves();
 
@@ -142,14 +147,20 @@ public partial class Main
         var keyCode = GetKeyCode(e);
 
         if (keyCode == -1)
+        {
             return;
+        }
 
         Interop.DApiKey(0, EventModifiers(e), keyCode);
 
         if (keyCode >= 32 && e.Key.Length == 1)
+        {
             Interop.DApiChar(e.Key[0]);
+        }
         else if (/*keyCode == 8 ||*/ keyCode == 13)
+        {
             Interop.DApiChar(keyCode);
+        }
     }
 
     private void OnCanvasKeyUp(KeyboardEventArgs e) =>
@@ -193,7 +204,9 @@ public partial class Main
     {
         var value = e.Value?.ToString();
         if (value is null)
+        {
             throw new NullReferenceException(nameof(value));
+        }
         var name = ExtractFilename(value).ToLower();
         await Upload(name);
     }
@@ -201,7 +214,9 @@ public partial class Main
     private async Task Upload(string name)
     {
         if (name is null)
+        {
             throw new ArgumentNullException(nameof(name));
+        }
 
         if (!name.EndsWith(".sv"))
         {
@@ -223,7 +238,9 @@ public partial class Main
     {
         var value = e.Value?.ToString();
         if (value is null)
+        {
             throw new NullReferenceException(nameof(value));
+        }
         var name = ExtractFilename(value).ToLower();
         await Start(name);
     }
@@ -242,7 +259,9 @@ public partial class Main
     private async Task RemoveSave(SaveGame saveGame)
     {
         if (!Interop.Confirm($"Are you sure you want to delete {saveGame.ShortName}?"))
+        {
             return;
+        }
 
         await Interop.RemoveFile(saveGame.Name);
         var saveToRemove = AppState.Saves.FirstOrDefault(x => x.Name == saveGame.Name);
@@ -269,19 +288,29 @@ public partial class Main
         else
         {
             if (AppState.HasSpawn)
+            {
                 await Worker.InitGame(this);
+            }
             else
+            {
                 await LoadSpawn();
+            }
         }
     }
 
     private async Task LoadRetail()
     {
         if (!await Interop.HasFile(retailFilename))
+        {
             if (isDrop)
+            {
                 await Interop.SetDropFile();
+            }
             else
+            {
                 await Interop.SetInputFile();
+            }
+        }
     }
 
     private async Task LoadSpawn()
@@ -370,7 +399,9 @@ public partial class Main
     public async Task OnExit()
     {
         if (AppState.Error)
+        {
             return;
+        }
 
         Timer?.Change(Timeout.Infinite, Timeout.Infinite);
         Timer?.Dispose();
@@ -385,7 +416,9 @@ public partial class Main
         await Worker.RunGame(this);
 
         if (GameWasmHandle.IsAllocated)
+        {
             GameWasmHandle.Free();
+        }
     }
 
     [JSInvokable]
@@ -394,7 +427,9 @@ public partial class Main
         await Worker.InitGame(this);
 
         if (spawnMpqHandle.IsAllocated)
+        {
             spawnMpqHandle.Free();
+        }
     }
 
     //[JSInvokable]
