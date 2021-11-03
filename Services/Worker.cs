@@ -17,12 +17,17 @@ public class Worker
 
     public async Task InitGame(Main app)
     {
+        if (app is null)
+        {
+            throw new ArgumentNullException(nameof(app));
+        }
+
         app.OnProgress(new Progress { Message = "Launching..." });
 
         var isShareware = app.GameType == GameType.Shareware;
         var url = $"{_navigationManager.BaseUri}{(isShareware ? _spawnWasmFilename : _retailWasmFilename)}";
 
-        var binary = await _httpClient.GetByteArrayAsync(url);
+        var binary = await _httpClient.GetByteArrayAsync(new Uri(url));
 
         app.GameWasmHandle = _interop.InitWebAssemblyUnmarshalledBegin(isShareware, binary);
 
@@ -32,6 +37,11 @@ public class Worker
 
     public async Task RunGame(Main app)
     {
+        if (app is null)
+        {
+            throw new ArgumentNullException(nameof(app));
+        }
+
         //await _interop.SNetInitWebsocket();
 
         var startTime = DateTime.Now;

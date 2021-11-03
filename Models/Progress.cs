@@ -6,7 +6,7 @@ public struct Progress
 
     public int BytesLoaded { get; set; }
 
-    public double PercentLoaded { get => Total != 0 ? Round(100d * BytesLoaded / Total) : 100d; }
+    public double PercentLoaded => Total != 0 ? Round(100d * BytesLoaded / Total) : 100d;
 
     public int Total { get; set; }
 }

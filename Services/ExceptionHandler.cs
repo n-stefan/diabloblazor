@@ -6,7 +6,7 @@ public class ExceptionHandler : TextWriter
 
     public override Encoding Encoding => Encoding.UTF8;
 
-    public event EventHandler<string>? OnException;
+    public event EventHandler<ExceptionEventArgs>? Exception;
 
     public ExceptionHandler()
     {
@@ -14,13 +14,14 @@ public class ExceptionHandler : TextWriter
         Console.SetError(this);
     }
 
-    public override void WriteLine(string? message)
+    public override void WriteLine(string? value)
     {
-        if (message is null)
+        if (value is null)
         {
-            throw new ArgumentNullException(nameof(message));
+            throw new ArgumentNullException(nameof(value));
         }
-        OnException?.Invoke(this, message);
-        _consoleWriter.WriteLine(message);
+
+        Exception?.Invoke(this, new ExceptionEventArgs { Message = value });
+        _consoleWriter.WriteLine(value);
     }
 }

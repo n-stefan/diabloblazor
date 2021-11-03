@@ -63,6 +63,11 @@ public class Interop
 
     public GCHandle InitWebAssemblyUnmarshalledBegin(bool isSpawn, byte[] data)
     {
+        if (data is null)
+        {
+            throw new ArgumentNullException(nameof(data));
+        }
+
         var gameWasmHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
         _jsUnmarshalledRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
             isSpawn, gameWasmHandle.AddrOfPinnedObject(), data.Length);
@@ -71,6 +76,11 @@ public class Interop
 
     public GCHandle StoreSpawnUnmarshalledBegin(byte[] data)
     {
+        if (data is null)
+        {
+            throw new ArgumentNullException(nameof(data));
+        }
+
         var spawnMpqHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
         _jsUnmarshalledRuntime.InvokeUnmarshalled<IntPtr, int, object>("interop.fileStore.storeSpawnUnmarshalledBegin", spawnMpqHandle.AddrOfPinnedObject(), data.Length);
         return spawnMpqHandle;

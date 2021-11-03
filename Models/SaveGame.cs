@@ -10,6 +10,11 @@ public struct SaveGame
 
     public SaveGame(string name)
     {
+        if (name is null)
+        {
+            throw new ArgumentNullException(nameof(name));
+        }
+
         Name = name;
         ShortName = Path.GetFileNameWithoutExtension(name);
         GameType = name.ToLower().StartsWith("spawn") ? GameType.Shareware : GameType.Retail;

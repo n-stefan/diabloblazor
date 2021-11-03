@@ -114,7 +114,7 @@ public partial class Main
 
         canvasRect = await Interop.GetCanvasRect();
 
-        ExceptionHandler.OnException += (_, message) => Interop.Alert($"An error has occured: {message}");
+        ExceptionHandler.Exception += (_, e) => Interop.Alert($"An error has occured: {e.Message}");
 
         await Interop.AddEventListeners();
 
@@ -193,8 +193,13 @@ public partial class Main
     private void CompressMPQ() =>
         AppState.Compress = true;
 
-    private static string ExtractFilename(string path)
+    private static string ExtractFilename(string? path)
     {
+        if (path is null)
+        {
+            throw new ArgumentNullException(nameof(path));
+        }
+
         //Path.GetFileName doesn't seem to do the trick
         var index = path.LastIndexOf(@"\");
         return (index != -1) ? path[(index + 1)..] : path;
@@ -203,10 +208,6 @@ public partial class Main
     private async Task ParseSaveFile(ChangeEventArgs e)
     {
         var value = e.Value?.ToString();
-        if (value is null)
-        {
-            throw new NullReferenceException(nameof(value));
-        }
         var name = ExtractFilename(value).ToLower();
         await Upload(name);
     }
@@ -237,10 +238,6 @@ public partial class Main
     private async Task ParseMpqFile(ChangeEventArgs e)
     {
         var value = e.Value?.ToString();
-        if (value is null)
-        {
-            throw new NullReferenceException(nameof(value));
-        }
         var name = ExtractFilename(value).ToLower();
         await Start(name);
     }
@@ -343,7 +340,7 @@ public partial class Main
             //if (!spawnFilesizes.Contains(filesize))
             //    throw new Exception("Invalid spawn.mpq size. Try clearing the cache and refreshing the page.");
 
-            var binary = await HttpClient.GetWithProgressAsync(url, "Downloading...", spawnFilesizes[1], 524_288, OnProgress);
+            var binary = await HttpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], 524_288, OnProgress);
             spawnMpqHandle = Interop.StoreSpawnUnmarshalledBegin(binary);
         }
     }
@@ -404,7 +401,10 @@ public partial class Main
         }
 
         Timer?.Change(Timeout.Infinite, Timeout.Infinite);
-        Timer?.Dispose();
+        if (Timer != null)
+        {
+            await Timer.DisposeAsync();
+        }
         Timer = null;
 
         await Interop.Reload();
