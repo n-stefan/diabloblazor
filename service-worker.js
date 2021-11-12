@@ -5,7 +5,7 @@ async function onInstall(event) {
     console.info('Installing service worker');
     await caches.delete(cacheName);
     await caches.open(cacheName).then(cache => cache.addAll([
-        '_framework/blazor.boot.json',
+        '_framework/blazor.boot.json.br',
         '_framework/blazor.webassembly.js',
         '_framework/dotnet.6.0.0.zaltyhy3q9.js',
         'index.html',
