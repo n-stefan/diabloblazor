@@ -1,12 +1,12 @@
 ﻿namespace diabloblazor.Models;
 
-public struct Progress
+public record struct Progress
 {
-    public string Message { get; set; }
+    public string Message { get; init; }
 
-    public int BytesLoaded { get; set; }
+    public int Total { get; init; }
+
+    public int BytesLoaded { get; init; }
 
     public double PercentLoaded => Total != 0 ? Round(100d * BytesLoaded / Total) : 100d;
-
-    public int Total { get; set; }
 }

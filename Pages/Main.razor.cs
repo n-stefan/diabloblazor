@@ -99,7 +99,7 @@ public partial class Main
 
     protected override async Task OnInitializedAsync()
     {
-        Configuration = new Configuration(Config["Version"]); //await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
+        Configuration = new Configuration { Version = Config["Version"] }; //await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
 
         RenderInterval = await Interop.GetRenderInterval();
 

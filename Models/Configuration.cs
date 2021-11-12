@@ -1,9 +1,6 @@
 ﻿namespace diabloblazor.Models;
 
-public struct Configuration
+public record struct Configuration
 {
-    public string Version { get; }
-
-    public Configuration(string version) =>
-        Version = version;
+    public string Version { get; init; }
 }

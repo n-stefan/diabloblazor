@@ -1,16 +1,16 @@
 ﻿namespace diabloblazor.Models;
 
-public struct ClientRect
+public record struct ClientRect
 {
-    public double Bottom { get; set; }
+    public double Bottom { get; init; }
 
-    public double Left { get; set; }
+    public double Left { get; init; }
 
-    public double Right { get; set; }
+    public double Right { get; init; }
 
-    public double Top { get; set; }
+    public double Top { get; init; }
 
-    //public double Height { get; set; }
+    //public double Height { get; init; }
 
-    //public double Width { get; set; }
+    //public double Width { get; init; }
 }
