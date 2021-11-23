@@ -70,8 +70,6 @@ class Interop {
             if (this._fileStore.isDropFile(e))
                 e.preventDefault();
         });
-
-        this.canvas.addEventListener('contextmenu', (e: Event): void => e.preventDefault());
     }
 
     public getCanvasRect = (): ClientRect => {

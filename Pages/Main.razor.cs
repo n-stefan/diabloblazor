@@ -171,6 +171,11 @@ public partial class Main
     private void OnCanvasKeyUp(KeyboardEventArgs e) =>
         Interop.DApiKey(1, EventModifiers(e), GetKeyCode(e));
 
+    private static void OnCanvasContextMenu(MouseEventArgs _)
+    {
+        //Do nothing
+    }
+
     private void OnMainDragEnter(DragEventArgs e) =>
         SetDropping(1);
 
