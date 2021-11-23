@@ -71,10 +71,6 @@ class Interop {
                 e.preventDefault();
         });
 
-        this.canvas.addEventListener('keydown', (e: KeyboardEvent): void => {
-            if (e.keyCode === 8 || e.keyCode === 9 || (e.keyCode >= 112 && e.keyCode <= 119))
-                e.preventDefault();
-        });
         this.canvas.addEventListener('contextmenu', (e: Event): void => e.preventDefault());
     }
 

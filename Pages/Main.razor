@@ -5,8 +5,8 @@
         <div class="inner">
             @if (!AppState.Error)
             {
-                <canvas id="canvas" width="640" height="480" tabindex="1" @onkeydown="OnCanvasKeyDown" @onkeyup="OnCanvasKeyUp"
-                        @onmousemove="OnCanvasMouseMove" @onmousedown="OnCanvasMouseDown" @onmouseup="OnCanvasMouseUp" />
+                <canvas id="canvas" width="640" height="480" tabindex="1" @onkeydown="OnCanvasKeyDown" @onkeydown:preventDefault="preventDefaultKeyDown"
+                        @onkeyup="OnCanvasKeyUp" @onmousemove="OnCanvasMouseMove" @onmousedown="OnCanvasMouseDown" @onmouseup="OnCanvasMouseUp" />
             }
         </div>
     </div>

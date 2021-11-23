@@ -8,6 +8,7 @@ public partial class Main
     private const string retailFilename = "diabdat.mpq";
     private string? saveName;
     private bool isDrop;
+    private bool preventDefaultKeyDown;
     private ClientRect canvasRect;
     private ElementReference downloadLink;
     private GCHandle spawnMpqHandle;
@@ -149,6 +150,10 @@ public partial class Main
         if (keyCode == -1)
         {
             return;
+        }
+        if (keyCode is 8 or 9 or (>= 112 and <= 119))
+        {
+            preventDefaultKeyDown = true;
         }
 
         Interop.DApiKey(0, EventModifiers(e), keyCode);
