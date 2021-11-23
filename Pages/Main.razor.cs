@@ -9,6 +9,7 @@ public partial class Main
     private string? saveName;
     private bool isDrop;
     private bool preventDefaultKeyDown;
+    private bool preventDefaultDragOver;
     private ClientRect canvasRect;
     private ElementReference downloadLink;
     private GCHandle spawnMpqHandle;
@@ -181,6 +182,14 @@ public partial class Main
 
     private void OnMainDragLeave(DragEventArgs e) =>
         SetDropping(-1);
+
+    private void OnMainDragOver(DragEventArgs e)
+    {
+        if (e.DataTransfer.Items.Any(x => x.Kind == "file") || e.DataTransfer.Files.Any())
+        {
+            preventDefaultDragOver = true;
+        }
+    }
 
     private void SetDropping(int change) =>
         AppState.Dropping = Max(AppState.Dropping + change, 0);

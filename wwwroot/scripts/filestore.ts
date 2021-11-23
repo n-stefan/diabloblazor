@@ -67,17 +67,6 @@ class FileStore {
         return { name: filename, data: array };
     }
 
-    public isDropFile = (event: DragEvent): boolean => {
-        const items = event.dataTransfer.items;
-        if (items)
-            for (let i = 0; i < items.length; ++i)
-                if (items[i].kind === 'file')
-                    return true;
-        if (event.dataTransfer.files.length)
-            return true;
-        return false;
-    }
-
     public onDropFile = (event: DragEvent): void => {
         this.dropFile = this.getDropFile(event);
         if (this.dropFile) {
@@ -193,5 +182,16 @@ class FileStore {
 
     //public setFile = (name: string, array: Uint8Array): void => {
     //    this.files.set(name.toLowerCase(), array);
+    //}
+
+    //public isDropFile = (event: DragEvent): boolean => {
+    //    const items = event.dataTransfer.items;
+    //    if (items)
+    //        for (let i = 0; i < items.length; ++i)
+    //            if (items[i].kind === 'file')
+    //                return true;
+    //    if (event.dataTransfer.files.length)
+    //        return true;
+    //    return false;
     //}
 }

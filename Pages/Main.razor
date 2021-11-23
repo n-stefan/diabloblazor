@@ -1,6 +1,7 @@
 ﻿@page "/"
 
-<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnMainDragEnter" @ondragleave="OnMainDragLeave">
+<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnMainDragEnter" @ondragleave="OnMainDragLeave"
+     @ondragover="OnMainDragOver" @ondragover:preventDefault="preventDefaultDragOver">
     <div class="Body">
         <div class="inner">
             @if (!AppState.Error)

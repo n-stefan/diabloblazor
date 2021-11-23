@@ -61,15 +61,10 @@ class Interop {
     }
 
     public addEventListeners = (): void => {
-        //TODO: preventDefault in Blazor as soon as supported
         window.addEventListener('resize', (): void => this._dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
 
         const main = document.getElementById('main');
         main.addEventListener('drop', (e: DragEvent): void => this._fileStore.onDropFile(e));
-        main.addEventListener('dragover', (e: DragEvent): void => {
-            if (this._fileStore.isDropFile(e))
-                e.preventDefault();
-        });
     }
 
     public getCanvasRect = (): ClientRect => {
