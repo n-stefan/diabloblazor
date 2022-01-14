@@ -10,10 +10,10 @@ You can try it out on [GitHub Pages](https://n-stefan.github.io/diabloblazor). I
 
 IDE: latest Visual Studio Community 2022 Preview.
 
-If you want to try out WebAssembly AOT compilation, install the following .NET SDK workload from an elevated command prompt:
+The `wasm-tools` SDK workload is required, install it from an elevated command prompt:
 
 `dotnet workload install wasm-tools`
 
-Then publish the app:
+If you want to try out WebAssembly AOT compilation, publish the app:
 
 `dotnet publish -c Release`
