@@ -12,7 +12,7 @@ async function onInstall(event: /*ExtendableEvent*/any): Promise<void> {
     await caches.open(cacheName).then(cache => cache.addAll([
         location.hostname === 'localhost' ? '_framework/blazor.boot.json' : '_framework/blazor.boot.json.br',
         '_framework/blazor.webassembly.js',
-        '_framework/dotnet.6.0.0.tj42mwroj7.js',
+        '_framework/dotnet..wv7tfl1my9.js',
         'index.html',
         'dist/decode.min.js',
         'dist/external.min.css',
@@ -26,10 +26,10 @@ async function onInstall(event: /*ExtendableEvent*/any): Promise<void> {
         'manifest.json',
         'appsettings.json',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0',
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0'
         //'spawn.mpq', //25MB
-        'Diablo.wasm',
-        'DiabloSpawn.wasm'
+        //'Diablo.wasm',
+        //'DiabloSpawn.wasm'
     ]));
 }
 

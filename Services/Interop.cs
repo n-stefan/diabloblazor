@@ -61,18 +61,18 @@ public class Interop
     public ValueTask SetRenderInterval(int renderInterval) =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.setRenderInterval", renderInterval);
 
-    public GCHandle InitWebAssemblyUnmarshalledBegin(bool isSpawn, byte[] data)
-    {
-        if (data is null)
-        {
-            throw new ArgumentNullException(nameof(data));
-        }
+    //public GCHandle InitWebAssemblyUnmarshalledBegin(bool isSpawn, byte[] data)
+    //{
+    //    if (data is null)
+    //    {
+    //        throw new ArgumentNullException(nameof(data));
+    //    }
 
-        var gameWasmHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-        _jsUnmarshalledRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
-            isSpawn, gameWasmHandle.AddrOfPinnedObject(), data.Length);
-        return gameWasmHandle;
-    }
+    //    var gameWasmHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+    //    _jsUnmarshalledRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
+    //        isSpawn, gameWasmHandle.AddrOfPinnedObject(), data.Length);
+    //    return gameWasmHandle;
+    //}
 
     public GCHandle StoreSpawnUnmarshalledBegin(byte[] data)
     {
@@ -92,23 +92,23 @@ public class Interop
     public ValueTask InitSound() =>
         _jsRuntime.InvokeVoidAsync("interop.sound.initSound");
 
-    public ValueTask DApiInit(double currentDateTime, int offScreen, int version0, int version1, int version2) =>
-        _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiInit", currentDateTime, offScreen, version0, version1, version2);
+    //public ValueTask DApiInit(double currentDateTime, int offScreen, int version0, int version1, int version2) =>
+    //    _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiInit", currentDateTime, offScreen, version0, version1, version2);
 
-    public void DApiMouse(int action, int button, int eventModifiers, double x, double y) =>
-        _jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiMouse", action, button, eventModifiers, x, y);
+    //public void DApiMouse(int action, int button, int eventModifiers, double x, double y) =>
+    //    _jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiMouse", action, button, eventModifiers, x, y);
     //_jsRuntime.InvokeVoidAsync("interop.webassembly.dapiMouse", action, button, eventModifiers, x, y);
 
-    public void DApiKey(int action, int eventModifiers, int key) =>
-        _jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiKey", action, eventModifiers, key);
+    //public void DApiKey(int action, int eventModifiers, int key) =>
+    //    _jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiKey", action, eventModifiers, key);
     //_jsRuntime.InvokeVoidAsync("interop.webassembly.dapiKey", action, eventModifiers, key);
 
-    public void DApiChar(int chr) =>
-        _jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiChar", chr);
+    //public void DApiChar(int chr) =>
+    //    _jsInProcessRuntime.InvokeVoid("interop.webassembly.dapiChar", chr);
     //_jsRuntime.InvokeVoidAsync("interop.webassembly.dapiChar", chr);
 
-    public ValueTask CallApi(string api, params object[] args) =>
-        _jsRuntime.InvokeVoidAsync("interop.webassembly.callApi", api, args);
+    //public ValueTask CallApi(string api, params object[] args) =>
+    //    _jsRuntime.InvokeVoidAsync("interop.webassembly.callApi", api, args);
 
     public ValueTask<ClientRect> GetCanvasRect() =>
         _jsRuntime.InvokeAsync<ClientRect>("interop.getCanvasRect");

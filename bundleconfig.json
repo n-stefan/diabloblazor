@@ -39,13 +39,13 @@
   {
     "outputFileName": "wwwroot/dist/diablo.min.js",
     "inputFiles": [
-      "wwwroot/scripts/Diablo.js",
-      "wwwroot/scripts/DiabloSpawn.js",
-      "wwwroot/scripts/helper.js",
+      //"wwwroot/scripts/Diablo.js",
+      //"wwwroot/scripts/DiabloSpawn.js",
+      //"wwwroot/scripts/helper.js",
       "wwwroot/scripts/graphics.js",
       "wwwroot/scripts/sound.js",
       "wwwroot/scripts/progress.js",
-      "wwwroot/scripts/webassembly.js",
+      //"wwwroot/scripts/webassembly.js",
       "wwwroot/scripts/filestore.js",
       "wwwroot/scripts/interop.js"
     ],

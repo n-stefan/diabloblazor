@@ -20,7 +20,7 @@ public partial class Main
     public Configuration Configuration { get; private set; }
     public GameType GameType { get; private set; }
     public Timer? Timer { private get; set; }
-    public GCHandle GameWasmHandle { private get; set; }
+    //public GCHandle GameWasmHandle { private get; set; }
 
     private string FPSTarget =>
         (RenderInterval != 0) ? (1000d / RenderInterval).ToString("N2") : "0";
@@ -129,19 +129,19 @@ public partial class Main
     private void OnCanvasMouseMove(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
-        Interop.DApiMouse(0, 0, EventModifiers(e), x, y);
+        NativeImports.DApi_Mouse(0, 0, EventModifiers(e), Convert.ToInt32(x), Convert.ToInt32(y));
     }
 
     private void OnCanvasMouseDown(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
-        Interop.DApiMouse(1, MouseButton(e), EventModifiers(e), x, y);
+        NativeImports.DApi_Mouse(1, MouseButton(e), EventModifiers(e), Convert.ToInt32(x), Convert.ToInt32(y));
     }
 
     private void OnCanvasMouseUp(MouseEventArgs e)
     {
         var (x, y) = MousePos(e);
-        Interop.DApiMouse(2, MouseButton(e), EventModifiers(e), x, y);
+        NativeImports.DApi_Mouse(2, MouseButton(e), EventModifiers(e), Convert.ToInt32(x), Convert.ToInt32(y));
     }
 
     private void OnCanvasKeyDown(KeyboardEventArgs e)
@@ -157,20 +157,20 @@ public partial class Main
             preventDefaultKeyDown = true;
         }
 
-        Interop.DApiKey(0, EventModifiers(e), keyCode);
+        NativeImports.DApi_Key(0, EventModifiers(e), keyCode);
 
         if (keyCode >= 32 && e.Key.Length == 1)
         {
-            Interop.DApiChar(e.Key[0]);
+            NativeImports.DApi_Char(e.Key[0]);
         }
         else if (/*keyCode == 8 ||*/ keyCode == 13)
         {
-            Interop.DApiChar(keyCode);
+            NativeImports.DApi_Char(keyCode);
         }
     }
 
     private void OnCanvasKeyUp(KeyboardEventArgs e) =>
-        Interop.DApiKey(1, EventModifiers(e), GetKeyCode(e));
+        NativeImports.DApi_Key(1, EventModifiers(e), GetKeyCode(e));
 
     private static void OnCanvasContextMenu(MouseEventArgs _)
     {
@@ -299,13 +299,13 @@ public partial class Main
         if (GameType == GameType.Retail)
         {
             await LoadRetail();
-            await Worker.InitGame(this);
+            Worker.InitGame(this);
         }
         else
         {
             if (AppState.HasSpawn)
             {
-                await Worker.InitGame(this);
+                Worker.InitGame(this);
             }
             else
             {
@@ -429,21 +429,21 @@ public partial class Main
         await Interop.Reload();
     }
 
-    [JSInvokable]
-    public async Task InitWebAssemblyUnmarshalledEnd()
-    {
-        await Worker.RunGame(this);
+    //[JSInvokable]
+    //public async Task InitWebAssemblyUnmarshalledEnd()
+    //{
+    //    await Worker.RunGame(this);
 
-        if (GameWasmHandle.IsAllocated)
-        {
-            GameWasmHandle.Free();
-        }
-    }
+    //    if (GameWasmHandle.IsAllocated)
+    //    {
+    //        GameWasmHandle.Free();
+    //    }
+    //}
 
     [JSInvokable]
-    public async Task StoreSpawnUnmarshalledEnd()
+    public void StoreSpawnUnmarshalledEnd()
     {
-        await Worker.InitGame(this);
+        Worker.InitGame(this);
 
         if (spawnMpqHandle.IsAllocated)
         {
@@ -451,7 +451,7 @@ public partial class Main
         }
     }
 
-    //[JSInvokable]
-    //public void SetCursorPos(double x, double y) =>
-    //    Interop.DApiMouse(0, 0, 0, x, y);
+    [JSInvokable]
+    public void SetCursorPos(double x, double y) =>
+        NativeImports.DApi_Mouse(0, 0, 0, Convert.ToInt32(x), Convert.ToInt32(y));
 }

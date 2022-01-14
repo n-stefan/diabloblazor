@@ -1,4 +1,4 @@
-﻿
+﻿/*
 declare const Diablo: any;
 declare const DiabloSpawn: any;
 
@@ -61,3 +61,4 @@ class Webassembly {
     //        this.wasm._SNet_InitWebsocket();
     //}
 }
+*/

@@ -1,4 +1,4 @@
-﻿
+﻿/*
 //declare const base64js: any;
 
 class Helper {
@@ -27,3 +27,4 @@ class Helper {
     //    return base64js.toByteArray(base64);
     //}
 }
+*/

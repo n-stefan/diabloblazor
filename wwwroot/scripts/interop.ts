@@ -9,7 +9,7 @@
 //declare const axios: any;
 
 class Interop {
-    private _webassembly: Webassembly;
+    //private _webassembly: Webassembly;
     private _graphics: Graphics;
     private _sound: Sound;
     private _fileStore: FileStore;
@@ -17,7 +17,7 @@ class Interop {
     private _dotNetReference: any;
 
     constructor() {
-        this._webassembly = new Webassembly();
+        //this._webassembly = new Webassembly();
         this._graphics = new Graphics();
         this._sound = new Sound();
         this._fileStore = new FileStore();
@@ -30,9 +30,9 @@ class Interop {
         windowAny.DApi.exit_error = this.exitError;
     }
 
-    public get webassembly(): Webassembly {
-        return this._webassembly;
-    }
+    //public get webassembly(): Webassembly {
+    //    return this._webassembly;
+    //}
 
     public get graphics(): Graphics {
         return this._graphics;
@@ -92,8 +92,8 @@ class Interop {
     }
 
     public setCursor = (x: number, y: number): void => {
-        this._webassembly.dapiMouse(0, 0, 0, x, y);
-        //this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
+        //this._webassembly.dapiMouse(0, 0, 0, x, y);
+        this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
     }
 
     public reload = (): void => {
