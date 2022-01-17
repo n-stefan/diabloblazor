@@ -8,7 +8,7 @@ You can try it out on [GitHub Pages](https://n-stefan.github.io/diabloblazor). I
 
 [DiabloBlazorServer](https://github.com/n-stefan/diabloblazorserver) is the development server. Clone or fork it also unless you want to use another server instead (doesn't have to be ASP.NET).
 
-The source code of game itself is [here](https://github.com/n-stefan/devilution).
+Source code of the game itself is [here](https://github.com/n-stefan/devilution).
 
 IDE: latest Visual Studio Community 2022 Preview.
 
