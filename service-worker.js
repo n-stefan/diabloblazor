@@ -5,9 +5,9 @@ async function onInstall(event) {
     console.info('Installing service worker');
     await caches.delete(cacheName);
     await caches.open(cacheName).then(cache => cache.addAll([
-        '_framework/blazor.boot.json.br',
+        location.hostname === 'localhost' ? '_framework/blazor.boot.json' : '_framework/blazor.boot.json.br',
         '_framework/blazor.webassembly.js',
-        '_framework/dotnet.6.0.0.zaltyhy3q9.js',
+        '_framework/dotnet.6.0.1.zaltyhy3q9.js',
         'index.html',
         'dist/decode.min.js',
         'dist/external.min.css',
@@ -21,9 +21,7 @@ async function onInstall(event) {
         'manifest.json',
         'appsettings.json',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0',
-        'Diablo.wasm',
-        'DiabloSpawn.wasm'
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0'
     ]));
 }
 async function onFetch(event) {
