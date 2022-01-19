@@ -17,7 +17,7 @@ public partial class Main
 
     public bool Offscreen { get; private set; }
     public int RenderInterval { get; private set; }
-    public Configuration Configuration { get; private set; }
+    public Config Config { get; private set; }
     public GameType GameType { get; private set; }
     public Timer? Timer { private get; set; }
     //public GCHandle GameWasmHandle { private get; set; }
@@ -29,8 +29,8 @@ public partial class Main
     private AppState AppState { get; set; } = default!;
     [Inject]
     private Interop Interop { get; set; } = default!;
-    [Inject]
-    private Worker Worker { get; set; } = default!;
+    //[Inject]
+    //private Worker Worker { get; set; } = default!;
     [Inject]
     private ExceptionHandler ExceptionHandler { get; set; } = default!;
     [Inject]
@@ -38,7 +38,7 @@ public partial class Main
     [Inject]
     private HttpClient HttpClient { get; set; } = default!;
     [Inject]
-    private IConfiguration Config { get; set; } = default!;
+    private IConfiguration Configuration { get; set; } = default!;
     //[Inject]
     //private IndexedDbManager IndexedDbManager { get; set; } = default!;
 
@@ -101,7 +101,7 @@ public partial class Main
 
     protected override async Task OnInitializedAsync()
     {
-        Configuration = new Configuration { Version = Config["Version"] }; //await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
+        Config = new Config { Version = Configuration["Version"] }; //await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
 
         RenderInterval = await Interop.GetRenderInterval();
 
@@ -169,7 +169,7 @@ public partial class Main
         }
     }
 
-    private void OnCanvasKeyUp(KeyboardEventArgs e) =>
+    private static void OnCanvasKeyUp(KeyboardEventArgs e) =>
         NativeImports.DApi_Key(1, EventModifiers(e), GetKeyCode(e));
 
     private static void OnCanvasContextMenu(MouseEventArgs _)
@@ -452,6 +452,6 @@ public partial class Main
     }
 
     [JSInvokable]
-    public void SetCursorPos(double x, double y) =>
+    public static void SetCursorPos(double x, double y) =>
         NativeImports.DApi_Mouse(0, 0, 0, Convert.ToInt32(x), Convert.ToInt32(y));
 }

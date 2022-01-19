@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Services;
 
-public class Worker
+public static class Worker
 {
     //private const string _spawnWasmFilename = "DiabloSpawn.wasm";
     //private const string _retailWasmFilename = "Diablo.wasm";
@@ -15,7 +15,7 @@ public class Worker
     //    _interop = interop;
     //}
 
-    public void InitGame(Main app)
+    public static void InitGame(Main app)
     {
         if (app is null)
         {
@@ -35,7 +35,7 @@ public class Worker
         RunGame(app);
     }
 
-    public void RunGame(Main app)
+    public static void RunGame(Main app)
     {
         if (app is null)
         {
@@ -46,7 +46,7 @@ public class Worker
 
         var startTime = DateTime.Now;
 
-        var version = Regex.Match(app.Configuration.Version, @"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled);
+        var version = Regex.Match(app.Config.Version, @"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled);
 
         var spawn = app.GameType == GameType.Shareware ? 1 : 0;
 

@@ -3,7 +3,7 @@
 builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<AppState>();
 builder.Services.AddScoped<Interop>();
-builder.Services.AddScoped<Worker>();
+//builder.Services.AddScoped<Worker>();
 builder.Services.AddSingleton<ExceptionHandler>();
 //builder.Services.AddIndexedDB(db =>
 //{
