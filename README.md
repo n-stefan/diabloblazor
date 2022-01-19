@@ -8,12 +8,14 @@ You can try it out on [GitHub Pages](https://n-stefan.github.io/diabloblazor). I
 
 [DiabloBlazorServer](https://github.com/n-stefan/diabloblazorserver) is the development server. Clone or fork it also unless you want to use another server instead (doesn't have to be ASP.NET).
 
+The game's source code is [here](https://github.com/n-stefan/devilution).
+
 IDE: latest Visual Studio Community 2022 Preview.
 
-If you want to try out WebAssembly AOT compilation, install the following .NET SDK workload from an elevated command prompt:
+The `wasm-tools` SDK workload is required, install it from an elevated command prompt:
 
 `dotnet workload install wasm-tools`
 
-Then publish the app:
+If you want to try out WebAssembly AOT compilation, publish the app:
 
 `dotnet publish -c Release`
