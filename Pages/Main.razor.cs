@@ -29,8 +29,6 @@ public partial class Main
     private AppState AppState { get; set; } = default!;
     [Inject]
     private Interop Interop { get; set; } = default!;
-    //[Inject]
-    //private Worker Worker { get; set; } = default!;
     [Inject]
     private ExceptionHandler ExceptionHandler { get; set; } = default!;
     [Inject]
@@ -39,6 +37,8 @@ public partial class Main
     private HttpClient HttpClient { get; set; } = default!;
     [Inject]
     private IConfiguration Configuration { get; set; } = default!;
+    //[Inject]
+    //private Worker Worker { get; set; } = default!;
     //[Inject]
     //private IndexedDbManager IndexedDbManager { get; set; } = default!;
 
@@ -429,17 +429,6 @@ public partial class Main
         await Interop.Reload();
     }
 
-    //[JSInvokable]
-    //public async Task InitWebAssemblyUnmarshalledEnd()
-    //{
-    //    await Worker.RunGame(this);
-
-    //    if (GameWasmHandle.IsAllocated)
-    //    {
-    //        GameWasmHandle.Free();
-    //    }
-    //}
-
     [JSInvokable]
     public void StoreSpawnUnmarshalledEnd()
     {
@@ -454,4 +443,15 @@ public partial class Main
     [JSInvokable]
     public static void SetCursorPos(double x, double y) =>
         NativeImports.DApi_Mouse(0, 0, 0, Convert.ToInt32(x), Convert.ToInt32(y));
+
+    //[JSInvokable]
+    //public async Task InitWebAssemblyUnmarshalledEnd()
+    //{
+    //    await Worker.RunGame(this);
+
+    //    if (GameWasmHandle.IsAllocated)
+    //    {
+    //        GameWasmHandle.Free();
+    //    }
+    //}
 }

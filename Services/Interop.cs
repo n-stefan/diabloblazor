@@ -61,19 +61,6 @@ public class Interop
     public ValueTask SetRenderInterval(int renderInterval) =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.setRenderInterval", renderInterval);
 
-    //public GCHandle InitWebAssemblyUnmarshalledBegin(bool isSpawn, byte[] data)
-    //{
-    //    if (data is null)
-    //    {
-    //        throw new ArgumentNullException(nameof(data));
-    //    }
-
-    //    var gameWasmHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-    //    _jsUnmarshalledRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
-    //        isSpawn, gameWasmHandle.AddrOfPinnedObject(), data.Length);
-    //    return gameWasmHandle;
-    //}
-
     public GCHandle StoreSpawnUnmarshalledBegin(byte[] data)
     {
         if (data is null)
@@ -92,6 +79,28 @@ public class Interop
     public ValueTask InitSound() =>
         _jsRuntime.InvokeVoidAsync("interop.sound.initSound");
 
+    public ValueTask<ClientRect> GetCanvasRect() =>
+        _jsRuntime.InvokeAsync<ClientRect>("interop.getCanvasRect");
+
+    public ValueTask Reload() =>
+        _jsRuntime.InvokeVoidAsync("interop.reload");
+
+    public ValueTask AddEventListeners() =>
+        _jsRuntime.InvokeVoidAsync("interop.addEventListeners");
+
+    //public GCHandle InitWebAssemblyUnmarshalledBegin(bool isSpawn, byte[] data)
+    //{
+    //    if (data is null)
+    //    {
+    //        throw new ArgumentNullException(nameof(data));
+    //    }
+
+    //    var gameWasmHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+    //    _jsUnmarshalledRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
+    //        isSpawn, gameWasmHandle.AddrOfPinnedObject(), data.Length);
+    //    return gameWasmHandle;
+    //}
+
     //public ValueTask DApiInit(double currentDateTime, int offScreen, int version0, int version1, int version2) =>
     //    _jsRuntime.InvokeVoidAsync("interop.webassembly.dapiInit", currentDateTime, offScreen, version0, version1, version2);
 
@@ -109,15 +118,6 @@ public class Interop
 
     //public ValueTask CallApi(string api, params object[] args) =>
     //    _jsRuntime.InvokeVoidAsync("interop.webassembly.callApi", api, args);
-
-    public ValueTask<ClientRect> GetCanvasRect() =>
-        _jsRuntime.InvokeAsync<ClientRect>("interop.getCanvasRect");
-
-    public ValueTask Reload() =>
-        _jsRuntime.InvokeVoidAsync("interop.reload");
-
-    public ValueTask AddEventListeners() =>
-        _jsRuntime.InvokeVoidAsync("interop.addEventListeners");
 
     //public ValueTask UpdateIndexedDb(string name, byte[] data) =>
     //    _jsRuntime.InvokeVoidAsync("interop.fileStore.updateIndexedDb", name, new ByteArray(data));
