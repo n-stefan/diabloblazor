@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Pages;
 
-public partial class Main
+public partial class Main : ComponentBase
 {
     //TODO: Move some into AppState
     private static readonly int[] spawnFilesizes = { 50_274_091, 25_830_791 };
@@ -12,8 +12,7 @@ public partial class Main
     private bool preventDefaultDragOver;
     private ClientRect canvasRect;
     private ElementReference downloadLink;
-    private GCHandle spawnMpqHandle;
-    //private Dictionary<string, byte[]> fileSystem;
+    //private GCHandle spawnMpqHandle;
 
     public bool Offscreen { get; private set; }
     public int RenderInterval { get; private set; }
@@ -37,6 +36,8 @@ public partial class Main
     private HttpClient HttpClient { get; set; } = default!;
     [Inject]
     private IConfiguration Configuration { get; set; } = default!;
+    [Inject]
+    private FileSystem FileSystem { get; set; } = default!;
     //[Inject]
     //private Worker Worker { get; set; } = default!;
     //[Inject]
@@ -101,26 +102,26 @@ public partial class Main
 
     protected override async Task OnInitializedAsync()
     {
+        await Interop.SetDotNetReference(DotNetObjectReference.Create(this));
+
         Config = new Config { Version = Configuration["Version"] }; //await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
 
         RenderInterval = await Interop.GetRenderInterval();
 
         await InitFileSystem();
 
-        if (await Interop.HasFile(spawnFilename, spawnFilesizes))
+        if (FileSystem.HasFile(spawnFilename, spawnFilesizes))
         {
             AppState.HasSpawn = true;
         }
 
-        await InitSaves();
+        InitSaves();
 
         canvasRect = await Interop.GetCanvasRect();
 
         ExceptionHandler.Exception += (_, e) => Interop.Alert($"An error has occured: {e.Message}");
 
         await Interop.AddEventListeners();
-
-        await Interop.SetDotNetReference(DotNetObjectReference.Create(this));
     }
 
     private async Task OnRenderIntervalChange(ChangeEventArgs e) =>
@@ -202,9 +203,9 @@ public partial class Main
         return Interop.InitIndexedDb();
     }
 
-    private async Task InitSaves()
+    private void InitSaves()
     {
-        var filenames = await Interop.GetFilenames();
+        var filenames = FileSystem.GetFilenames();
         var saveNames = filenames.Where(x => x.EndsWith(".sv")).ToList();
         saveNames.ForEach(x => AppState.Saves.Add(new SaveGame(x)));
     }
@@ -316,7 +317,7 @@ public partial class Main
 
     private async Task LoadRetail()
     {
-        if (!await Interop.HasFile(retailFilename))
+        if (!FileSystem.HasFile(retailFilename))
         {
             if (isDrop)
             {
@@ -360,7 +361,8 @@ public partial class Main
             //    throw new Exception("Invalid spawn.mpq size. Try clearing the cache and refreshing the page.");
 
             var binary = await HttpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], 524_288, OnProgress);
-            spawnMpqHandle = Interop.StoreSpawnUnmarshalledBegin(binary);
+            var address = FileSystem.SetFile(spawnFilename, binary);
+            Interop.StoreSpawnUnmarshalledBegin(address, binary.Length);
         }
     }
 
@@ -426,23 +428,34 @@ public partial class Main
         }
         Timer = null;
 
+        FileSystem.Free();
+
         await Interop.Reload();
     }
 
     [JSInvokable]
-    public void StoreSpawnUnmarshalledEnd()
-    {
+    public void StoreSpawnUnmarshalledEnd() =>
         Worker.InitGame(this);
-
-        if (spawnMpqHandle.IsAllocated)
-        {
-            spawnMpqHandle.Free();
-        }
-    }
 
     [JSInvokable]
     public static void SetCursorPos(double x, double y) =>
         NativeImports.DApi_Mouse(0, 0, 0, Convert.ToInt32(x), Convert.ToInt32(y));
+
+    [JSInvokable]
+    public int GetFilesize(string name) =>
+        FileSystem.GetFilesize(name);
+
+    [JSInvokable]
+    public ulong GetFile(string name) =>
+        FileSystem.GetFile(name);
+
+    [JSInvokable]
+    public ulong SetFile(string name, byte[] data) =>
+        FileSystem.SetFile(name, data);
+
+    [JSInvokable]
+    public void DeleteFile(string name) =>
+        FileSystem.DeleteFile(name);
 
     //[JSInvokable]
     //public async Task InitWebAssemblyUnmarshalledEnd()

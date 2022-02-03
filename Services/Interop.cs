@@ -37,11 +37,11 @@ public class Interop
     public ValueTask UploadFile() =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.uploadFile");
 
-    public ValueTask<bool> HasFile(string name, params int[] sizes) =>
-        _jsRuntime.InvokeAsync<bool>("interop.fileStore.hasFile", name, sizes);
+    //public ValueTask<bool> HasFile(string name, params int[] sizes) =>
+    //    _jsRuntime.InvokeAsync<bool>("interop.fileStore.hasFile", name, sizes);
 
-    public ValueTask<string[]> GetFilenames() =>
-        _jsRuntime.InvokeAsync<string[]>("interop.fileStore.getFilenames");
+    //public ValueTask<string[]> GetFilenames() =>
+    //    _jsRuntime.InvokeAsync<string[]>("interop.fileStore.getFilenames");
 
     public ValueTask<int> GetFilesize(string name) =>
         _jsRuntime.InvokeAsync<int>("interop.fileStore.getFilesize", name);
@@ -61,17 +61,8 @@ public class Interop
     public ValueTask SetRenderInterval(int renderInterval) =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.setRenderInterval", renderInterval);
 
-    public GCHandle StoreSpawnUnmarshalledBegin(byte[] data)
-    {
-        if (data is null)
-        {
-            throw new ArgumentNullException(nameof(data));
-        }
-
-        var spawnMpqHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-        _jsUnmarshalledRuntime.InvokeUnmarshalled<IntPtr, int, object>("interop.fileStore.storeSpawnUnmarshalledBegin", spawnMpqHandle.AddrOfPinnedObject(), data.Length);
-        return spawnMpqHandle;
-    }
+    public void StoreSpawnUnmarshalledBegin(ulong address, int length) =>
+        _jsUnmarshalledRuntime.InvokeUnmarshalled<ulong, int, object>("interop.fileStore.storeSpawnUnmarshalledBegin", address, length);
 
     public ValueTask InitGraphics(bool offscreen) =>
         _jsRuntime.InvokeVoidAsync("interop.graphics.initGraphics", offscreen);

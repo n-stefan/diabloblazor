@@ -97,6 +97,7 @@ class Interop {
     }
 
     public reload = (): void => {
+        //windowAny.buffer = null;
         window.location.reload();
     }
 

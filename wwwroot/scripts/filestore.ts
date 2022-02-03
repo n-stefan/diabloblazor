@@ -8,12 +8,9 @@ interface FileDef {
 
 class FileStore {
     private store: typeof IdbKvStore;
-    private files: Map<string, Uint8Array>;
     private dropFile: File;
 
     constructor() {
-        this.files = new Map<string, Uint8Array>();
-
         windowAny.DApi.get_file_size = this.getFilesize;
         windowAny.DApi.get_file_contents = this.getFileContents;
         windowAny.DApi.put_file_contents = this.putFileContents;
@@ -24,12 +21,12 @@ class FileStore {
     public initIndexedDb = async (dummy: any): Promise<void> => {
         this.store = new IdbKvStore('diablo_fs');
         for (let [name, data] of Object.entries(await this.store.json()))
-            this.files.set(name.toLowerCase(), data as Uint8Array);
+            getInterop().dotNetReference.invokeMethod('SetFile', name.toLowerCase(), data as Uint8Array);
     }
 
-    public updateIndexedDbFromUint8Array = async (name: string, array: Uint8Array): Promise<void> => {
-        await this.store.set(name, array);
-    }
+    //public updateIndexedDbFromUint8Array = async (name: string, array: Uint8Array): Promise<void> => {
+    //    await this.store.set(name, array);
+    //}
 
     public readIndexedDb = async (name: string): Promise<Uint8Array> => {
         return await this.store.get(name.toLowerCase());
@@ -37,16 +34,14 @@ class FileStore {
 
     public indexedDbHasFile = async (name: string): Promise<boolean> => {
         const file = await this.store.get(name.toLowerCase());
-        return (file) ? true : false;
+        return file ? true : false;
     }
 
     public storeSpawnUnmarshalledBegin = async (address: number, length: number): Promise<void> => {
         const arrayBuffer = windowAny.Module.HEAPU8.subarray(address, address + length);
         const array = new Uint8Array(arrayBuffer);
-        const name = 'spawn.mpq';
-        await this.store.set(name, array);
-        this.files.set(name, array);
-        getInterop().dotNetReference.invokeMethodAsync('StoreSpawnUnmarshalledEnd');
+        await this.store.set('spawn.mpq', array);
+        getInterop().dotNetReference.invokeMethod('StoreSpawnUnmarshalledEnd');
     }
 
     private readFile = (file: File): Promise<ArrayBuffer> => new Promise<ArrayBuffer>((resolve, reject): void => {
@@ -55,7 +50,7 @@ class FileStore {
         reader.onerror = (): void => reject(reader.error);
         reader.onabort = (): void => reject();
         reader.onprogress = (event: ProgressEvent<FileReader>) =>
-            getInterop().dotNetReference.invokeMethodAsync('OnProgress', new Progress('Loading...', event.loaded, event.total));
+            getInterop().dotNetReference.invokeMethod('OnProgress', new Progress('Loading...', event.loaded, event.total));
         reader.readAsArrayBuffer(file);
     });
 
@@ -89,59 +84,58 @@ class FileStore {
     //Dummy parameter for minification
     public setDropFile = async (dummy: any): Promise<void> => {
         const array = new Uint8Array(await this.readFile(this.dropFile));
-        this.files.set(this.dropFile.name.toLowerCase(), array);
+        getInterop().dotNetReference.invokeMethod('SetFile', this.dropFile.name.toLowerCase(), array);
         this.dropFile = null;
     }
 
     //Dummy parameter for minification
     public setInputFile = async (dummy: any): Promise<void> => {
         const fileDef = await this.getFileFromInput('mpqInput');
-        this.files.set(fileDef.name, fileDef.data);
+        getInterop().dotNetReference.invokeMethod('SetFile', fileDef.name, fileDef.data);
     }
 
     //Dummy parameter for minification
     public uploadFile = async (dummy: any): Promise<void> => {
         const fileDef = await this.getFileFromInput('saveInput');
-        this.files.set(fileDef.name, fileDef.data);
+        getInterop().dotNetReference.invokeMethod('SetFile', fileDef.name, fileDef.data);
         this.store.set(fileDef.name, fileDef.data);
     }
 
-    public hasFile = (name: string, sizes: number[]): boolean => {
-        const file = this.files.get(name.toLowerCase());
-        if (!file)
-            return false;
-        else if (sizes.length > 0)
-            return sizes.includes(file.byteLength);
-        else
-            return true;
-    }
+    //public hasFile = (name: string, sizes: number[]): boolean => {
+    //    const file = this.files.get(name.toLowerCase());
+    //    if (!file)
+    //        return false;
+    //    else if (sizes.length > 0)
+    //        return sizes.includes(file.byteLength);
+    //    else
+    //        return true;
+    //}
 
-    public getFilenames = (): string[] => {
-        return [...this.files.keys()];
-    }
+    //public getFilenames = (): string[] => {
+    //    return [...this.files.keys()];
+    //}
 
     public getFilesize = (name: string): number => {
-        const file = this.files.get(name.toLowerCase());
-        return file ? file.byteLength : 0;
+        return getInterop().dotNetReference.invokeMethod('GetFilesize', name);
     }
 
     public getFileContents = (name: string, array: Uint8Array, offset: number): void => {
-        const file = this.files.get(name.toLowerCase());
-        if (file)
-            array.set(file.subarray(offset, offset + array.byteLength));
+        const address = getInterop().dotNetReference.invokeMethod('GetFile', name.toLowerCase());
+        const file = windowAny.Module.HEAPU8.subarray(address + offset, address + offset + array.byteLength);
+        array.set(file);
     }
 
     public putFileContents = async (name: string, array: Uint8Array): Promise<void> => {
         name = name.toLowerCase();
         //if (!name.match(/^(spawn\d+\.sv|single_\d+\.sv|config\.ini)$/i))
         //  alert(`Bad file name: ${name}`);
-        this.files.set(name, array);
-        await this.updateIndexedDbFromUint8Array(name, array);
+        getInterop().dotNetReference.invokeMethod('SetFile', name, array);
+        await this.store.set(name, array);
     }
 
     public removeFile = async (name: string): Promise<void> => {
         name = name.toLowerCase();
-        this.files.delete(name);
+        getInterop().dotNetReference.invokeMethod('DeleteFile', name);
         await this.store.remove(name);
     }
 
