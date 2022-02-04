@@ -9,8 +9,8 @@ public class File
     public int Length =>
         _data.Length;
 
-    public ulong Address =>
-        (ulong)_handle.AddrOfPinnedObject();
+    public IntPtr Address =>
+        _handle.AddrOfPinnedObject();
 
     public File(byte[] data)
     {

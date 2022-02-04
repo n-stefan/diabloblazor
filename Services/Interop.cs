@@ -55,8 +55,8 @@ public class Interop
     public ValueTask SetRenderInterval(int renderInterval) =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.setRenderInterval", renderInterval);
 
-    public void StoreSpawnUnmarshalledBegin(ulong address, int length) =>
-        _jsUnmarshalledRuntime.InvokeUnmarshalled<ulong, int, object>("interop.fileStore.storeSpawnUnmarshalledBegin", address, length);
+    public void StoreSpawnUnmarshalledBegin(IntPtr address, int length) =>
+        _jsUnmarshalledRuntime.InvokeUnmarshalled<IntPtr, int, object>("interop.fileStore.storeSpawnUnmarshalledBegin", address, length);
 
     public ValueTask InitGraphics(bool offscreen) =>
         _jsRuntime.InvokeVoidAsync("interop.graphics.initGraphics", offscreen);

@@ -444,11 +444,11 @@ public partial class Main : ComponentBase
 
     [JSInvokable]
     public ulong GetFile(string name) =>
-        FileSystem.GetFile(name);
+        (ulong)FileSystem.GetFile(name);
 
     [JSInvokable]
     public ulong SetFile(string name, byte[] data) =>
-        FileSystem.SetFile(name, data);
+        (ulong)FileSystem.SetFile(name, data);
 
     [JSInvokable]
     public void DeleteFile(string name) =>

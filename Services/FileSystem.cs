@@ -6,10 +6,10 @@ public class FileSystem
 {
     private Dictionary<string, File> files = new();
 
-    public ulong GetFile(string name) =>
+    public IntPtr GetFile(string name) =>
         files[name].Address;
 
-    public ulong SetFile(string name, byte[] data)
+    public IntPtr SetFile(string name, byte[] data)
     {
         if (files.ContainsKey(name))
         {
