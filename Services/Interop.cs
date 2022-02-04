@@ -37,12 +37,6 @@ public class Interop
     public ValueTask UploadFile() =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.uploadFile");
 
-    //public ValueTask<bool> HasFile(string name, params int[] sizes) =>
-    //    _jsRuntime.InvokeAsync<bool>("interop.fileStore.hasFile", name, sizes);
-
-    //public ValueTask<string[]> GetFilenames() =>
-    //    _jsRuntime.InvokeAsync<string[]>("interop.fileStore.getFilenames");
-
     public ValueTask<int> GetFilesize(string name) =>
         _jsRuntime.InvokeAsync<int>("interop.fileStore.getFilesize", name);
 
@@ -79,13 +73,18 @@ public class Interop
     public ValueTask AddEventListeners() =>
         _jsRuntime.InvokeVoidAsync("interop.addEventListeners");
 
+    //public ValueTask<bool> HasFile(string name, params int[] sizes) =>
+    //    _jsRuntime.InvokeAsync<bool>("interop.fileStore.hasFile", name, sizes);
+
+    //public ValueTask<string[]> GetFilenames() =>
+    //    _jsRuntime.InvokeAsync<string[]>("interop.fileStore.getFilenames");
+
     //public GCHandle InitWebAssemblyUnmarshalledBegin(bool isSpawn, byte[] data)
     //{
     //    if (data is null)
     //    {
     //        throw new ArgumentNullException(nameof(data));
     //    }
-
     //    var gameWasmHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
     //    _jsUnmarshalledRuntime.InvokeUnmarshalled<bool, IntPtr, int, object>("interop.webassembly.initWebAssemblyUnmarshalledBegin",
     //        isSpawn, gameWasmHandle.AddrOfPinnedObject(), data.Length);

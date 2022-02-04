@@ -24,10 +24,6 @@ class FileStore {
             getInterop().dotNetReference.invokeMethod('SetFile', name.toLowerCase(), data as Uint8Array);
     }
 
-    //public updateIndexedDbFromUint8Array = async (name: string, array: Uint8Array): Promise<void> => {
-    //    await this.store.set(name, array);
-    //}
-
     public readIndexedDb = async (name: string): Promise<Uint8Array> => {
         return await this.store.get(name.toLowerCase());
     }
@@ -101,20 +97,6 @@ class FileStore {
         this.store.set(fileDef.name, fileDef.data);
     }
 
-    //public hasFile = (name: string, sizes: number[]): boolean => {
-    //    const file = this.files.get(name.toLowerCase());
-    //    if (!file)
-    //        return false;
-    //    else if (sizes.length > 0)
-    //        return sizes.includes(file.byteLength);
-    //    else
-    //        return true;
-    //}
-
-    //public getFilenames = (): string[] => {
-    //    return [...this.files.keys()];
-    //}
-
     public getFilesize = (name: string): number => {
         return getInterop().dotNetReference.invokeMethod('GetFilesize', name);
     }
@@ -147,6 +129,24 @@ class FileStore {
     public setRenderInterval = (value: number): void => {
         localStorage.setItem('DiabloRenderInterval', value.toString());
     }
+
+    //public updateIndexedDbFromUint8Array = async (name: string, array: Uint8Array): Promise<void> => {
+    //    await this.store.set(name, array);
+    //}
+
+    //public hasFile = (name: string, sizes: number[]): boolean => {
+    //    const file = this.files.get(name.toLowerCase());
+    //    if (!file)
+    //        return false;
+    //    else if (sizes.length > 0)
+    //        return sizes.includes(file.byteLength);
+    //    else
+    //        return true;
+    //}
+
+    //public getFilenames = (): string[] => {
+    //    return [...this.files.keys()];
+    //}
 
     //public updateIndexedDb = async (name: string, base64: string): Promise<void> => {
     //    const array = Helper.fromBase64ToUint8Array(base64);

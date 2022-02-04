@@ -42,9 +42,9 @@ public class FileSystem
 
     public void Free()
     {
-        foreach (var f in files)
+        foreach (var file in files)
         {
-            f.Value.Free();
+            file.Value.Free();
         }
         files.Clear();
         files = null;

@@ -210,9 +210,6 @@ public partial class Main : ComponentBase
         saveNames.ForEach(x => AppState.Saves.Add(new SaveGame(x)));
     }
 
-    private void CompressMPQ() =>
-        AppState.Compress = true;
-
     private static string ExtractFilename(string? path)
     {
         if (path is null)
@@ -461,10 +458,12 @@ public partial class Main : ComponentBase
     //public async Task InitWebAssemblyUnmarshalledEnd()
     //{
     //    await Worker.RunGame(this);
-
     //    if (GameWasmHandle.IsAllocated)
     //    {
     //        GameWasmHandle.Free();
     //    }
     //}
+
+    //private void CompressMPQ() =>
+    //    AppState.Compress = true;
 }
