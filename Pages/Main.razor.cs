@@ -359,7 +359,8 @@ public partial class Main : ComponentBase
 
             var binary = await HttpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], 524_288, OnProgress);
             var address = FileSystem.SetFile(spawnFilename, binary);
-            Interop.StoreSpawnUnmarshalledBegin(address, binary.Length);
+            Interop.StoreSpawnIndexedDb(address, binary.Length);
+            Worker.InitGame(this);
         }
     }
 
@@ -431,10 +432,6 @@ public partial class Main : ComponentBase
     }
 
     [JSInvokable]
-    public void StoreSpawnUnmarshalledEnd() =>
-        Worker.InitGame(this);
-
-    [JSInvokable]
     public static void SetCursorPos(double x, double y) =>
         NativeImports.DApi_Mouse(0, 0, 0, Convert.ToInt32(x), Convert.ToInt32(y));
 
@@ -453,6 +450,10 @@ public partial class Main : ComponentBase
     [JSInvokable]
     public void DeleteFile(string name) =>
         FileSystem.DeleteFile(name);
+
+    //[JSInvokable]
+    //public void StoreSpawnUnmarshalledEnd() =>
+    //    Worker.InitGame(this);
 
     //[JSInvokable]
     //public async Task InitWebAssemblyUnmarshalledEnd()

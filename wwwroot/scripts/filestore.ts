@@ -33,11 +33,10 @@ class FileStore {
         return file ? true : false;
     }
 
-    public storeSpawnUnmarshalledBegin = async (address: number, length: number): Promise<void> => {
+    public storeSpawnIndexedDb = async (address: number, length: number): Promise<void> => {
         const arrayBuffer = windowAny.Module.HEAPU8.subarray(address, address + length);
         const array = new Uint8Array(arrayBuffer);
         await this.store.set('spawn.mpq', array);
-        getInterop().dotNetReference.invokeMethod('StoreSpawnUnmarshalledEnd');
     }
 
     private readFile = (file: File): Promise<ArrayBuffer> => new Promise<ArrayBuffer>((resolve, reject): void => {

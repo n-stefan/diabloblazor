@@ -31,6 +31,9 @@ public class Interop
     public ValueTask<bool> IndexedDbHasFile(string name) =>
         _jsRuntime.InvokeAsync<bool>("interop.fileStore.indexedDbHasFile", name);
 
+    public void StoreSpawnIndexedDb(IntPtr address, int length) =>
+        _jsUnmarshalledRuntime.InvokeUnmarshalled<IntPtr, int, object>("interop.fileStore.storeSpawnIndexedDb", address, length);
+
     public ValueTask ClickDownloadLink(ElementReference link, string download, string href) =>
         _jsRuntime.InvokeVoidAsync("interop.clickDownloadLink", link, download, href);
 
@@ -54,9 +57,6 @@ public class Interop
 
     public ValueTask SetRenderInterval(int renderInterval) =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.setRenderInterval", renderInterval);
-
-    public void StoreSpawnUnmarshalledBegin(IntPtr address, int length) =>
-        _jsUnmarshalledRuntime.InvokeUnmarshalled<IntPtr, int, object>("interop.fileStore.storeSpawnUnmarshalledBegin", address, length);
 
     public ValueTask InitGraphics(bool offscreen) =>
         _jsRuntime.InvokeVoidAsync("interop.graphics.initGraphics", offscreen);
