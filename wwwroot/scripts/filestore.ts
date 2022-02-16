@@ -10,12 +10,12 @@ class FileStore {
     private store: typeof IdbKvStore;
     private dropFile: File;
 
-    constructor() {
-        windowAny.DApi.get_file_size = this.getFilesize;
-        windowAny.DApi.get_file_contents = this.getFileContents;
-        windowAny.DApi.put_file_contents = this.putFileContents;
-        windowAny.DApi.remove_file = this.removeFile;
-    }
+    //constructor() {
+    //    windowAny.DApi.get_file_size = this.getFilesize;
+    //    windowAny.DApi.get_file_contents = this.getFileContents;
+    //    windowAny.DApi.put_file_contents = this.putFileContents;
+    //    windowAny.DApi.remove_file = this.removeFile;
+    //}
 
     //Dummy parameter for minification
     public initIndexedDb = async (dummy: any): Promise<void> => {
@@ -33,10 +33,16 @@ class FileStore {
         return file ? true : false;
     }
 
-    public storeSpawnIndexedDb = async (address: number, length: number): Promise<void> => {
-        const arrayBuffer = windowAny.Module.HEAPU8.subarray(address, address + length);
+    public storeIndexedDb = async (nameAddress: number, dataAddress: number, dataLength: number): Promise<void> => {
+        const end = windowAny.Module.HEAPU8.indexOf(0, nameAddress);
+        const name = String.fromCharCode.apply(null, windowAny.Module.HEAPU8.subarray(nameAddress, end));
+        const arrayBuffer = windowAny.Module.HEAPU8.subarray(dataAddress, dataAddress + dataLength);
         const array = new Uint8Array(arrayBuffer);
-        await this.store.set('spawn.mpq', array);
+        await this.store.set(name, array);
+    }
+
+    public removeIndexedDb = async (name: string): Promise<void> => {
+        await this.store.remove(name);
     }
 
     private readFile = (file: File): Promise<ArrayBuffer> => new Promise<ArrayBuffer>((resolve, reject): void => {
@@ -96,29 +102,23 @@ class FileStore {
         this.store.set(fileDef.name, fileDef.data);
     }
 
-    public getFilesize = (name: string): number => {
-        return getInterop().dotNetReference.invokeMethod('GetFilesize', name);
-    }
+    //public getFilesize = (name: string): number => {
+    //    return getInterop().dotNetReference.invokeMethod('GetFilesize', name);
+    //}
 
-    public getFileContents = (name: string, array: Uint8Array, offset: number): void => {
-        const address = getInterop().dotNetReference.invokeMethod('GetFile', name.toLowerCase());
-        const file = windowAny.Module.HEAPU8.subarray(address + offset, address + offset + array.byteLength);
-        array.set(file);
-    }
+    //public getFileContents = (name: string, array: Uint8Array, offset: number): void => {
+    //    const address = getInterop().dotNetReference.invokeMethod('GetFile', name.toLowerCase());
+    //    const file = windowAny.Module.HEAPU8.subarray(address + offset, address + offset + array.byteLength);
+    //    array.set(file);
+    //}
 
-    public putFileContents = async (name: string, array: Uint8Array): Promise<void> => {
-        name = name.toLowerCase();
-        //if (!name.match(/^(spawn\d+\.sv|single_\d+\.sv|config\.ini)$/i))
-        //  alert(`Bad file name: ${name}`);
-        getInterop().dotNetReference.invokeMethod('SetFile', name, array);
-        await this.store.set(name, array);
-    }
-
-    public removeFile = async (name: string): Promise<void> => {
-        name = name.toLowerCase();
-        getInterop().dotNetReference.invokeMethod('DeleteFile', name);
-        await this.store.remove(name);
-    }
+    //public putFileContents = async (name: string, array: Uint8Array): Promise<void> => {
+    //    name = name.toLowerCase();
+    //    //if (!name.match(/^(spawn\d+\.sv|single_\d+\.sv|config\.ini)$/i))
+    //    //  alert(`Bad file name: ${name}`);
+    //    getInterop().dotNetReference.invokeMethod('SetFile', name, array);
+    //    await this.store.set(name, array);
+    //}
 
     public getRenderInterval = (): number => {
         const value = localStorage.getItem('DiabloRenderInterval');
@@ -128,10 +128,6 @@ class FileStore {
     public setRenderInterval = (value: number): void => {
         localStorage.setItem('DiabloRenderInterval', value.toString());
     }
-
-    //public updateIndexedDbFromUint8Array = async (name: string, array: Uint8Array): Promise<void> => {
-    //    await this.store.set(name, array);
-    //}
 
     //public hasFile = (name: string, sizes: number[]): boolean => {
     //    const file = this.files.get(name.toLowerCase());

@@ -31,8 +31,11 @@ public class Interop
     public ValueTask<bool> IndexedDbHasFile(string name) =>
         _jsRuntime.InvokeAsync<bool>("interop.fileStore.indexedDbHasFile", name);
 
-    public void StoreSpawnIndexedDb(IntPtr address, int length) =>
-        _jsUnmarshalledRuntime.InvokeUnmarshalled<IntPtr, int, object>("interop.fileStore.storeSpawnIndexedDb", address, length);
+    public void StoreIndexedDb(IntPtr nameAddress, IntPtr dataAddress, int dataLength) =>
+        _jsUnmarshalledRuntime.InvokeUnmarshalled<IntPtr, IntPtr, int, object>("interop.fileStore.storeIndexedDb", nameAddress, dataAddress, dataLength);
+
+    public ValueTask RemoveIndexedDb(string name) =>
+        _jsRuntime.InvokeVoidAsync("interop.fileStore.removeIndexedDb", name);
 
     public ValueTask ClickDownloadLink(ElementReference link, string download, string href) =>
         _jsRuntime.InvokeVoidAsync("interop.clickDownloadLink", link, download, href);
@@ -40,11 +43,8 @@ public class Interop
     public ValueTask UploadFile() =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.uploadFile");
 
-    public ValueTask<int> GetFilesize(string name) =>
-        _jsRuntime.InvokeAsync<int>("interop.fileStore.getFilesize", name);
-
-    public ValueTask RemoveFile(string name) =>
-        _jsRuntime.InvokeVoidAsync("interop.fileStore.removeFile", name);
+    //public ValueTask<int> GetFilesize(string name) =>
+    //    _jsRuntime.InvokeAsync<int>("interop.fileStore.getFilesize", name);
 
     public ValueTask SetInputFile() =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.setInputFile");

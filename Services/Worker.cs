@@ -35,7 +35,7 @@ public static class Worker
         RunGame(app);
     }
 
-    public static void RunGame(Main app)
+    unsafe public static void RunGame(Main app)
     {
         if (app is null)
         {
@@ -50,8 +50,14 @@ public static class Worker
 
         var spawn = app.GameType == GameType.Shareware ? 1 : 0;
 
+        delegate* unmanaged<IntPtr, int> getFilesize = &Main.GetFilesize;
+        delegate* unmanaged<IntPtr, IntPtr> getFileContents = &Main.GetFileContents;
+        delegate* unmanaged<IntPtr, IntPtr, int, void> putFileContents = &Main.PutFileContents;
+        delegate* unmanaged<IntPtr, void> removeFile = &Main.RemoveFile;
+
         NativeImports.DApi_Init(Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds), app.Offscreen ? 1 : 0,
-            int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value), spawn);
+            int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value), spawn,
+            (IntPtr)getFilesize, (IntPtr)getFileContents, (IntPtr)putFileContents, (IntPtr)removeFile);
 
         app.Timer = new Timer(
             _ => NativeImports.DApi_Render(Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds)),

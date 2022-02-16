@@ -12,14 +12,14 @@ public partial class Main : ComponentBase
     private bool preventDefaultDragOver;
     private ClientRect canvasRect;
     private ElementReference downloadLink;
-    //private GCHandle spawnMpqHandle;
+    private static GCHandle interopHandle;
+    private static GCHandle fileSystemHandle;
 
     public bool Offscreen { get; private set; }
     public int RenderInterval { get; private set; }
     public Config Config { get; private set; }
     public GameType GameType { get; private set; }
     public Timer? Timer { private get; set; }
-    //public GCHandle GameWasmHandle { private get; set; }
 
     private string FPSTarget =>
         (RenderInterval != 0) ? (1000d / RenderInterval).ToString("N2") : "0";
@@ -102,6 +102,9 @@ public partial class Main : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        interopHandle = GCHandle.Alloc(Interop);
+        fileSystemHandle = GCHandle.Alloc(FileSystem);
+
         await Interop.SetDotNetReference(DotNetObjectReference.Create(this));
 
         Config = new Config { Version = Configuration["Version"] }; //await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
@@ -277,7 +280,7 @@ public partial class Main : ComponentBase
             return;
         }
 
-        await Interop.RemoveFile(saveGame.Name);
+        await RemoveFile(saveGame.Name);
         var saveToRemove = AppState.Saves.FirstOrDefault(x => x.Name == saveGame.Name);
         AppState.Saves.Remove(saveToRemove);
     }
@@ -329,12 +332,12 @@ public partial class Main : ComponentBase
 
     private async Task LoadSpawn()
     {
-        var filesize = await Interop.GetFilesize(spawnFilename);
+        var filesize = FileSystem.GetFilesize(spawnFilename);
         if (filesize != 0 && !spawnFilesizes.Contains(filesize))
         {
             //await IndexedDbManager.DeleteRecord<string>("kv", spawnFilename);
 
-            await Interop.RemoveFile(spawnFilename);
+            await RemoveFile(spawnFilename);
             filesize = 0;
         }
         if (filesize == 0)
@@ -359,7 +362,7 @@ public partial class Main : ComponentBase
 
             var binary = await HttpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], 524_288, OnProgress);
             var address = FileSystem.SetFile(spawnFilename, binary);
-            Interop.StoreSpawnIndexedDb(address, binary.Length);
+            Interop.StoreIndexedDb(Marshal.StringToHGlobalAuto(spawnFilename), address, binary.Length);
             Worker.InitGame(this);
         }
     }
@@ -428,6 +431,9 @@ public partial class Main : ComponentBase
 
         FileSystem.Free();
 
+        interopHandle.Free();
+        fileSystemHandle.Free();
+
         await Interop.Reload();
     }
 
@@ -435,21 +441,69 @@ public partial class Main : ComponentBase
     public static void SetCursorPos(double x, double y) =>
         NativeImports.DApi_Mouse(0, 0, 0, Convert.ToInt32(x), Convert.ToInt32(y));
 
-    [JSInvokable]
-    public int GetFilesize(string name) =>
-        FileSystem.GetFilesize(name);
+    //TODO: Move to FileSystem?
+    unsafe private static string GetFilename(IntPtr address)
+    {
+        var span = new ReadOnlySpan<byte>((byte*)address, 20);
+        span = span[..span.IndexOf((byte)0)];
+        return Encoding.UTF8.GetString(span);
+    }
 
-    [JSInvokable]
-    public ulong GetFile(string name) =>
-        (ulong)FileSystem.GetFile(name);
+    [UnmanagedCallersOnly]
+    public static int GetFilesize(IntPtr nameAddress)
+    {
+        var name = GetFilename(nameAddress);
+        var fileSystem = (FileSystem)fileSystemHandle.Target;
+        return fileSystem.GetFilesize(name);
+    }
+
+    [UnmanagedCallersOnly]
+    public static IntPtr GetFileContents(IntPtr nameAddress)
+    {
+        var name = GetFilename(nameAddress);
+        var fileSystem = (FileSystem)fileSystemHandle.Target;
+        return fileSystem.GetFile(name);
+    }
+
+    //[JSInvokable]
+    //public ulong GetFile(string name) =>
+    //    (ulong)FileSystem.GetFile(name);
 
     [JSInvokable]
     public ulong SetFile(string name, byte[] data) =>
         (ulong)FileSystem.SetFile(name, data);
 
-    [JSInvokable]
-    public void DeleteFile(string name) =>
+    [UnmanagedCallersOnly]
+    unsafe public static void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength)
+    {
+        var name = GetFilename(nameAddress);
+        var span = new ReadOnlySpan<byte>((byte*)dataAddress, dataLength);
+        var data = span.ToArray();
+        var fileSystem = (FileSystem)fileSystemHandle.Target;
+        var fileAddress = fileSystem.SetFile(name, data);
+        var interop = (Interop)interopHandle.Target;
+        interop.StoreIndexedDb(nameAddress, fileAddress, data.Length);
+    }
+
+    [UnmanagedCallersOnly]
+    public static void RemoveFile(IntPtr nameAddress)
+    {
+        var name = GetFilename(nameAddress);
+        var fileSystem = (FileSystem)fileSystemHandle.Target;
+        fileSystem.DeleteFile(name);
+        var interop = (Interop)interopHandle.Target;
+        interop.RemoveIndexedDb(name);
+    }
+
+    private ValueTask RemoveFile(string name)
+    {
         FileSystem.DeleteFile(name);
+        return Interop.RemoveIndexedDb(name);
+    }
+
+    //[JSInvokable]
+    //public void DeleteFile(string name) =>
+    //    FileSystem.DeleteFile(name);
 
     //[JSInvokable]
     //public void StoreSpawnUnmarshalledEnd() =>
