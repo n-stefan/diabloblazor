@@ -10,13 +10,6 @@ class FileStore {
     private store: typeof IdbKvStore;
     private dropFile: File;
 
-    //constructor() {
-    //    windowAny.DApi.get_file_size = this.getFilesize;
-    //    windowAny.DApi.get_file_contents = this.getFileContents;
-    //    windowAny.DApi.put_file_contents = this.putFileContents;
-    //    windowAny.DApi.remove_file = this.removeFile;
-    //}
-
     //Dummy parameter for minification
     public initIndexedDb = async (dummy: any): Promise<void> => {
         this.store = new IdbKvStore('diablo_fs');
@@ -102,24 +95,6 @@ class FileStore {
         this.store.set(fileDef.name, fileDef.data);
     }
 
-    //public getFilesize = (name: string): number => {
-    //    return getInterop().dotNetReference.invokeMethod('GetFilesize', name);
-    //}
-
-    //public getFileContents = (name: string, array: Uint8Array, offset: number): void => {
-    //    const address = getInterop().dotNetReference.invokeMethod('GetFile', name.toLowerCase());
-    //    const file = windowAny.Module.HEAPU8.subarray(address + offset, address + offset + array.byteLength);
-    //    array.set(file);
-    //}
-
-    //public putFileContents = async (name: string, array: Uint8Array): Promise<void> => {
-    //    name = name.toLowerCase();
-    //    //if (!name.match(/^(spawn\d+\.sv|single_\d+\.sv|config\.ini)$/i))
-    //    //  alert(`Bad file name: ${name}`);
-    //    getInterop().dotNetReference.invokeMethod('SetFile', name, array);
-    //    await this.store.set(name, array);
-    //}
-
     public getRenderInterval = (): number => {
         const value = localStorage.getItem('DiabloRenderInterval');
         return value ? parseInt(value) : 50;
@@ -128,59 +103,4 @@ class FileStore {
     public setRenderInterval = (value: number): void => {
         localStorage.setItem('DiabloRenderInterval', value.toString());
     }
-
-    //public hasFile = (name: string, sizes: number[]): boolean => {
-    //    const file = this.files.get(name.toLowerCase());
-    //    if (!file)
-    //        return false;
-    //    else if (sizes.length > 0)
-    //        return sizes.includes(file.byteLength);
-    //    else
-    //        return true;
-    //}
-
-    //public getFilenames = (): string[] => {
-    //    return [...this.files.keys()];
-    //}
-
-    //public updateIndexedDb = async (name: string, base64: string): Promise<void> => {
-    //    const array = Helper.fromBase64ToUint8Array(base64);
-    //    await this.store.set(name, array);
-    //}
-
-    //public updateIndexedDbFromArrayBuffer = async (name: string, buffer: ArrayBuffer): Promise<Uint8Array> => {
-    //    const array = new Uint8Array(buffer);
-    //    await this.store.set(name, array);
-    //    return array;
-    //}
-
-    //public downloadFile = async (name: string): Promise<void> => {
-    //    const file = await this.store.get(name.toLowerCase());
-    //    if (!file)
-    //        return;
-    //    const blob = new Blob([file], { type: 'binary/octet-stream' });
-    //    const url = URL.createObjectURL(blob);
-    //    const link = document.createElement('a');
-    //    link.href = url;
-    //    link.download = name;
-    //    document.body.appendChild(link);
-    //    link.click();
-    //    document.body.removeChild(link);
-    //    URL.revokeObjectURL(url);
-    //}
-
-    //public setFile = (name: string, array: Uint8Array): void => {
-    //    this.files.set(name.toLowerCase(), array);
-    //}
-
-    //public isDropFile = (event: DragEvent): boolean => {
-    //    const items = event.dataTransfer.items;
-    //    if (items)
-    //        for (let i = 0; i < items.length; ++i)
-    //            if (items[i].kind === 'file')
-    //                return true;
-    //    if (event.dataTransfer.files.length)
-    //        return true;
-    //    return false;
-    //}
 }

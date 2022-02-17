@@ -27,9 +27,6 @@ async function onInstall(event: /*ExtendableEvent*/any): Promise<void> {
         'appsettings.json',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0'
-        //'spawn.mpq', //25MB
-        //'Diablo.wasm',
-        //'DiabloSpawn.wasm'
     ]));
 }
 

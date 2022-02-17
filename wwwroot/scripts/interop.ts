@@ -6,10 +6,7 @@
 //Multiplayer?
 //Touch? Low priority
 
-//declare const axios: any;
-
 class Interop {
-    //private _webassembly: Webassembly;
     private _graphics: Graphics;
     private _sound: Sound;
     private _fileStore: FileStore;
@@ -17,7 +14,6 @@ class Interop {
     private _dotNetReference: any;
 
     constructor() {
-        //this._webassembly = new Webassembly();
         this._graphics = new Graphics();
         this._sound = new Sound();
         this._fileStore = new FileStore();
@@ -29,10 +25,6 @@ class Interop {
         windowAny.DApi.exit_game = this.exitGame;
         windowAny.DApi.exit_error = this.exitError;
     }
-
-    //public get webassembly(): Webassembly {
-    //    return this._webassembly;
-    //}
 
     public get graphics(): Graphics {
         return this._graphics;
@@ -92,12 +84,10 @@ class Interop {
     }
 
     public setCursor = (x: number, y: number): void => {
-        //this._webassembly.dapiMouse(0, 0, 0, x, y);
         this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
     }
 
     public reload = (): void => {
-        //windowAny.buffer = null;
         window.location.reload();
     }
 
@@ -108,23 +98,6 @@ class Interop {
         element.removeAttribute('download');
         element.removeAttribute('href');
     }
-
-    //private download = async (url: string, sizes: number[]): Promise<ArrayBuffer> => {
-    //    const response = await axios.request({
-    //        url: url,
-    //        responseType: 'arraybuffer',
-    //        onDownloadProgress: (e: ProgressEvent): void => this._dotNetReference.invokeMethodAsync('OnProgress', new Progress('Downloading...', e.loaded, e.total || sizes[1])),
-    //        headers: { 'Cache-Control': 'max-age=31536000' }
-    //    });
-    //    return response.data;
-    //}
-
-    //public downloadAndUpdateIndexedDb = async (url: string, name: string, sizes: number[]): Promise<number> => {
-    //    const arrayBuffer = await this.download(url, sizes);
-    //    const array = await this._fileStore.updateIndexedDbFromArrayBuffer(name, arrayBuffer);
-    //    this._fileStore.setFile(name, array);
-    //    return arrayBuffer.byteLength;
-    //}
 }
 
 const windowAny = window as any;

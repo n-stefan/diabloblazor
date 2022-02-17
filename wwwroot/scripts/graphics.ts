@@ -92,7 +92,7 @@ class Graphics {
     }
 
     private onRender = (): void => {
-        if (this.context instanceof ImageBitmapRenderingContext) //(renderBatch.bitmap)
+        if (this.context instanceof ImageBitmapRenderingContext)
             (this.context as ImageBitmapRenderingContext).transferFromImageBitmap(this.renderBatch.bitmap);
         else if (this.context instanceof CanvasRenderingContext2D) {
             const ctx = this.context as CanvasRenderingContext2D;
