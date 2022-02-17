@@ -2,19 +2,6 @@
 
 public static class Worker
 {
-    //private const string _spawnWasmFilename = "DiabloSpawn.wasm";
-    //private const string _retailWasmFilename = "Diablo.wasm";
-    //private readonly NavigationManager _navigationManager;
-    //private readonly HttpClient _httpClient;
-    //private readonly Interop _interop;
-
-    //public Worker(NavigationManager navigationManager, HttpClient httpClient, Interop interop)
-    //{
-    //    _navigationManager = navigationManager;
-    //    _httpClient = httpClient;
-    //    _interop = interop;
-    //}
-
     public static void InitGame(Main app)
     {
         if (app is null)
@@ -24,14 +11,6 @@ public static class Worker
 
         app.OnProgress(new Progress { Message = "Launching..." });
 
-        //var isShareware = app.GameType == GameType.Shareware;
-        //var url = $"{_navigationManager.BaseUri}{(isShareware ? _spawnWasmFilename : _retailWasmFilename)}";
-
-        //var binary = await _httpClient.GetByteArrayAsync(new Uri(url));
-
-        //app.GameWasmHandle = _interop.InitWebAssemblyUnmarshalledBegin(isShareware, binary);
-
-        //await _interop.InitWebAssembly(isShareware, binary);
         RunGame(app);
     }
 
@@ -41,8 +20,6 @@ public static class Worker
         {
             throw new ArgumentNullException(nameof(app));
         }
-
-        //await _interop.SNetInitWebsocket();
 
         var startTime = DateTime.Now;
 

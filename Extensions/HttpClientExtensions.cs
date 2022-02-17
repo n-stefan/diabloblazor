@@ -8,7 +8,6 @@ public static class HttpClientExtensions
         request.SetBrowserResponseStreamingEnabled(true);
 
         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-        //using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
         response.EnsureSuccessStatusCode();
 
         using var stream = await response.Content.ReadAsStreamAsync();

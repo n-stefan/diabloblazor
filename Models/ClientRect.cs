@@ -9,8 +9,4 @@ public record struct ClientRect
     public double Right { get; init; }
 
     public double Top { get; init; }
-
-    //public double Height { get; init; }
-
-    //public double Width { get; init; }
 }

@@ -18,10 +18,4 @@ static class NativeImports
 
     [DllImport(main), DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
     internal static extern void DApi_Render(uint time);
-
-    //[DllImport(main), DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-    //internal static extern IntPtr DApi_SyncTextPtr();
-
-    //[DllImport(main), DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-    //internal static extern void DApi_SyncText(int flags);
 }

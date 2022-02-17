@@ -38,10 +38,6 @@ public partial class Main : ComponentBase
     private IConfiguration Configuration { get; set; } = default!;
     [Inject]
     private FileSystem FileSystem { get; set; } = default!;
-    //[Inject]
-    //private Worker Worker { get; set; } = default!;
-    //[Inject]
-    //private IndexedDbManager IndexedDbManager { get; set; } = default!;
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {
@@ -107,11 +103,11 @@ public partial class Main : ComponentBase
 
         await Interop.SetDotNetReference(DotNetObjectReference.Create(this));
 
-        Config = new Config { Version = Configuration["Version"] }; //await HttpClient.GetJsonAsync<Configuration>($"{NavigationManager.BaseUri}dist/appconfig.json");
+        Config = new Config { Version = Configuration["Version"] };
 
         RenderInterval = await Interop.GetRenderInterval();
 
-        await InitFileSystem();
+        await Interop.InitIndexedDb();
 
         if (FileSystem.HasFile(spawnFilename, spawnFilesizes))
         {
@@ -198,14 +194,6 @@ public partial class Main : ComponentBase
     private void SetDropping(int change) =>
         AppState.Dropping = Max(AppState.Dropping + change, 0);
 
-    private ValueTask InitFileSystem()
-    {
-        //var store = await IndexedDbManager.GetRecords<IndexedDbFile>("kv");
-        //return store.ToDictionary(x => x.Name, x => x.Data);
-
-        return Interop.InitIndexedDb();
-    }
-
     private void InitSaves()
     {
         var filenames = FileSystem.GetFilenames();
@@ -270,7 +258,6 @@ public partial class Main : ComponentBase
         var data = await Interop.ReadIndexedDb(name);
         var base64 = Convert.ToBase64String(data);
         await Interop.ClickDownloadLink(downloadLink, name, $"data:application/octet-stream;base64,{base64}");
-        //await Interop.DownloadFile(name);
     }
 
     private async Task RemoveSave(SaveGame saveGame)
@@ -335,31 +322,12 @@ public partial class Main : ComponentBase
         var filesize = FileSystem.GetFilesize(spawnFilename);
         if (filesize != 0 && !spawnFilesizes.Contains(filesize))
         {
-            //await IndexedDbManager.DeleteRecord<string>("kv", spawnFilename);
-
             await RemoveFile(spawnFilename);
             filesize = 0;
         }
         if (filesize == 0)
         {
-            //HttpClient.DefaultRequestHeaders.Add("Cache-Control", "max-age=31536000");
             var url = $"{NavigationManager.BaseUri}{spawnFilename}";
-            //var spawn = await HttpClient.GetByteArrayAsync(url);
-
-            //fileSystem[spawnFilename] = spawn;
-
-            //var indexedDBFile = new IndexedDbFile { Name = spawnFilename, Data = spawn };
-            //var storeRecord = new StoreRecord<IndexedDbFile> { Storename = "kv", Data = indexedDBFile };
-            //await IndexedDbManager.UpdateRecord<IndexedDbFile>(storeRecord);
-
-            //TODO: When serialization is fast enough
-            //await Interop.UpdateIndexedDb(spawnFilename, spawn);
-
-            //filesize = await Interop.DownloadAndUpdateIndexedDb(url, spawnFilename, spawnFilesizes);
-
-            //if (!spawnFilesizes.Contains(filesize))
-            //    throw new Exception("Invalid spawn.mpq size. Try clearing the cache and refreshing the page.");
-
             var binary = await HttpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], 524_288, OnProgress);
             var address = FileSystem.SetFile(spawnFilename, binary);
             Interop.StoreIndexedDb(Marshal.StringToHGlobalAuto(spawnFilename), address, binary.Length);
@@ -442,6 +410,10 @@ public partial class Main : ComponentBase
         NativeImports.DApi_Mouse(0, 0, 0, Convert.ToInt32(x), Convert.ToInt32(y));
 
     //TODO: Move to FileSystem?
+    [JSInvokable]
+    public ulong SetFile(string name, byte[] data) =>
+        (ulong)FileSystem.SetFile(name, data);
+
     unsafe private static string GetFilename(IntPtr address)
     {
         var span = new ReadOnlySpan<byte>((byte*)address, 20);
@@ -464,14 +436,6 @@ public partial class Main : ComponentBase
         var fileSystem = (FileSystem)fileSystemHandle.Target;
         return fileSystem.GetFile(name);
     }
-
-    //[JSInvokable]
-    //public ulong GetFile(string name) =>
-    //    (ulong)FileSystem.GetFile(name);
-
-    [JSInvokable]
-    public ulong SetFile(string name, byte[] data) =>
-        (ulong)FileSystem.SetFile(name, data);
 
     [UnmanagedCallersOnly]
     unsafe public static void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength)
@@ -500,24 +464,6 @@ public partial class Main : ComponentBase
         FileSystem.DeleteFile(name);
         return Interop.RemoveIndexedDb(name);
     }
-
-    //[JSInvokable]
-    //public void DeleteFile(string name) =>
-    //    FileSystem.DeleteFile(name);
-
-    //[JSInvokable]
-    //public void StoreSpawnUnmarshalledEnd() =>
-    //    Worker.InitGame(this);
-
-    //[JSInvokable]
-    //public async Task InitWebAssemblyUnmarshalledEnd()
-    //{
-    //    await Worker.RunGame(this);
-    //    if (GameWasmHandle.IsAllocated)
-    //    {
-    //        GameWasmHandle.Free();
-    //    }
-    //}
 
     //private void CompressMPQ() =>
     //    AppState.Compress = true;
