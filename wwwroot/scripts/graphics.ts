@@ -41,12 +41,11 @@ class Graphics {
         windowAny.DApi.draw_blit = this.drawBlit;
         windowAny.DApi.draw_clip_text = this.drawClipText;
         windowAny.DApi.draw_text = this.drawText;
-        windowAny.DApi.draw_belt = this.drawBelt;
     }
 
     public initGraphics = (offscreen: boolean): void => {
         const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        this.context = (offscreen) ? canvas.getContext('bitmaprenderer') : canvas.getContext('2d', { alpha: false });
+        this.context = offscreen ? canvas.getContext('bitmaprenderer') : canvas.getContext('2d', { alpha: false });
     }
 
     public drawBegin = (): void => {
@@ -85,10 +84,6 @@ class Graphics {
 
     public drawText = (x: number, y: number, text: string, color: number): void => {
         this.renderBatch.text.push({ x, y, text, color });
-    }
-
-    public drawBelt = (items: number[]): void => {
-        //Do nothing
     }
 
     private onRender = (): void => {
