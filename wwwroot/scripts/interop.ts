@@ -18,8 +18,6 @@ class Interop {
         this._sound = new Sound();
         this._fileStore = new FileStore();
 
-        windowAny.DApi.open_keyboard = this.openKeyboard;
-        windowAny.DApi.close_keyboard = this.closeKeyboard;
         windowAny.DApi.set_cursor = this.setCursor;
         windowAny.DApi.current_save_id = this.currentSaveId;
         windowAny.DApi.exit_game = this.exitGame;
@@ -61,14 +59,6 @@ class Interop {
 
     public getCanvasRect = (): ClientRect => {
         return this.canvas.getBoundingClientRect();
-    }
-
-    public openKeyboard = (...args: number[]): void => {
-        //Do nothing
-    }
-
-    public closeKeyboard = (): void => {
-        //Do nothing
     }
 
     public exitError = (error: string): void => {
