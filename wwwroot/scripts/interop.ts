@@ -18,7 +18,6 @@ class Interop {
         this._sound = new Sound();
         this._fileStore = new FileStore();
 
-        windowAny.DApi.set_cursor = this.setCursor;
         windowAny.DApi.current_save_id = this.currentSaveId;
         windowAny.DApi.exit_game = this.exitGame;
         windowAny.DApi.exit_error = this.exitError;
@@ -71,10 +70,6 @@ class Interop {
 
     public currentSaveId = (id: number): void => {
         this._dotNetReference.invokeMethodAsync('SetSaveName', id);
-    }
-
-    public setCursor = (x: number, y: number): void => {
-        this._dotNetReference.invokeMethodAsync('SetCursorPos', x, y);
     }
 
     public reload = (): void => {

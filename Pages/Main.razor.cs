@@ -405,9 +405,9 @@ public partial class Main : ComponentBase
         await Interop.Reload();
     }
 
-    [JSInvokable]
-    public static void SetCursorPos(double x, double y) =>
-        NativeImports.DApi_Mouse(0, 0, 0, Convert.ToInt32(x), Convert.ToInt32(y));
+    [UnmanagedCallersOnly]
+    public static void SetCursor(int x, int y) =>
+        NativeImports.DApi_Mouse(0, 0, 0, x, y);
 
     //TODO: Move to FileSystem?
     [JSInvokable]
