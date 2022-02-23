@@ -12,6 +12,7 @@ public partial class Main : ComponentBase
     private bool preventDefaultDragOver;
     private ClientRect canvasRect;
     private ElementReference downloadLink;
+    private Timer? timer;
     private static GCHandle interopHandle;
     private static GCHandle fileSystemHandle;
     private static GCHandle timerHandle;
@@ -20,7 +21,15 @@ public partial class Main : ComponentBase
     public int RenderInterval { get; private set; }
     public Config Config { get; private set; }
     public GameType GameType { get; private set; }
-    public Timer? Timer { private get; set; }
+    public Timer? Timer
+    {
+        private get => timer;
+        set
+        {
+            timer = value;
+            timerHandle = GCHandle.Alloc(timer);
+        }
+    }
 
     private string FPSTarget =>
         (RenderInterval != 0) ? (1000d / RenderInterval).ToString("N2") : "0";
@@ -73,7 +82,7 @@ public partial class Main : ComponentBase
         {
             return (/*(*/ke.ShiftKey /*|| this.touchMods[TOUCH_SHIFT])*/ ? 1 : 0) + (ke.CtrlKey ? 2 : 0) + (ke.AltKey ? 4 : 0) /*+ (e.touches ? 8 : 0)*/;
         }
-        throw new ArgumentException($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs!");
+        throw new ArgumentException($"Parameter '{nameof(e)}' must be of type MouseEventArgs or KeyboardEventArgs.");
     }
 
     private static int GetKeyCode(KeyboardEventArgs e) =>
@@ -101,7 +110,6 @@ public partial class Main : ComponentBase
     {
         interopHandle = GCHandle.Alloc(Interop);
         fileSystemHandle = GCHandle.Alloc(FileSystem);
-        timerHandle = GCHandle.Alloc(Timer);
 
         await Interop.SetDotNetReference(DotNetObjectReference.Create(this));
 
@@ -384,20 +392,23 @@ public partial class Main : ComponentBase
         StateHasChanged();
     }
 
+    private static T GetHandleTarget<T>(GCHandle handle) where T : class =>
+        handle.Target is T target ? target : throw new InvalidCastException("Handle target is of the wrong type.");
+
     [UnmanagedCallersOnly]
     public static void ExitGame()
     {
-        var timer = timerHandle.Target as Timer;
-        timer?.Change(Timeout.Infinite, Timeout.Infinite);
-        timer?.Dispose();
+        var timer = GetHandleTarget<Timer>(timerHandle);
+        timer.Change(Timeout.Infinite, Timeout.Infinite);
+        timer.Dispose();
         timerHandle.Free();
 
-        var fileSystem = fileSystemHandle.Target as FileSystem;
-        fileSystem?.Free();
+        var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
+        fileSystem.Free();
         fileSystemHandle.Free();
 
-        var interop = interopHandle.Target as Interop;
-        interop?.Reload();
+        var interop = GetHandleTarget<Interop>(interopHandle);
+        interop.Reload();
         interopHandle.Free();
     }
 
@@ -421,7 +432,7 @@ public partial class Main : ComponentBase
     public static int GetFilesize(IntPtr nameAddress)
     {
         var name = GetFilename(nameAddress);
-        var fileSystem = (FileSystem)fileSystemHandle.Target;
+        var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         return fileSystem.GetFilesize(name);
     }
 
@@ -429,7 +440,7 @@ public partial class Main : ComponentBase
     public static IntPtr GetFileContents(IntPtr nameAddress)
     {
         var name = GetFilename(nameAddress);
-        var fileSystem = (FileSystem)fileSystemHandle.Target;
+        var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         return fileSystem.GetFile(name);
     }
 
@@ -439,9 +450,9 @@ public partial class Main : ComponentBase
         var name = GetFilename(nameAddress);
         var span = new ReadOnlySpan<byte>((byte*)dataAddress, dataLength);
         var data = span.ToArray();
-        var fileSystem = (FileSystem)fileSystemHandle.Target;
+        var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         var fileAddress = fileSystem.SetFile(name, data);
-        var interop = (Interop)interopHandle.Target;
+        var interop = GetHandleTarget<Interop>(interopHandle);
         interop.StoreIndexedDb(nameAddress, fileAddress, data.Length);
     }
 
@@ -449,9 +460,9 @@ public partial class Main : ComponentBase
     public static void RemoveFile(IntPtr nameAddress)
     {
         var name = GetFilename(nameAddress);
-        var fileSystem = (FileSystem)fileSystemHandle.Target;
+        var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         fileSystem.DeleteFile(name);
-        var interop = (Interop)interopHandle.Target;
+        var interop = GetHandleTarget<Interop>(interopHandle);
         interop.RemoveIndexedDb(name);
     }
 
