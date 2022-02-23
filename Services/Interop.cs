@@ -64,8 +64,8 @@ public class Interop
     public ValueTask<ClientRect> GetCanvasRect() =>
         _jsRuntime.InvokeAsync<ClientRect>("interop.getCanvasRect");
 
-    public ValueTask Reload() =>
-        _jsRuntime.InvokeVoidAsync("interop.reload");
+    public void Reload() =>
+        _jsInProcessRuntime.InvokeVoid("interop.reload");
 
     public ValueTask AddEventListeners() =>
         _jsRuntime.InvokeVoidAsync("interop.addEventListeners");

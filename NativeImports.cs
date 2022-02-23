@@ -6,7 +6,7 @@ static class NativeImports
 
     [DllImport(main), DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
     internal static extern void DApi_Init(uint time, int offscreen, int v0, int v1, int v2, int spawn, IntPtr getFilesize, IntPtr getFileContents, IntPtr putFileContents,
-        IntPtr removeFile, IntPtr setCursor);
+        IntPtr removeFile, IntPtr setCursor, IntPtr exitGame);
 
     [DllImport(main), DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
     internal static extern void DApi_Mouse(int action, int button, int mods, int x, int y);

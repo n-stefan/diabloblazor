@@ -19,7 +19,6 @@ class Interop {
         this._fileStore = new FileStore();
 
         windowAny.DApi.current_save_id = this.currentSaveId;
-        windowAny.DApi.exit_game = this.exitGame;
         windowAny.DApi.exit_error = this.exitError;
     }
 
@@ -62,10 +61,6 @@ class Interop {
 
     public exitError = (error: string): void => {
         throw Error(error);
-    }
-
-    public exitGame = (): void => {
-        this._dotNetReference.invokeMethodAsync('OnExit');
     }
 
     public currentSaveId = (id: number): void => {

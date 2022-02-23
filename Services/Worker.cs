@@ -32,10 +32,11 @@ public static class Worker
         delegate* unmanaged<IntPtr, IntPtr, int, void> putFileContents = &Main.PutFileContents;
         delegate* unmanaged<IntPtr, void> removeFile = &Main.RemoveFile;
         delegate* unmanaged<int, int, void> setCursor = &Main.SetCursor;
+        delegate* unmanaged<void> exitGame = &Main.ExitGame;
 
         NativeImports.DApi_Init(Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds), app.Offscreen ? 1 : 0,
             int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value), spawn,
-            (IntPtr)getFilesize, (IntPtr)getFileContents, (IntPtr)putFileContents, (IntPtr)removeFile, (IntPtr)setCursor);
+            (IntPtr)getFilesize, (IntPtr)getFileContents, (IntPtr)putFileContents, (IntPtr)removeFile, (IntPtr)setCursor, (IntPtr)exitGame);
 
         app.Timer = new Timer(
             _ => NativeImports.DApi_Render(Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds)),

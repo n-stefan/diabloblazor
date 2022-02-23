@@ -14,6 +14,7 @@ public partial class Main : ComponentBase
     private ElementReference downloadLink;
     private static GCHandle interopHandle;
     private static GCHandle fileSystemHandle;
+    private static GCHandle timerHandle;
 
     public bool Offscreen { get; private set; }
     public int RenderInterval { get; private set; }
@@ -100,6 +101,7 @@ public partial class Main : ComponentBase
     {
         interopHandle = GCHandle.Alloc(Interop);
         fileSystemHandle = GCHandle.Alloc(FileSystem);
+        timerHandle = GCHandle.Alloc(Timer);
 
         await Interop.SetDotNetReference(DotNetObjectReference.Create(this));
 
@@ -382,27 +384,21 @@ public partial class Main : ComponentBase
         StateHasChanged();
     }
 
-    [JSInvokable]
-    public async Task OnExit()
+    [UnmanagedCallersOnly]
+    public static void ExitGame()
     {
-        if (AppState.Error)
-        {
-            return;
-        }
+        var timer = timerHandle.Target as Timer;
+        timer?.Change(Timeout.Infinite, Timeout.Infinite);
+        timer?.Dispose();
+        timerHandle.Free();
 
-        Timer?.Change(Timeout.Infinite, Timeout.Infinite);
-        if (Timer != null)
-        {
-            await Timer.DisposeAsync();
-        }
-        Timer = null;
-
-        FileSystem.Free();
-
-        interopHandle.Free();
+        var fileSystem = fileSystemHandle.Target as FileSystem;
+        fileSystem?.Free();
         fileSystemHandle.Free();
 
-        await Interop.Reload();
+        var interop = interopHandle.Target as Interop;
+        interop?.Reload();
+        interopHandle.Free();
     }
 
     [UnmanagedCallersOnly]
