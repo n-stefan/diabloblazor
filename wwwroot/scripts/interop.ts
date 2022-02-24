@@ -19,7 +19,6 @@ class Interop {
         this._fileStore = new FileStore();
 
         windowAny.DApi.current_save_id = this.currentSaveId;
-        windowAny.DApi.exit_error = this.exitError;
     }
 
     public get graphics(): Graphics {
@@ -57,10 +56,6 @@ class Interop {
 
     public getCanvasRect = (): ClientRect => {
         return this.canvas.getBoundingClientRect();
-    }
-
-    public exitError = (error: string): void => {
-        throw Error(error);
     }
 
     public currentSaveId = (id: number): void => {

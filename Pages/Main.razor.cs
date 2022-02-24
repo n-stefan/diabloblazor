@@ -128,7 +128,7 @@ public partial class Main : ComponentBase
 
         canvasRect = await Interop.GetCanvasRect();
 
-        ExceptionHandler.Exception += (_, e) => Interop.Alert($"An error has occured: {e.Message}");
+        ExceptionHandler.Exception += (_, e) => Interop.Alert($"An error has occurred: {e.Message}");
 
         await Interop.AddEventListeners();
     }
@@ -413,6 +413,14 @@ public partial class Main : ComponentBase
     }
 
     [UnmanagedCallersOnly]
+    public static void ExitError(IntPtr messageAddress)
+    {
+        var message = GetString(messageAddress);
+        var interop = GetHandleTarget<Interop>(interopHandle);
+        interop.Alert($"An error has occurred: {message}");
+    }
+
+    [UnmanagedCallersOnly]
     public static void SetCursor(int x, int y) =>
         NativeImports.DApi_Mouse(0, 0, 0, x, y);
 
@@ -421,7 +429,7 @@ public partial class Main : ComponentBase
     public ulong SetFile(string name, byte[] data) =>
         (ulong)FileSystem.SetFile(name, data);
 
-    unsafe private static string GetFilename(IntPtr address)
+    unsafe private static string GetString(IntPtr address)
     {
         var span = new ReadOnlySpan<byte>((byte*)address, 20);
         span = span[..span.IndexOf((byte)0)];
@@ -431,7 +439,7 @@ public partial class Main : ComponentBase
     [UnmanagedCallersOnly]
     public static int GetFilesize(IntPtr nameAddress)
     {
-        var name = GetFilename(nameAddress);
+        var name = GetString(nameAddress);
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         return fileSystem.GetFilesize(name);
     }
@@ -439,7 +447,7 @@ public partial class Main : ComponentBase
     [UnmanagedCallersOnly]
     public static IntPtr GetFileContents(IntPtr nameAddress)
     {
-        var name = GetFilename(nameAddress);
+        var name = GetString(nameAddress);
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         return fileSystem.GetFile(name);
     }
@@ -447,7 +455,7 @@ public partial class Main : ComponentBase
     [UnmanagedCallersOnly]
     unsafe public static void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength)
     {
-        var name = GetFilename(nameAddress);
+        var name = GetString(nameAddress);
         var span = new ReadOnlySpan<byte>((byte*)dataAddress, dataLength);
         var data = span.ToArray();
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
@@ -459,7 +467,7 @@ public partial class Main : ComponentBase
     [UnmanagedCallersOnly]
     public static void RemoveFile(IntPtr nameAddress)
     {
-        var name = GetFilename(nameAddress);
+        var name = GetString(nameAddress);
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         fileSystem.DeleteFile(name);
         var interop = GetHandleTarget<Interop>(interopHandle);
