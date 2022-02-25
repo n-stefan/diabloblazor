@@ -260,14 +260,14 @@ public partial class Main : ComponentBase
         await Interop.ClickDownloadLink(downloadLink, name, $"data:application/octet-stream;base64,{base64}");
     }
 
-    private async Task RemoveSave(SaveGame saveGame)
+    private void RemoveSave(SaveGame saveGame)
     {
         if (!Interop.Confirm($"Are you sure you want to delete {saveGame.ShortName}?"))
         {
             return;
         }
 
-        await RemoveFile(saveGame.Name);
+        RemoveFile(saveGame.Name);
         var saveToRemove = AppState.Saves.FirstOrDefault(x => x.Name == saveGame.Name);
         AppState.Saves.Remove(saveToRemove);
     }
@@ -322,7 +322,7 @@ public partial class Main : ComponentBase
         var filesize = FileSystem.GetFilesize(spawnFilename);
         if (filesize != 0 && !spawnFilesizes.Contains(filesize))
         {
-            await RemoveFile(spawnFilename);
+            RemoveFile(spawnFilename);
             filesize = 0;
         }
         if (filesize == 0)
@@ -463,10 +463,10 @@ public partial class Main : ComponentBase
         interop.RemoveIndexedDb(name);
     }
 
-    private ValueTask RemoveFile(string name)
+    private void RemoveFile(string name)
     {
         FileSystem.DeleteFile(name);
-        return Interop.RemoveIndexedDb(name);
+        Interop.RemoveIndexedDb(name);
     }
 
     //private void CompressMPQ() =>

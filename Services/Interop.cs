@@ -34,8 +34,8 @@ public class Interop
     public void StoreIndexedDb(IntPtr nameAddress, IntPtr dataAddress, int dataLength) =>
         _jsUnmarshalledRuntime.InvokeUnmarshalled<IntPtr, IntPtr, int, object>("interop.fileStore.storeIndexedDb", nameAddress, dataAddress, dataLength);
 
-    public ValueTask RemoveIndexedDb(string name) =>
-        _jsRuntime.InvokeVoidAsync("interop.fileStore.removeIndexedDb", name);
+    public void RemoveIndexedDb(string name) =>
+        _jsInProcessRuntime.InvokeVoid("interop.fileStore.removeIndexedDb", name);
 
     public ValueTask ClickDownloadLink(ElementReference link, string download, string href) =>
         _jsRuntime.InvokeVoidAsync("interop.clickDownloadLink", link, download, href);
