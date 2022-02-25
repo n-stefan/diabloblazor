@@ -17,8 +17,6 @@ class Interop {
         this._graphics = new Graphics();
         this._sound = new Sound();
         this._fileStore = new FileStore();
-
-        windowAny.DApi.current_save_id = this.currentSaveId;
     }
 
     public get graphics(): Graphics {
@@ -56,10 +54,6 @@ class Interop {
 
     public getCanvasRect = (): ClientRect => {
         return this.canvas.getBoundingClientRect();
-    }
-
-    public currentSaveId = (id: number): void => {
-        this._dotNetReference.invokeMethodAsync('SetSaveName', id);
     }
 
     public reload = (): void => {

@@ -6,30 +6,20 @@ public partial class Main : ComponentBase
     private static readonly int[] spawnFilesizes = { 50_274_091, 25_830_791 };
     private const string spawnFilename = "spawn.mpq";
     private const string retailFilename = "diabdat.mpq";
-    private string? saveName;
+    private static string? saveName;
     private bool isDrop;
     private bool preventDefaultKeyDown;
     private bool preventDefaultDragOver;
     private ClientRect canvasRect;
     private ElementReference downloadLink;
-    private Timer? timer;
     private static GCHandle interopHandle;
     private static GCHandle fileSystemHandle;
-    private static GCHandle timerHandle;
 
     public bool Offscreen { get; private set; }
     public int RenderInterval { get; private set; }
     public Config Config { get; private set; }
-    public GameType GameType { get; private set; }
-    public Timer? Timer
-    {
-        private get => timer;
-        set
-        {
-            timer = value;
-            timerHandle = GCHandle.Alloc(timer);
-        }
-    }
+    public static GameType GameType { get; private set; }
+    public static Timer? Timer { private get; set; }
 
     private string FPSTarget =>
         (RenderInterval != 0) ? (1000d / RenderInterval).ToString("N2") : "0";
@@ -377,8 +367,8 @@ public partial class Main : ComponentBase
         StateHasChanged();
     }
 
-    [JSInvokable]
-    public void SetSaveName(int id) =>
+    [UnmanagedCallersOnly]
+    public static void CurrentSaveId(int id) =>
         saveName = (id >= 0) ? (GameType == GameType.Shareware) ? $"spawn{id}.sv" : $"single_{id}.sv" : null;
 
     [JSInvokable]
@@ -395,13 +385,19 @@ public partial class Main : ComponentBase
     private static T GetHandleTarget<T>(GCHandle handle) where T : class =>
         handle.Target is T target ? target : throw new InvalidCastException("Handle target is of the wrong type.");
 
+    unsafe private static string GetString(IntPtr address)
+    {
+        var span = new ReadOnlySpan<byte>((byte*)address, 20);
+        span = span[..span.IndexOf((byte)0)];
+        return Encoding.UTF8.GetString(span);
+    }
+
     [UnmanagedCallersOnly]
     public static void ExitGame()
     {
-        var timer = GetHandleTarget<Timer>(timerHandle);
-        timer.Change(Timeout.Infinite, Timeout.Infinite);
-        timer.Dispose();
-        timerHandle.Free();
+        Timer?.Change(Timeout.Infinite, Timeout.Infinite);
+        Timer?.Dispose();
+        Timer = null;
 
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         fileSystem.Free();
@@ -428,13 +424,6 @@ public partial class Main : ComponentBase
     [JSInvokable]
     public ulong SetFile(string name, byte[] data) =>
         (ulong)FileSystem.SetFile(name, data);
-
-    unsafe private static string GetString(IntPtr address)
-    {
-        var span = new ReadOnlySpan<byte>((byte*)address, 20);
-        span = span[..span.IndexOf((byte)0)];
-        return Encoding.UTF8.GetString(span);
-    }
 
     [UnmanagedCallersOnly]
     public static int GetFilesize(IntPtr nameAddress)
