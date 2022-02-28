@@ -1,4 +1,12 @@
-﻿namespace diabloblazor.Pages;
+﻿
+//TODO master list:
+//Move as much as possible from TS to C#
+//Use threads (Worker) when available
+//Compress .mpq?
+//Multiplayer?
+//Touch? Low priority
+
+namespace diabloblazor.Pages;
 
 public partial class Main : ComponentBase
 {

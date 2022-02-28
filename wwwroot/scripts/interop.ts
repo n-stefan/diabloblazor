@@ -1,11 +1,4 @@
 ﻿
-//TODO master list:
-//Move as much as possible from TS to C#
-//Use threads (Worker) when available
-//Compress .mpq?
-//Multiplayer?
-//Touch? Low priority
-
 class Interop {
     private _graphics: Graphics;
     private _sound: Sound;

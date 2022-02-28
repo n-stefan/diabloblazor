@@ -1,6 +1,5 @@
 ﻿
 interface Image {
-    buffer?: ArrayBuffer;
     x: number;
     y: number;
     width: number;
