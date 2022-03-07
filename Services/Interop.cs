@@ -58,6 +58,9 @@ public class Interop
     public ValueTask InitGraphics(bool offscreen) =>
         _jsRuntime.InvokeVoidAsync("interop.graphics.initGraphics", offscreen);
 
+    public void Render(RenderBatch renderBatch) =>
+        _jsInProcessRuntime.InvokeVoid("interop.graphics.onRender", renderBatch);
+
     public ValueTask InitSound() =>
         _jsRuntime.InvokeVoidAsync("interop.sound.initSound");
 

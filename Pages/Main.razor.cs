@@ -395,7 +395,7 @@ public partial class Main : ComponentBase
 
     unsafe private static string GetString(IntPtr address)
     {
-        var span = new ReadOnlySpan<byte>((byte*)address, 20);
+        var span = new ReadOnlySpan<byte>(address.ToPointer(), 100);
         span = span[..span.IndexOf((byte)0)];
         return Encoding.UTF8.GetString(span);
     }
@@ -453,7 +453,7 @@ public partial class Main : ComponentBase
     unsafe public static void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength)
     {
         var name = GetString(nameAddress);
-        var span = new ReadOnlySpan<byte>((byte*)dataAddress, dataLength);
+        var span = new ReadOnlySpan<byte>(dataAddress.ToPointer(), dataLength);
         var data = span.ToArray();
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         var fileAddress = fileSystem.SetFile(name, data);
@@ -475,6 +475,37 @@ public partial class Main : ComponentBase
     {
         FileSystem.DeleteFile(name);
         Interop.RemoveIndexedDb(name);
+    }
+
+    //TODO: Move to Graphics service?
+    private static RenderBatch RenderBatch;
+
+    [UnmanagedCallersOnly]
+    public static void DrawBegin() =>
+        RenderBatch = new();
+
+    [UnmanagedCallersOnly]
+    public static void DrawEnd()
+    {
+        var interop = GetHandleTarget<Interop>(interopHandle);
+        interop.Render(RenderBatch);
+        RenderBatch.FreeImages();
+        RenderBatch = null;
+    }
+
+    [UnmanagedCallersOnly]
+    public static void DrawBlit(int x, int y, int w, int h, IntPtr dataAddress) =>
+        RenderBatch.Images.Add(new Image { X = x, Y = y, Width = w, Height = h, Data = (ulong)dataAddress });
+
+    [UnmanagedCallersOnly]
+    public static void DrawClipText(int x0, int y0, int x1, int y1) =>
+        RenderBatch.Clip = new Clip { X0 = x0, Y0 = y0, X1 = x1, Y1 = y1 };
+
+    [UnmanagedCallersOnly]
+    public static void DrawText(int x, int y, IntPtr textAddress, int color)
+    {
+        var text = GetString(textAddress);
+        RenderBatch.Text.Add(new TextDef { X = x, Y = y, Text = text, Color = color });
     }
 
     //private void CompressMPQ() =>

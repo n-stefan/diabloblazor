@@ -4,7 +4,7 @@ interface Image {
     y: number;
     width: number;
     height: number;
-    data: Uint8ClampedArray;
+    data: number;
 }
 
 interface TextDef {
@@ -22,7 +22,7 @@ interface Clip {
 }
 
 interface RenderBatch {
-    bitmap?: ImageBitmap;    
+    bitmap?: ImageBitmap;
     images: Image[];
     text: TextDef[];
     clip: Clip;
@@ -32,79 +32,33 @@ type RenderContext = CanvasRenderingContext2D | ImageBitmapRenderingContext;
 
 class Graphics {
     private context: RenderContext;
-    private renderBatch: RenderBatch;
-
-    constructor() {
-        windowAny.DApi.draw_begin = this.drawBegin;
-        windowAny.DApi.draw_end = this.drawEnd;
-        windowAny.DApi.draw_blit = this.drawBlit;
-        windowAny.DApi.draw_clip_text = this.drawClipText;
-        windowAny.DApi.draw_text = this.drawText;
-    }
 
     public initGraphics = (offscreen: boolean): void => {
         const canvas = document.getElementById('canvas') as HTMLCanvasElement;
         this.context = offscreen ? canvas.getContext('bitmaprenderer') : canvas.getContext('2d', { alpha: false });
     }
 
-    public drawBegin = (): void => {
-        this.renderBatch = {
-            images: [],
-            text: [],
-            clip: null
-        };
-    }
-
-    //private frameTime: number = 0;
-    //private lastTime: number = 0;
-
-    //private getFPS = (): number => {
-    //    const time = performance.now();
-    //    if (!this.lastTime)
-    //        this.lastTime = time;
-    //    this.frameTime = time - this.lastTime; //0.9 * this.frameTime + 0.1 * (time - this.lastTime);
-    //    this.lastTime = time;
-    //    return this.frameTime ? 1000.0 / this.frameTime : 0.0;
-    //}
-
-    public drawEnd = (): void => {
-        //this.drawText(2, 10, `FPS: ${this.getFPS().toFixed(1)}`, 0x7070FF);
-        this.onRender();
-        this.renderBatch = null;
-    }
-
-    public drawBlit = (x: number, y: number, width: number, height: number, data: Uint8ClampedArray): void => {
-        this.renderBatch.images.push({ x, y, width, height, data: data.slice() });
-    }
-
-    public drawClipText = (x0: number, y0: number, x1: number, y1: number): void => {
-        this.renderBatch.clip = { x0, y0, x1, y1 };
-    }
-
-    public drawText = (x: number, y: number, text: string, color: number): void => {
-        this.renderBatch.text.push({ x, y, text, color });
-    }
-
-    private onRender = (): void => {
+    public onRender = (renderBatch: RenderBatch): void => {
         if (this.context instanceof ImageBitmapRenderingContext)
-            (this.context as ImageBitmapRenderingContext).transferFromImageBitmap(this.renderBatch.bitmap);
+            (this.context as ImageBitmapRenderingContext).transferFromImageBitmap(renderBatch.bitmap);
         else if (this.context instanceof CanvasRenderingContext2D) {
             const ctx = this.context as CanvasRenderingContext2D;
-            for (let i of this.renderBatch.images) {
+            for (let i of renderBatch.images) {
                 const image = ctx.createImageData(i.width, i.height);
-                image.data.set(i.data);
+                const data = windowAny.Module.HEAPU8.subarray(i.data, i.data + (i.width * i.height * 4));
+                image.data.set(data);
                 ctx.putImageData(image, i.x, i.y);
             }
-            if (this.renderBatch.text.length) {
+            if (renderBatch.text.length) {
                 ctx.save();
                 ctx.font = 'bold 13px Times New Roman';
-                if (this.renderBatch.clip) {
-                    const c = this.renderBatch.clip;
+                if (renderBatch.clip) {
+                    const c = renderBatch.clip;
                     ctx.beginPath();
                     ctx.rect(c.x0, c.y0, c.x1 - c.x0, c.y1 - c.y0);
                     ctx.clip();
                 }
-                for (let t of this.renderBatch.text) {
+                for (let t of renderBatch.text) {
                     const r = ((t.color >> 16) & 0xFF);
                     const g = ((t.color >> 8) & 0xFF);
                     const b = (t.color & 0xFF);

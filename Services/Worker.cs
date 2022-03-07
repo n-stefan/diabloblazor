@@ -35,11 +35,17 @@ public static class Worker
         delegate* unmanaged<void> exitGame = &Main.ExitGame;
         delegate* unmanaged<IntPtr, void> exitError = &Main.ExitError;
         delegate* unmanaged<int, void> currentSaveId = &Main.CurrentSaveId;
+        delegate* unmanaged<void> drawBegin = &Main.DrawBegin;
+        delegate* unmanaged<void> drawEnd = &Main.DrawEnd;
+        delegate* unmanaged<int, int, int, int, IntPtr, void> drawBlit = &Main.DrawBlit;
+        delegate* unmanaged<int, int, int, int, void> drawClipText = &Main.DrawClipText;
+        delegate* unmanaged<int, int, IntPtr, int, void> drawText = &Main.DrawText;
 
         NativeImports.DApi_Init(Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds), app.Offscreen ? 1 : 0,
             int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value), spawn,
             new[] { (IntPtr)getFilesize, (IntPtr)getFileContents, (IntPtr)putFileContents, (IntPtr)removeFile, (IntPtr)setCursor,
-                (IntPtr)exitGame, (IntPtr)exitError, (IntPtr)currentSaveId });
+                (IntPtr)exitGame, (IntPtr)exitError, (IntPtr)currentSaveId, (IntPtr)drawBegin, (IntPtr)drawEnd, (IntPtr)drawBlit,
+                (IntPtr)drawClipText, (IntPtr)drawText });
 
         Main.Timer = new Timer(
             _ => NativeImports.DApi_Render(Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds)),
