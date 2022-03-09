@@ -379,10 +379,6 @@ public partial class Main : ComponentBase
         StateHasChanged();
     }
 
-    [UnmanagedCallersOnly]
-    public static void CurrentSaveId(int id) =>
-        saveName = (id >= 0) ? (GameType == GameType.Shareware) ? $"spawn{id}.sv" : $"single_{id}.sv" : null;
-
     [JSInvokable]
     public void OnResize(ClientRect rect) =>
         canvasRect = rect;
@@ -393,6 +389,14 @@ public partial class Main : ComponentBase
         AppState.Progress = progress;
         StateHasChanged();
     }
+
+    [JSInvokable]
+    public ulong SetFile(string name, byte[] data) =>
+        (ulong)FileSystem.SetFile(name, data);
+
+    [UnmanagedCallersOnly]
+    public static void CurrentSaveId(int id) =>
+        saveName = (id >= 0) ? (GameType == GameType.Shareware) ? $"spawn{id}.sv" : $"single_{id}.sv" : null;
 
     [UnmanagedCallersOnly]
     public static void ExitGame()
@@ -423,11 +427,6 @@ public partial class Main : ComponentBase
     [UnmanagedCallersOnly]
     public static void SetCursor(int x, int y) =>
         NativeImports.DApi_Mouse(0, 0, 0, x, y);
-
-    //TODO: Move to FileSystem?
-    [JSInvokable]
-    public ulong SetFile(string name, byte[] data) =>
-        (ulong)FileSystem.SetFile(name, data);
 
     [UnmanagedCallersOnly]
     public static int GetFilesize(IntPtr nameAddress)
@@ -467,12 +466,6 @@ public partial class Main : ComponentBase
         interop.RemoveIndexedDb(name);
     }
 
-    private void RemoveFile(string name)
-    {
-        FileSystem.DeleteFile(name);
-        Interop.RemoveIndexedDb(name);
-    }
-
     [UnmanagedCallersOnly]
     public static void DrawBegin()
     {
@@ -506,6 +499,12 @@ public partial class Main : ComponentBase
     {
         var graphics = GetHandleTarget<Graphics>(graphicsHandle);
         graphics.DrawText(x, y, textAddress, color);
+    }
+
+    private void RemoveFile(string name)
+    {
+        FileSystem.DeleteFile(name);
+        Interop.RemoveIndexedDb(name);
     }
 
     //private void CompressMPQ() =>
