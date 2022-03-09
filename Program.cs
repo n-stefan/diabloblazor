@@ -5,6 +5,7 @@ builder.Services.AddScoped<AppState>();
 builder.Services.AddScoped<Interop>();
 builder.Services.AddSingleton<ExceptionHandler>();
 builder.Services.AddScoped<FileSystem>();
+builder.Services.AddScoped<Graphics>();
 
 builder.RootComponents.Add<App>("app");
 

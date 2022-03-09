@@ -22,6 +22,7 @@ public partial class Main : ComponentBase
     private ElementReference downloadLink;
     private static GCHandle interopHandle;
     private static GCHandle fileSystemHandle;
+    private static GCHandle graphicsHandle;
 
     public bool Offscreen { get; private set; }
     public int RenderInterval { get; private set; }
@@ -46,6 +47,8 @@ public partial class Main : ComponentBase
     private IConfiguration Configuration { get; set; } = default!;
     [Inject]
     private FileSystem FileSystem { get; set; } = default!;
+    [Inject]
+    private Graphics Graphics { get; set; } = default!;
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {
@@ -108,6 +111,7 @@ public partial class Main : ComponentBase
     {
         interopHandle = GCHandle.Alloc(Interop);
         fileSystemHandle = GCHandle.Alloc(FileSystem);
+        graphicsHandle = GCHandle.Alloc(Graphics);
 
         await Interop.SetDotNetReference(DotNetObjectReference.Create(this));
 
@@ -390,22 +394,14 @@ public partial class Main : ComponentBase
         StateHasChanged();
     }
 
-    private static T GetHandleTarget<T>(GCHandle handle) where T : class =>
-        handle.Target is T target ? target : throw new InvalidCastException("Handle target is of the wrong type.");
-
-    unsafe private static string GetString(IntPtr address)
-    {
-        var span = new ReadOnlySpan<byte>(address.ToPointer(), 100);
-        span = span[..span.IndexOf((byte)0)];
-        return Encoding.UTF8.GetString(span);
-    }
-
     [UnmanagedCallersOnly]
     public static void ExitGame()
     {
         Timer?.Change(Timeout.Infinite, Timeout.Infinite);
         Timer?.Dispose();
         Timer = null;
+
+        graphicsHandle.Free();
 
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         fileSystem.Free();
@@ -477,35 +473,39 @@ public partial class Main : ComponentBase
         Interop.RemoveIndexedDb(name);
     }
 
-    //TODO: Move to Graphics service?
-    private static RenderBatch RenderBatch;
-
     [UnmanagedCallersOnly]
-    public static void DrawBegin() =>
-        RenderBatch = new();
+    public static void DrawBegin()
+    {
+        var graphics = GetHandleTarget<Graphics>(graphicsHandle);
+        graphics.DrawBegin();
+    }
 
     [UnmanagedCallersOnly]
     public static void DrawEnd()
     {
-        var interop = GetHandleTarget<Interop>(interopHandle);
-        interop.Render(RenderBatch);
-        RenderBatch.FreeImages();
-        RenderBatch = null;
+        var graphics = GetHandleTarget<Graphics>(graphicsHandle);
+        graphics.DrawEnd();
     }
 
     [UnmanagedCallersOnly]
-    public static void DrawBlit(int x, int y, int w, int h, IntPtr dataAddress) =>
-        RenderBatch.Images.Add(new Image { X = x, Y = y, Width = w, Height = h, Data = (ulong)dataAddress });
+    public static void DrawBlit(int x, int y, int w, int h, IntPtr dataAddress)
+    {
+        var graphics = GetHandleTarget<Graphics>(graphicsHandle);
+        graphics.DrawBlit(x, y, w, h, dataAddress);
+    }
 
     [UnmanagedCallersOnly]
-    public static void DrawClipText(int x0, int y0, int x1, int y1) =>
-        RenderBatch.Clip = new Clip { X0 = x0, Y0 = y0, X1 = x1, Y1 = y1 };
+    public static void DrawClipText(int x0, int y0, int x1, int y1)
+    {
+        var graphics = GetHandleTarget<Graphics>(graphicsHandle);
+        graphics.DrawClipText(x0, y0, x1, y1);
+    }
 
     [UnmanagedCallersOnly]
     public static void DrawText(int x, int y, IntPtr textAddress, int color)
     {
-        var text = GetString(textAddress);
-        RenderBatch.Text.Add(new TextDef { X = x, Y = y, Text = text, Color = color });
+        var graphics = GetHandleTarget<Graphics>(graphicsHandle);
+        graphics.DrawText(x, y, textAddress, color);
     }
 
     //private void CompressMPQ() =>
