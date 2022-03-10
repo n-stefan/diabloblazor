@@ -279,7 +279,7 @@ public partial class Main : ComponentBase
             return;
         }
 
-        RemoveFile(saveGame.Name);
+        FileSystem.RemoveFile(saveGame.Name);
         var saveToRemove = AppState.Saves.FirstOrDefault(x => x.Name == saveGame.Name);
         AppState.Saves.Remove(saveToRemove);
     }
@@ -334,7 +334,7 @@ public partial class Main : ComponentBase
         var filesize = FileSystem.GetFilesize(spawnFilename);
         if (filesize != 0 && !spawnFilesizes.Contains(filesize))
         {
-            RemoveFile(spawnFilename);
+            FileSystem.RemoveFile(spawnFilename);
             filesize = 0;
         }
         if (filesize == 0)
@@ -431,39 +431,29 @@ public partial class Main : ComponentBase
     [UnmanagedCallersOnly]
     public static int GetFilesize(IntPtr nameAddress)
     {
-        var name = GetString(nameAddress);
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
-        return fileSystem.GetFilesize(name);
+        return fileSystem.GetFilesize(nameAddress);
     }
 
     [UnmanagedCallersOnly]
     public static IntPtr GetFileContents(IntPtr nameAddress)
     {
-        var name = GetString(nameAddress);
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
-        return fileSystem.GetFile(name);
+        return fileSystem.GetFileContents(nameAddress);
     }
 
     [UnmanagedCallersOnly]
     unsafe public static void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength)
     {
-        var name = GetString(nameAddress);
-        var span = new ReadOnlySpan<byte>(dataAddress.ToPointer(), dataLength);
-        var data = span.ToArray();
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
-        var fileAddress = fileSystem.SetFile(name, data);
-        var interop = GetHandleTarget<Interop>(interopHandle);
-        interop.StoreIndexedDb(nameAddress, fileAddress, data.Length);
+        fileSystem.PutFileContents(nameAddress, dataAddress, dataLength);
     }
 
     [UnmanagedCallersOnly]
     public static void RemoveFile(IntPtr nameAddress)
     {
-        var name = GetString(nameAddress);
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
-        fileSystem.DeleteFile(name);
-        var interop = GetHandleTarget<Interop>(interopHandle);
-        interop.RemoveIndexedDb(name);
+        fileSystem.RemoveFile(nameAddress);
     }
 
     [UnmanagedCallersOnly]
@@ -499,12 +489,6 @@ public partial class Main : ComponentBase
     {
         var graphics = GetHandleTarget<Graphics>(graphicsHandle);
         graphics.DrawText(x, y, textAddress, color);
-    }
-
-    private void RemoveFile(string name)
-    {
-        FileSystem.DeleteFile(name);
-        Interop.RemoveIndexedDb(name);
     }
 
     //private void CompressMPQ() =>

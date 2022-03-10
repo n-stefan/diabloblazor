@@ -5,9 +5,10 @@ namespace diabloblazor.Services;
 public class FileSystem
 {
     private Dictionary<string, File> files = new();
+    private readonly Interop interop;
 
-    public IntPtr GetFile(string name) =>
-        files[name].Address;
+    public FileSystem(Interop interop) =>
+        this.interop = interop;
 
     public IntPtr SetFile(string name, byte[] data)
     {
@@ -19,14 +20,14 @@ public class FileSystem
         return files[name].Address;
     }
 
-    public void DeleteFile(string name)
-    {
-        files[name].Free();
-        files.Remove(name);
-    }
-
     public int GetFilesize(string name) =>
         files.ContainsKey(name) ? files[name].Length : 0;
+
+    public int GetFilesize(IntPtr nameAddress)
+    {
+        var name = GetString(nameAddress);
+        return GetFilesize(name);
+    }
 
     public string[] GetFilenames() =>
         files.Keys.ToArray();
@@ -48,5 +49,33 @@ public class FileSystem
         }
         files.Clear();
         files = null;
+    }
+
+    public IntPtr GetFileContents(IntPtr nameAddress)
+    {
+        var name = GetString(nameAddress);
+        return files[name].Address;
+    }
+
+    unsafe public void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength)
+    {
+        var name = GetString(nameAddress);
+        var span = new ReadOnlySpan<byte>(dataAddress.ToPointer(), dataLength);
+        var data = span.ToArray();
+        var fileAddress = SetFile(name, data);
+        interop.StoreIndexedDb(nameAddress, fileAddress, data.Length);
+    }
+
+    public void RemoveFile(string name)
+    {
+        files[name].Free();
+        files.Remove(name);
+        interop.RemoveIndexedDb(name);
+    }
+
+    public void RemoveFile(IntPtr nameAddress)
+    {
+        var name = GetString(nameAddress);
+        RemoveFile(name);
     }
 }
