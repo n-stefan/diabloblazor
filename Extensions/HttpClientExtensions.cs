@@ -18,7 +18,7 @@ public static class HttpClientExtensions
 
         do
         {
-            var count = (totalBytesRead + bufferSize > totalSize) ? totalSize - totalBytesRead : bufferSize;
+            var count = Min(totalSize - totalBytesRead, bufferSize);
             bytesRead = await stream.ReadAsync(data, totalBytesRead, count);
             totalBytesRead += bytesRead;
             onProgress?.Invoke(new Progress { Message = message, BytesLoaded = totalBytesRead, Total = totalSize });

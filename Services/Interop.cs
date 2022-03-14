@@ -43,9 +43,6 @@ public class Interop
     public ValueTask UploadFile() =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.uploadFile");
 
-    public ValueTask SetInputFile() =>
-        _jsRuntime.InvokeVoidAsync("interop.fileStore.setInputFile");
-
     public ValueTask SetDropFile() =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.setDropFile");
 

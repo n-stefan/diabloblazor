@@ -83,12 +83,6 @@ class FileStore {
     }
 
     //Dummy parameter for minification
-    public setInputFile = async (dummy: any): Promise<void> => {
-        const fileDef = await this.getFileFromInput('mpqInput');
-        getInterop().dotNetReference.invokeMethod('SetFile', fileDef.name, fileDef.data);
-    }
-
-    //Dummy parameter for minification
     public uploadFile = async (dummy: any): Promise<void> => {
         const fileDef = await this.getFileFromInput('saveInput');
         getInterop().dotNetReference.invokeMethod('SetFile', fileDef.name, fileDef.data);

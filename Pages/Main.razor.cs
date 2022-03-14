@@ -12,6 +12,7 @@ public partial class Main : ComponentBase
 {
     //TODO: Move some into AppState
     private static readonly int[] spawnFilesizes = { 50_274_091, 25_830_791 };
+    private readonly int bufferSize = 524_288;
     private const string spawnFilename = "spawn.mpq";
     private const string retailFilename = "diabdat.mpq";
     private static string? saveName;
@@ -20,6 +21,7 @@ public partial class Main : ComponentBase
     private bool preventDefaultDragOver;
     private ClientRect canvasRect;
     private ElementReference downloadLink;
+    private IBrowserFile? file;
     private static GCHandle interopHandle;
     private static GCHandle fileSystemHandle;
     private static GCHandle graphicsHandle;
@@ -255,11 +257,10 @@ public partial class Main : ComponentBase
         AppState.Saves.Add(new SaveGame(name));
     }
 
-    private async Task ParseMpqFile(ChangeEventArgs e)
+    private async Task LoadMpqFile(InputFileChangeEventArgs e)
     {
-        var value = e.Value?.ToString();
-        var name = ExtractFilename(value).ToLower();
-        await Start(name);
+        file = e.File;
+        await Start(file.Name);
     }
 
     private void GoBack() =>
@@ -324,7 +325,24 @@ public partial class Main : ComponentBase
             }
             else
             {
-                await Interop.SetInputFile();
+                var bytesRead = 0;
+                var totalBytesRead = 0;
+                var data = new byte[file.Size];
+
+                using var stream = file.OpenReadStream(520_000_000);
+
+                do
+                {
+                    var count = Min(file.Size - totalBytesRead, bufferSize);
+                    bytesRead = await stream.ReadAsync(data, totalBytesRead, (int)count);
+                    totalBytesRead += bytesRead;
+                    OnProgress(new Progress { Message = "Loading...", BytesLoaded = totalBytesRead, Total = file.Size });
+                }
+                while (bytesRead != 0);
+
+                FileSystem.SetFile(file.Name, data);
+
+                file = null;
             }
         }
     }
@@ -340,7 +358,7 @@ public partial class Main : ComponentBase
         if (filesize == 0)
         {
             var url = $"{NavigationManager.BaseUri}{spawnFilename}";
-            var binary = await HttpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], 524_288, OnProgress);
+            var binary = await HttpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], bufferSize, OnProgress);
             var address = FileSystem.SetFile(spawnFilename, binary);
             Interop.StoreIndexedDb(Marshal.StringToHGlobalAuto(spawnFilename), address, binary.Length);
             Worker.InitGame(this);

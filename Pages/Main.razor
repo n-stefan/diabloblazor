@@ -79,6 +79,6 @@
                 <p><input type="range" min="15" max="100" step="1" @bind="RenderInterval" @bind:event="oninput" @onchange="OnRenderIntervalChange" /></p>
             </div>
         }
-        <input accept=".mpq" type="file" id="mpqInput" class="hidden" @onchange="ParseMpqFile" />
+        <InputFile OnChange="@LoadMpqFile" accept=".mpq" id="mpqInput" class="hidden" />
     </div>
 </div>
