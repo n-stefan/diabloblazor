@@ -36,7 +36,7 @@
                 </ul>
                 <a @ref="downloadLink" class="hidden"></a>
                 <label for="saveInput" class="startButton">Upload Save</label>
-                <input accept=".sv" type="file" id="saveInput" class="hidden" @onchange="ParseSaveFile" />
+                <InputFile OnChange="@UploadSaveFile" accept=".sv" id="saveInput" class="hidden" />
                 <div class="startButton" @onclick="GoBack">Back</div>
             </div>
         }

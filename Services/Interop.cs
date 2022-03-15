@@ -40,9 +40,6 @@ public class Interop
     public ValueTask ClickDownloadLink(ElementReference link, string download, string href) =>
         _jsRuntime.InvokeVoidAsync("interop.clickDownloadLink", link, download, href);
 
-    public ValueTask UploadFile() =>
-        _jsRuntime.InvokeVoidAsync("interop.fileStore.uploadFile");
-
     public ValueTask SetDropFile() =>
         _jsRuntime.InvokeVoidAsync("interop.fileStore.setDropFile");
 

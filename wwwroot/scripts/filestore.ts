@@ -48,14 +48,6 @@ class FileStore {
         reader.readAsArrayBuffer(file);
     });
 
-    private getFileFromInput = async (name: string): Promise<FileDef> => {
-        const input = document.getElementById(name) as HTMLInputElement;
-        const file = input.files[0];
-        const filename = file.name.toLowerCase();
-        const array = new Uint8Array(await this.readFile(file));
-        return { name: filename, data: array };
-    }
-
     public onDropFile = (event: DragEvent): void => {
         this.dropFile = this.getDropFile(event);
         if (this.dropFile) {
@@ -80,13 +72,6 @@ class FileStore {
         const array = new Uint8Array(await this.readFile(this.dropFile));
         getInterop().dotNetReference.invokeMethod('SetFile', this.dropFile.name.toLowerCase(), array);
         this.dropFile = null;
-    }
-
-    //Dummy parameter for minification
-    public uploadFile = async (dummy: any): Promise<void> => {
-        const fileDef = await this.getFileFromInput('saveInput');
-        getInterop().dotNetReference.invokeMethod('SetFile', fileDef.name, fileDef.data);
-        this.store.set(fileDef.name, fileDef.data);
     }
 
     public getRenderInterval = (): number => {

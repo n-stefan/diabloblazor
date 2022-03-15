@@ -215,23 +215,30 @@ public partial class Main : ComponentBase
         saveNames.ForEach(x => AppState.Saves.Add(new SaveGame(x)));
     }
 
-    private static string ExtractFilename(string? path)
+    private async Task<byte[]> ReadInputFile(string message)
     {
-        if (path is null)
-        {
-            throw new ArgumentNullException(nameof(path));
-        }
+        var bytesRead = 0;
+        var totalBytesRead = 0;
+        var data = new byte[file.Size];
 
-        //Path.GetFileName doesn't seem to do the trick
-        var index = path.LastIndexOf(@"\");
-        return (index != -1) ? path[(index + 1)..] : path;
+        using var stream = file.OpenReadStream(520_000_000);
+
+        do
+        {
+            var count = Min(file.Size - totalBytesRead, bufferSize);
+            bytesRead = await stream.ReadAsync(data, totalBytesRead, (int)count);
+            totalBytesRead += bytesRead;
+            OnProgress(new Progress { Message = message, BytesLoaded = totalBytesRead, Total = file.Size });
+        }
+        while (bytesRead != 0);
+
+        return data;
     }
 
-    private async Task ParseSaveFile(ChangeEventArgs e)
+    private async Task UploadSaveFile(InputFileChangeEventArgs e)
     {
-        var value = e.Value?.ToString();
-        var name = ExtractFilename(value).ToLower();
-        await Upload(name);
+        file = e.File;
+        await Upload(file.Name);
     }
 
     private async Task Upload(string name)
@@ -253,7 +260,14 @@ public partial class Main : ComponentBase
             return;
         }
 
-        await Interop.UploadFile();
+        var data = await ReadInputFile("Uploading...");
+
+        var address = FileSystem.SetFile(name, data);
+
+        Interop.StoreIndexedDb(Marshal.StringToHGlobalAuto(name), address, data.Length);
+
+        file = null;
+
         AppState.Saves.Add(new SaveGame(name));
     }
 
@@ -325,20 +339,7 @@ public partial class Main : ComponentBase
             }
             else
             {
-                var bytesRead = 0;
-                var totalBytesRead = 0;
-                var data = new byte[file.Size];
-
-                using var stream = file.OpenReadStream(520_000_000);
-
-                do
-                {
-                    var count = Min(file.Size - totalBytesRead, bufferSize);
-                    bytesRead = await stream.ReadAsync(data, totalBytesRead, (int)count);
-                    totalBytesRead += bytesRead;
-                    OnProgress(new Progress { Message = "Loading...", BytesLoaded = totalBytesRead, Total = file.Size });
-                }
-                while (bytesRead != 0);
+                var data = await ReadInputFile("Loading...");
 
                 FileSystem.SetFile(file.Name, data);
 
