@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Services;
 
-public class AppState
+public class AppState : IAppState
 {
     public bool Loading { get; set; }
 

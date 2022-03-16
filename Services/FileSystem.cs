@@ -2,12 +2,12 @@
 
 namespace diabloblazor.Services;
 
-public class FileSystem
+public class FileSystem : IFileSystem
 {
     private Dictionary<string, File> files = new();
-    private readonly Interop interop;
+    private readonly IInterop interop;
 
-    public FileSystem(Interop interop) =>
+    public FileSystem(IInterop interop) =>
         this.interop = interop;
 
     public IntPtr SetFile(string name, byte[] data)

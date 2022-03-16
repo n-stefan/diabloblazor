@@ -1,11 +1,11 @@
 ﻿namespace diabloblazor.Services;
 
-public class Graphics
+public class Graphics : IGraphics
 {
     private RenderBatch renderBatch;
-    private readonly Interop interop;
+    private readonly IInterop interop;
 
-    public Graphics(Interop interop) =>
+    public Graphics(IInterop interop) =>
         this.interop = interop;
 
     public void DrawBegin() =>

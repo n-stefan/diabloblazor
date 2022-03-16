@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Services;
 
-public class ExceptionHandler : TextWriter
+public class ExceptionHandler : TextWriter, IExceptionHandler
 {
     private readonly TextWriter _consoleWriter;
 

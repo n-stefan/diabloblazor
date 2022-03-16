@@ -36,11 +36,11 @@ public partial class Main : ComponentBase
         (RenderInterval != 0) ? (1000d / RenderInterval).ToString("N2") : "0";
 
     [Inject]
-    private AppState AppState { get; set; } = default!;
+    private IAppState AppState { get; set; } = default!;
     [Inject]
-    private Interop Interop { get; set; } = default!;
+    private IInterop Interop { get; set; } = default!;
     [Inject]
-    private ExceptionHandler ExceptionHandler { get; set; } = default!;
+    private IExceptionHandler ExceptionHandler { get; set; } = default!;
     [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
     [Inject]
@@ -48,9 +48,9 @@ public partial class Main : ComponentBase
     [Inject]
     private IConfiguration Configuration { get; set; } = default!;
     [Inject]
-    private FileSystem FileSystem { get; set; } = default!;
+    private IFileSystem FileSystem { get; set; } = default!;
     [Inject]
-    private Graphics Graphics { get; set; } = default!;
+    private IGraphics Graphics { get; set; } = default!;
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {

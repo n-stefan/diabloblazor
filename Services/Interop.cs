@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Services;
 
-public class Interop
+public class Interop : IInterop
 {
     private readonly IJSRuntime _jsRuntime;
     private readonly IJSInProcessRuntime _jsInProcessRuntime;
