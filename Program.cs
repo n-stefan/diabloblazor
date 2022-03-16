@@ -1,11 +1,11 @@
 ﻿var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddScoped<AppState>();
-builder.Services.AddScoped<Interop>();
+builder.Services.AddSingleton<AppState>();
+builder.Services.AddSingleton<Interop>();
 builder.Services.AddSingleton<ExceptionHandler>();
-builder.Services.AddScoped<FileSystem>();
-builder.Services.AddScoped<Graphics>();
+builder.Services.AddSingleton<FileSystem>();
+builder.Services.AddSingleton<Graphics>();
 
 builder.RootComponents.Add<App>("app");
 
