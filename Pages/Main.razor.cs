@@ -42,15 +42,17 @@ public partial class Main : ComponentBase
     [Inject]
     private IExceptionHandler ExceptionHandler { get; set; } = default!;
     [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
-    [Inject]
-    private HttpClient HttpClient { get; set; } = default!;
-    [Inject]
     private IConfiguration Configuration { get; set; } = default!;
     [Inject]
     private IFileSystem FileSystem { get; set; } = default!;
     [Inject]
     private IGraphics Graphics { get; set; } = default!;
+    [Inject]
+    private IWorker Worker { get; set; } = default!;
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+    [Inject]
+    private HttpClient HttpClient { get; set; } = default!;
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {

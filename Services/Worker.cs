@@ -1,8 +1,8 @@
 ﻿namespace diabloblazor.Services;
 
-public static class Worker
+public class Worker : IWorker
 {
-    public static void InitGame(Main app)
+    public void InitGame(Main app)
     {
         if (app is null)
         {
@@ -14,7 +14,7 @@ public static class Worker
         RunGame(app);
     }
 
-    unsafe public static void RunGame(Main app)
+    unsafe public void RunGame(Main app)
     {
         if (app is null)
         {
