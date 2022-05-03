@@ -237,6 +237,12 @@ public partial class Main : ComponentBase
         return data;
     }
 
+    private async Task LoadMpqFile(InputFileChangeEventArgs e)
+    {
+        file = e.File;
+        await Start(file.Name);
+    }
+
     private async Task UploadSaveFile(InputFileChangeEventArgs e)
     {
         file = e.File;
@@ -271,12 +277,6 @@ public partial class Main : ComponentBase
         file = null;
 
         AppState.Saves.Add(new SaveGame(name));
-    }
-
-    private async Task LoadMpqFile(InputFileChangeEventArgs e)
-    {
-        file = e.File;
-        await Start(file.Name);
     }
 
     private void GoBack() =>
@@ -464,7 +464,7 @@ public partial class Main : ComponentBase
     }
 
     [UnmanagedCallersOnly]
-    unsafe public static void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength)
+    public static void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength)
     {
         var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         fileSystem.PutFileContents(nameAddress, dataAddress, dataLength);
