@@ -22,9 +22,9 @@ public partial class Main : ComponentBase
     private ClientRect canvasRect;
     private ElementReference downloadLink;
     private IBrowserFile? file;
-    private static GCHandle interopHandle;
-    private static GCHandle fileSystemHandle;
-    private static GCHandle graphicsHandle;
+    private static IInterop interop;
+    private static IFileSystem fileSystem;
+    private static IGraphics graphics;
 
     public bool Offscreen { get; private set; }
     public int RenderInterval { get; private set; }
@@ -113,9 +113,9 @@ public partial class Main : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        interopHandle = GCHandle.Alloc(Interop);
-        fileSystemHandle = GCHandle.Alloc(FileSystem);
-        graphicsHandle = GCHandle.Alloc(Graphics);
+        interop = Interop;
+        fileSystem = FileSystem;
+        graphics = Graphics;
 
         await Interop.SetDotNetReference(DotNetObjectReference.Create(this));
 
@@ -426,22 +426,15 @@ public partial class Main : ComponentBase
         Timer?.Dispose();
         Timer = null;
 
-        graphicsHandle.Free();
-
-        var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
         fileSystem.Free();
-        fileSystemHandle.Free();
 
-        var interop = GetHandleTarget<Interop>(interopHandle);
         interop.Reload();
-        interopHandle.Free();
     }
 
     [UnmanagedCallersOnly]
     public static void ExitError(IntPtr messageAddress)
     {
         var message = GetString(messageAddress);
-        var interop = GetHandleTarget<Interop>(interopHandle);
         interop.Alert($"An error has occurred: {message}");
     }
 
@@ -450,67 +443,40 @@ public partial class Main : ComponentBase
         NativeImports.DApi_Mouse(0, 0, 0, x, y);
 
     [UnmanagedCallersOnly]
-    public static int GetFilesize(IntPtr nameAddress)
-    {
-        var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
-        return fileSystem.GetFilesize(nameAddress);
-    }
+    public static int GetFilesize(IntPtr nameAddress) =>
+        fileSystem.GetFilesize(nameAddress);
 
     [UnmanagedCallersOnly]
-    public static IntPtr GetFileContents(IntPtr nameAddress)
-    {
-        var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
-        return fileSystem.GetFileContents(nameAddress);
-    }
+    public static IntPtr GetFileContents(IntPtr nameAddress) =>
+        fileSystem.GetFileContents(nameAddress);
 
     [UnmanagedCallersOnly]
-    public static void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength)
-    {
-        var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
+    public static void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength) =>
         fileSystem.PutFileContents(nameAddress, dataAddress, dataLength);
-    }
 
     [UnmanagedCallersOnly]
-    public static void RemoveFile(IntPtr nameAddress)
-    {
-        var fileSystem = GetHandleTarget<FileSystem>(fileSystemHandle);
+    public static void RemoveFile(IntPtr nameAddress) =>
         fileSystem.RemoveFile(nameAddress);
-    }
 
     [UnmanagedCallersOnly]
-    public static void DrawBegin()
-    {
-        var graphics = GetHandleTarget<Graphics>(graphicsHandle);
+    public static void DrawBegin() =>
         graphics.DrawBegin();
-    }
 
     [UnmanagedCallersOnly]
-    public static void DrawEnd()
-    {
-        var graphics = GetHandleTarget<Graphics>(graphicsHandle);
+    public static void DrawEnd() =>
         graphics.DrawEnd();
-    }
 
     [UnmanagedCallersOnly]
-    public static void DrawBlit(int x, int y, int w, int h, IntPtr dataAddress)
-    {
-        var graphics = GetHandleTarget<Graphics>(graphicsHandle);
+    public static void DrawBlit(int x, int y, int w, int h, IntPtr dataAddress) =>
         graphics.DrawBlit(x, y, w, h, dataAddress);
-    }
 
     [UnmanagedCallersOnly]
-    public static void DrawClipText(int x0, int y0, int x1, int y1)
-    {
-        var graphics = GetHandleTarget<Graphics>(graphicsHandle);
+    public static void DrawClipText(int x0, int y0, int x1, int y1) =>
         graphics.DrawClipText(x0, y0, x1, y1);
-    }
 
     [UnmanagedCallersOnly]
-    public static void DrawText(int x, int y, IntPtr textAddress, int color)
-    {
-        var graphics = GetHandleTarget<Graphics>(graphicsHandle);
+    public static void DrawText(int x, int y, IntPtr textAddress, int color) =>
         graphics.DrawText(x, y, textAddress, color);
-    }
 
     //private void CompressMPQ() =>
     //    AppState.Compress = true;
