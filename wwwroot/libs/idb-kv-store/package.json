@@ -1,0 +1,49 @@
+{
+  "name": "idb-kv-store",
+  "version": "4.4.0",
+  "description": "Persistent key-value store for web browsers backed by IndexedDB",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xuset/idb-kv-store.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xuset/indexeddb-chunk-store/issues"
+  },
+  "homepage": "https://github.com/xuset/indexeddb-chunk-store#readme",
+  "scripts": {
+    "bundle": "browserify -r . -s IdbKvStore | uglifyjs -m > idbkvstore.min.js",
+    "standard": "standard",
+    "karma": "karma start",
+    "test": "standard && karma start"
+  },
+  "keywords": [
+    "indexeddb",
+    "indexdb",
+    "idb",
+    "key",
+    "value",
+    "kv",
+    "store"
+  ],
+  "author": "xuset",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^16.2.0",
+    "karma": "^2.0.2",
+    "karma-browserify": "^5.2.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.1.0",
+    "karma-sauce-launcher": "^1.2.0",
+    "karma-tap": "^4.1.4",
+    "run-parallel-limit": "^1.0.5",
+    "standard": "^11.0.1",
+    "tape": "^4.9.0",
+    "uglify-js": "^3.3.23",
+    "watchify": "^3.11.0"
+  },
+  "dependencies": {
+    "inherits": "^2.0.3",
+    "promisize": "^1.1.2"
+  }
+}
