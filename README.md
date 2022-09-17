@@ -6,7 +6,7 @@ As the name implies, DiabloBlazor swaps out React used in DiabloWeb for Blazor, 
 
 You can try it out on [GitHub Pages](https://n-stefan.github.io/diabloblazor). It is intended to be played like the original so touch controls aren't (currently) supported.
 
-[DiabloBlazorServer](https://github.com/n-stefan/diabloblazorserver) is the development server. Clone or fork it also unless you want to use another server instead (doesn't have to be ASP.NET).
+[DiabloBlazorServer](https://github.com/n-stefan/diabloblazorserver) is the development server. Clone or fork it also (unless you want to use another server instead) and set it as the startup project.
 
 The game's source code is [here](https://github.com/n-stefan/devilution).
 
