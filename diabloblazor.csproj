@@ -8,7 +8,7 @@
     <RunAOTCompilation>true</RunAOTCompilation>
     <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <!--<AnalysisMode>AllEnabledByDefault</AnalysisMode>-->
   </PropertyGroup>
 
