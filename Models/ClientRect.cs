@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Models;
 
-public record struct ClientRect
+public readonly record struct ClientRect
 {
     public double Bottom { get; init; }
 

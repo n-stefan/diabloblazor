@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Models;
 
-public record struct Config
+public readonly record struct Config
 {
     public string Version { get; init; }
 }

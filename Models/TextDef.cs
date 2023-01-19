@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Models;
 
-public record struct TextDef
+public readonly record struct TextDef
 {
     public int X { get; init; }
 

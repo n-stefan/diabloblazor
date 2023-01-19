@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Models;
 
-public record struct Progress
+public readonly record struct Progress
 {
     public string Message { get; init; }
 

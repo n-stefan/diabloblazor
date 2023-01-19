@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Models;
 
-public record struct ImageBitmap
+public readonly record struct ImageBitmap
 {
     public int Height { get; init; }
 

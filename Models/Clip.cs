@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Models;
 
-public record struct Clip
+public readonly record struct Clip
 {
     public int X0 { get; init; }
 

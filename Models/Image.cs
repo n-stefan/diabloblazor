@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Models;
 
-public record struct Image
+public readonly record struct Image
 {
     public int X { get; init; }
 

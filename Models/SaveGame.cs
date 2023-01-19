@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Models;
 
-public record struct SaveGame
+public readonly record struct SaveGame
 {
     public string Name { get; }
 
