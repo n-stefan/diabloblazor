@@ -8,5 +8,5 @@ public readonly record struct Progress
 
     public long BytesLoaded { get; init; }
 
-    public double PercentLoaded => Total != 0 ? Round(100d * BytesLoaded / Total) : 100d;
+    public double PercentLoaded => Total != 0 ? Math.Round(100d * BytesLoaded / Total) : 100d;
 }

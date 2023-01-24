@@ -57,11 +57,11 @@ public partial class Main : ComponentBase
     private (double x, double y) MousePos(MouseEventArgs e)
     {
         double tx = 0, ty = 0;
-        tx = Max(canvasRect.Left, Min(canvasRect.Right, tx + e.ClientX));
-        ty = Max(canvasRect.Top, Min(canvasRect.Bottom, ty + e.ClientY));
+        tx = Math.Max(canvasRect.Left, Math.Min(canvasRect.Right, tx + e.ClientX));
+        ty = Math.Max(canvasRect.Top, Math.Min(canvasRect.Bottom, ty + e.ClientY));
         return (
-            x: Max(0, Min(Round((tx - canvasRect.Left) / (canvasRect.Right - canvasRect.Left) * 640), 639)),
-            y: Max(0, Min(Round((ty - canvasRect.Top) / (canvasRect.Bottom - canvasRect.Top) * 480), 479))
+            x: Math.Max(0, Math.Min(Math.Round((tx - canvasRect.Left) / (canvasRect.Right - canvasRect.Left) * 640), 639)),
+            y: Math.Max(0, Math.Min(Math.Round((ty - canvasRect.Top) / (canvasRect.Bottom - canvasRect.Top) * 480), 479))
         );
     }
 
@@ -208,7 +208,7 @@ public partial class Main : ComponentBase
     }
 
     private void SetDropping(int change) =>
-        AppState.Dropping = Max(AppState.Dropping + change, 0);
+        AppState.Dropping = Math.Max(AppState.Dropping + change, 0);
 
     private void InitSaves()
     {
@@ -227,7 +227,7 @@ public partial class Main : ComponentBase
 
         do
         {
-            var count = Min(file.Size - totalBytesRead, bufferSize);
+            var count = Math.Min(file.Size - totalBytesRead, bufferSize);
             bytesRead = await stream.ReadAsync(data, totalBytesRead, (int)count);
             totalBytesRead += bytesRead;
             OnProgress(new Progress { Message = message, BytesLoaded = totalBytesRead, Total = file.Size });
@@ -269,9 +269,7 @@ public partial class Main : ComponentBase
         }
 
         var data = await ReadInputFile("Uploading...");
-
         FileSystem.SetFile(name, data);
-
         JSImports.StoreIndexedDb(name, data);
 
         file = null;
@@ -434,7 +432,7 @@ public partial class Main : ComponentBase
     [UnmanagedCallersOnly]
     public static void ExitError(IntPtr messageAddress)
     {
-        var message = GetString(messageAddress);
+        var message = Utils.GetString(messageAddress);
         interop.Alert($"An error has occurred: {message}");
     }
 

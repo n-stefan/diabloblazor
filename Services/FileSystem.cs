@@ -25,7 +25,7 @@ public class FileSystem : IFileSystem
 
     public int GetFilesize(IntPtr nameAddress)
     {
-        var name = GetString(nameAddress);
+        var name = Utils.GetString(nameAddress);
         return GetFilesize(name);
     }
 
@@ -53,13 +53,13 @@ public class FileSystem : IFileSystem
 
     public IntPtr GetFileContents(IntPtr nameAddress)
     {
-        var name = GetString(nameAddress);
+        var name = Utils.GetString(nameAddress);
         return files[name].Address;
     }
 
     unsafe public void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength)
     {
-        var name = GetString(nameAddress);
+        var name = Utils.GetString(nameAddress);
         var span = new ReadOnlySpan<byte>(dataAddress.ToPointer(), dataLength);
         var data = span.ToArray(); //TODO
         SetFile(name, data);
@@ -75,7 +75,7 @@ public class FileSystem : IFileSystem
 
     public void RemoveFile(IntPtr nameAddress)
     {
-        var name = GetString(nameAddress);
+        var name = Utils.GetString(nameAddress);
         RemoveFile(name);
     }
 }
