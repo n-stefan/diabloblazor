@@ -1,6 +1,7 @@
 ﻿global using diabloblazor;
 global using diabloblazor.Enums;
 global using diabloblazor.Extensions;
+global using diabloblazor.Imports;
 global using diabloblazor.JsonConverters;
 global using diabloblazor.Models;
 global using diabloblazor.Pages;
@@ -13,6 +14,7 @@ global using Microsoft.AspNetCore.Components.WebAssembly.Http;
 global using Microsoft.JSInterop;
 global using System.Collections.ObjectModel;
 global using System.Runtime.InteropServices;
+global using System.Runtime.InteropServices.JavaScript;
 global using System.Text;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;

@@ -4,13 +4,11 @@ public class Interop : IInterop
 {
     private readonly IJSRuntime _jsRuntime;
     private readonly IJSInProcessRuntime _jsInProcessRuntime;
-    private readonly IJSUnmarshalledRuntime _jsUnmarshalledRuntime;
 
     public Interop(IJSRuntime jsRuntime)
     {
         _jsRuntime = jsRuntime;
         _jsInProcessRuntime = (jsRuntime as IJSInProcessRuntime)!;
-        _jsUnmarshalledRuntime = (jsRuntime as IJSUnmarshalledRuntime)!;
     }
 
     public void Alert(string message) =>
@@ -30,9 +28,6 @@ public class Interop : IInterop
 
     public ValueTask<bool> IndexedDbHasFile(string name) =>
         _jsRuntime.InvokeAsync<bool>("interop.fileStore.indexedDbHasFile", name);
-
-    public void StoreIndexedDb(IntPtr nameAddress, IntPtr dataAddress, int dataLength) =>
-        _jsUnmarshalledRuntime.InvokeUnmarshalled<IntPtr, IntPtr, int, object>("interop.fileStore.storeIndexedDb", nameAddress, dataAddress, dataLength);
 
     public void RemoveIndexedDb(string name) =>
         _jsInProcessRuntime.InvokeVoid("interop.fileStore.removeIndexedDb", name);

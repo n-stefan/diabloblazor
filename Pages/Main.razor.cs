@@ -270,9 +270,9 @@ public partial class Main : ComponentBase
 
         var data = await ReadInputFile("Uploading...");
 
-        var address = FileSystem.SetFile(name, data);
+        FileSystem.SetFile(name, data);
 
-        Interop.StoreIndexedDb(Marshal.StringToHGlobalAuto(name), address, data.Length);
+        JSImports.StoreIndexedDb(name, data);
 
         file = null;
 
@@ -362,8 +362,8 @@ public partial class Main : ComponentBase
         {
             var url = $"{NavigationManager.BaseUri}{spawnFilename}";
             var binary = await HttpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], bufferSize, OnProgress);
-            var address = FileSystem.SetFile(spawnFilename, binary);
-            Interop.StoreIndexedDb(Marshal.StringToHGlobalAuto(spawnFilename), address, binary.Length);
+            FileSystem.SetFile(spawnFilename, binary);
+            JSImports.StoreIndexedDb(spawnFilename, binary);
             Worker.InitGame(this);
         }
     }

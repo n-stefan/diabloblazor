@@ -35,6 +35,4 @@ public interface IInterop
     ValueTask SetDropFile();
 
     ValueTask SetRenderInterval(int renderInterval);
-
-    void StoreIndexedDb(IntPtr nameAddress, IntPtr dataAddress, int dataLength);
 }

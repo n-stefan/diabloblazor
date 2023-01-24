@@ -1,4 +1,4 @@
-﻿namespace diabloblazor;
+﻿namespace diabloblazor.Imports;
 
 static partial class NativeImports
 {

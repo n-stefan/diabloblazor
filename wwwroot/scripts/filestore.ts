@@ -1,5 +1,6 @@
 ﻿
 declare const IdbKvStore: any;
+declare const MemoryView: any;
 
 interface FileDef {
     name: string;
@@ -26,12 +27,13 @@ class FileStore {
         return file ? true : false;
     }
 
-    public storeIndexedDb = async (nameAddress: number, dataAddress: number, dataLength: number): Promise<void> => {
-        const end = windowAny.Module.HEAPU8.indexOf(0, nameAddress);
-        const name = String.fromCharCode.apply(null, windowAny.Module.HEAPU8.subarray(nameAddress, end));
-        const arrayBuffer = windowAny.Module.HEAPU8.subarray(dataAddress, dataAddress + dataLength);
-        const array = new Uint8Array(arrayBuffer);
-        await this.store.set(name, array);
+    public storeIndexedDb = async (name: string, view: typeof MemoryView): Promise<void> => {
+        try {
+            const array = new Uint8Array(view._unsafe_create_view());
+            await this.store.set(name, array);
+        } finally {
+            view.dispose();
+        }
     }
 
     public removeIndexedDb = async (name: string): Promise<void> => {

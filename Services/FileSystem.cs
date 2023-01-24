@@ -61,9 +61,9 @@ public class FileSystem : IFileSystem
     {
         var name = GetString(nameAddress);
         var span = new ReadOnlySpan<byte>(dataAddress.ToPointer(), dataLength);
-        var data = span.ToArray();
-        var fileAddress = SetFile(name, data);
-        interop.StoreIndexedDb(nameAddress, fileAddress, data.Length);
+        var data = span.ToArray(); //TODO
+        SetFile(name, data);
+        JSImports.StoreIndexedDb(name, data);
     }
 
     public void RemoveFile(string name)
