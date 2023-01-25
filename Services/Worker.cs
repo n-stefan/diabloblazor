@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Services;
 
-public class Worker : IWorker
+public partial class Worker : IWorker
 {
     public void InitGame(Main app)
     {
@@ -23,7 +23,7 @@ public class Worker : IWorker
 
         var startTime = DateTime.Now;
 
-        var version = Regex.Match(app.Config.Version, @"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled);
+        var version = VersionRegex().Match(app.Config.Version);
 
         var spawn = Main.GameType == GameType.Shareware ? 1 : 0;
 
@@ -51,4 +51,7 @@ public class Worker : IWorker
             _ => NativeImports.DApi_Render(Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds)),
         null, 0, app.RenderInterval);
     }
+
+    [GeneratedRegex(@"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled)]
+    private static partial Regex VersionRegex();
 }
