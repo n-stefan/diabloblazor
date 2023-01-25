@@ -12,16 +12,16 @@ public class FileSystem : IFileSystem
 
     public IntPtr SetFile(string name, byte[] data)
     {
-        if (files.ContainsKey(name))
+        if (files.TryGetValue(name, out var file))
         {
-            files[name].Free();
+            file.Free();
         }
         files[name] = new File(data);
         return files[name].Address;
     }
 
     public int GetFilesize(string name) =>
-        files.ContainsKey(name) ? files[name].Length : 0;
+        files.TryGetValue(name, out var file) ? file.Length : 0;
 
     public int GetFilesize(IntPtr nameAddress)
     {
@@ -34,9 +34,9 @@ public class FileSystem : IFileSystem
 
     public bool HasFile(string name, int[]? sizes = null)
     {
-        if (files.ContainsKey(name))
+        if (files.TryGetValue(name, out var file))
         {
-            return sizes == null || sizes.Any(x => x == files[name].Length);
+            return sizes == null || sizes.Any(x => x == file.Length);
         }
         return false;
     }

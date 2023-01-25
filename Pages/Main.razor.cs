@@ -340,7 +340,6 @@ public partial class Main : ComponentBase
             else
             {
                 var data = await ReadInputFile("Loading...");
-
                 FileSystem.SetFile(file.Name, data);
 
                 file = null;
