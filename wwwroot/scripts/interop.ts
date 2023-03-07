@@ -49,10 +49,6 @@ class Interop {
         return this.canvas.getBoundingClientRect();
     }
 
-    public reload = (): void => {
-        window.location.reload();
-    }
-
     public clickDownloadLink = (element: HTMLElement, download: string, href: string): void => {
         element.setAttribute('download', download);
         element.setAttribute('href', href);

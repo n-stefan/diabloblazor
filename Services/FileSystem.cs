@@ -5,10 +5,6 @@ namespace diabloblazor.Services;
 public class FileSystem : IFileSystem
 {
     private Dictionary<string, File> files = new();
-    private readonly IInterop interop;
-
-    public FileSystem(IInterop interop) =>
-        this.interop = interop;
 
     public IntPtr SetFile(string name, byte[] data)
     {
@@ -70,7 +66,7 @@ public class FileSystem : IFileSystem
     {
         files[name].Free();
         files.Remove(name);
-        interop.RemoveIndexedDb(name);
+        JSImports.RemoveIndexedDb(name);
     }
 
     public void RemoveFile(IntPtr nameAddress)

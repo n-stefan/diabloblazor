@@ -22,7 +22,6 @@ public partial class Main : ComponentBase
     private ClientRect canvasRect;
     private ElementReference downloadLink;
     private IBrowserFile? file;
-    private static IInterop interop;
     private static IFileSystem fileSystem;
     private static IGraphics graphics;
 
@@ -113,7 +112,6 @@ public partial class Main : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        interop = Interop;
         fileSystem = FileSystem;
         graphics = Graphics;
 
@@ -121,9 +119,9 @@ public partial class Main : ComponentBase
 
         Config = new Config { Version = Configuration["Version"] };
 
-        RenderInterval = await Interop.GetRenderInterval();
+        RenderInterval = JSImports.GetRenderInterval();
 
-        await Interop.InitIndexedDb();
+        await JSImports.InitIndexedDb();
 
         if (FileSystem.HasFile(spawnFilename, spawnFilesizes))
         {
@@ -134,13 +132,13 @@ public partial class Main : ComponentBase
 
         canvasRect = await Interop.GetCanvasRect();
 
-        ExceptionHandler.Exception += (_, e) => Interop.Alert($"An error has occurred: {e.Message}");
+        ExceptionHandler.Exception += (_, e) => JSImports.Alert($"An error has occurred: {e.Message}");
 
-        await Interop.AddEventListeners();
+        JSImports.AddEventListeners();
     }
 
-    private async Task OnRenderIntervalChange(ChangeEventArgs e) =>
-        await Interop.SetRenderInterval(RenderInterval);
+    private void OnRenderIntervalChange(ChangeEventArgs e) =>
+        JSImports.SetRenderInterval(RenderInterval);
 
     private void OnCanvasMouseMove(MouseEventArgs e)
     {
@@ -258,13 +256,13 @@ public partial class Main : ComponentBase
 
         if (!name.EndsWith(".sv"))
         {
-            Interop.Alert("Please select an SV file.");
+            JSImports.Alert("Please select an SV file.");
             return;
         }
 
-        if (await Interop.IndexedDbHasFile(name))
+        if (await JSImports.IndexedDbHasFile(name))
         {
-            Interop.Alert($"Save '{name}' already exists.");
+            JSImports.Alert($"Save '{name}' already exists.");
             return;
         }
 
@@ -289,7 +287,7 @@ public partial class Main : ComponentBase
 
     private void RemoveSave(SaveGame saveGame)
     {
-        if (!Interop.Confirm($"Are you sure you want to delete {saveGame.ShortName}?"))
+        if (!JSImports.Confirm($"Are you sure you want to delete {saveGame.ShortName}?"))
         {
             return;
         }
@@ -304,8 +302,8 @@ public partial class Main : ComponentBase
 
     private async Task LoadGame()
     {
-        await Interop.InitGraphics(Offscreen);
-        await Interop.InitSound();
+        JSImports.InitGraphics(Offscreen);
+        JSImports.InitSound();
         await DoLoadGame();
     }
 
@@ -335,7 +333,7 @@ public partial class Main : ComponentBase
         {
             if (isDrop)
             {
-                await Interop.SetDropFile();
+                await JSImports.SetDropFile();
             }
             else
             {
@@ -373,7 +371,7 @@ public partial class Main : ComponentBase
 
         if (name is not null && !name.EndsWith(".mpq"))
         {
-            Interop.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
+            JSImports.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
             AppState.Dropping = 0;
             StateHasChanged();
             return;
@@ -425,14 +423,14 @@ public partial class Main : ComponentBase
 
         fileSystem.Free();
 
-        interop.Reload();
+        JSImports.Reload();
     }
 
     [UnmanagedCallersOnly]
     public static void ExitError(IntPtr messageAddress)
     {
         var message = Utils.GetString(messageAddress);
-        interop.Alert($"An error has occurred: {message}");
+        JSImports.Alert($"An error has occurred: {message}");
     }
 
     [UnmanagedCallersOnly]
