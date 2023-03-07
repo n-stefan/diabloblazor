@@ -6,7 +6,7 @@ public class FileSystem : IFileSystem
 {
     private Dictionary<string, File> files = new();
 
-    public IntPtr SetFile(string name, byte[] data)
+    public nint SetFile(string name, byte[] data)
     {
         if (files.TryGetValue(name, out var file))
         {
@@ -19,7 +19,7 @@ public class FileSystem : IFileSystem
     public int GetFilesize(string name) =>
         files.TryGetValue(name, out var file) ? file.Length : 0;
 
-    public int GetFilesize(IntPtr nameAddress)
+    public int GetFilesize(nint nameAddress)
     {
         var name = Utils.GetString(nameAddress);
         return GetFilesize(name);
@@ -47,13 +47,13 @@ public class FileSystem : IFileSystem
         files = null;
     }
 
-    public IntPtr GetFileContents(IntPtr nameAddress)
+    public nint GetFileContents(nint nameAddress)
     {
         var name = Utils.GetString(nameAddress);
         return files[name].Address;
     }
 
-    unsafe public void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength)
+    unsafe public void PutFileContents(nint nameAddress, nint dataAddress, int dataLength)
     {
         var name = Utils.GetString(nameAddress);
         var span = new ReadOnlySpan<byte>(dataAddress.ToPointer(), dataLength);
@@ -69,7 +69,7 @@ public class FileSystem : IFileSystem
         JSImports.RemoveIndexedDb(name);
     }
 
-    public void RemoveFile(IntPtr nameAddress)
+    public void RemoveFile(nint nameAddress)
     {
         var name = Utils.GetString(nameAddress);
         RemoveFile(name);

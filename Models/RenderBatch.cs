@@ -11,5 +11,5 @@ public record class RenderBatch
     public Clip Clip { get; set; }
 
     public void FreeImages() =>
-        Images.ForEach(image => Marshal.FreeHGlobal((IntPtr)image.Data));
+        Images.ForEach(image => Marshal.FreeHGlobal((nint)image.Data));
 }

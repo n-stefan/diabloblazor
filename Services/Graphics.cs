@@ -18,13 +18,13 @@ public class Graphics : IGraphics
         renderBatch = null;
     }
 
-    public void DrawBlit(int x, int y, int w, int h, IntPtr dataAddress) =>
+    public void DrawBlit(int x, int y, int w, int h, nint dataAddress) =>
         renderBatch.Images.Add(new Image { X = x, Y = y, Width = w, Height = h, Data = (ulong)dataAddress });
 
     public void DrawClipText(int x0, int y0, int x1, int y1) =>
         renderBatch.Clip = new Clip { X0 = x0, Y0 = y0, X1 = x1, Y1 = y1 };
 
-    public void DrawText(int x, int y, IntPtr textAddress, int color)
+    public void DrawText(int x, int y, nint textAddress, int color)
     {
         var text = Utils.GetString(textAddress);
         renderBatch.Text.Add(new TextDef { X = x, Y = y, Text = text, Color = color });

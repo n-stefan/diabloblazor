@@ -9,7 +9,7 @@ public class File
     public int Length =>
         _data.Length;
 
-    public IntPtr Address =>
+    public nint Address =>
         _handle.AddrOfPinnedObject();
 
     public File(byte[] data)

@@ -427,7 +427,7 @@ public partial class Main : ComponentBase
     }
 
     [UnmanagedCallersOnly]
-    public static void ExitError(IntPtr messageAddress)
+    public static void ExitError(nint messageAddress)
     {
         var message = Utils.GetString(messageAddress);
         JSImports.Alert($"An error has occurred: {message}");
@@ -438,19 +438,19 @@ public partial class Main : ComponentBase
         NativeImports.DApi_Mouse(0, 0, 0, x, y);
 
     [UnmanagedCallersOnly]
-    public static int GetFilesize(IntPtr nameAddress) =>
+    public static int GetFilesize(nint nameAddress) =>
         fileSystem.GetFilesize(nameAddress);
 
     [UnmanagedCallersOnly]
-    public static IntPtr GetFileContents(IntPtr nameAddress) =>
+    public static nint GetFileContents(nint nameAddress) =>
         fileSystem.GetFileContents(nameAddress);
 
     [UnmanagedCallersOnly]
-    public static void PutFileContents(IntPtr nameAddress, IntPtr dataAddress, int dataLength) =>
+    public static void PutFileContents(nint nameAddress, nint dataAddress, int dataLength) =>
         fileSystem.PutFileContents(nameAddress, dataAddress, dataLength);
 
     [UnmanagedCallersOnly]
-    public static void RemoveFile(IntPtr nameAddress) =>
+    public static void RemoveFile(nint nameAddress) =>
         fileSystem.RemoveFile(nameAddress);
 
     [UnmanagedCallersOnly]
@@ -462,7 +462,7 @@ public partial class Main : ComponentBase
         graphics.DrawEnd();
 
     [UnmanagedCallersOnly]
-    public static void DrawBlit(int x, int y, int w, int h, IntPtr dataAddress) =>
+    public static void DrawBlit(int x, int y, int w, int h, nint dataAddress) =>
         graphics.DrawBlit(x, y, w, h, dataAddress);
 
     [UnmanagedCallersOnly]
@@ -470,7 +470,7 @@ public partial class Main : ComponentBase
         graphics.DrawClipText(x0, y0, x1, y1);
 
     [UnmanagedCallersOnly]
-    public static void DrawText(int x, int y, IntPtr textAddress, int color) =>
+    public static void DrawText(int x, int y, nint textAddress, int color) =>
         graphics.DrawText(x, y, textAddress, color);
 
     //private void CompressMPQ() =>
