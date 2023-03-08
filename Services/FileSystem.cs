@@ -53,11 +53,11 @@ public class FileSystem : IFileSystem
         return files[name].Address;
     }
 
-    unsafe public void PutFileContents(nint nameAddress, nint dataAddress, int dataLength)
+    public void PutFileContents(nint nameAddress, nint dataAddress, int dataLength)
     {
         var name = Utils.GetString(nameAddress);
-        var span = new ReadOnlySpan<byte>(dataAddress.ToPointer(), dataLength);
-        var data = span.ToArray(); //TODO
+        var data = new byte[dataLength];
+        Marshal.Copy(dataAddress, data, 0, dataLength);
         SetFile(name, data);
         JSImports.StoreIndexedDb(name, data);
     }
