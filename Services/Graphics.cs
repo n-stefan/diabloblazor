@@ -26,7 +26,7 @@ public class Graphics : IGraphics
 
     public void DrawText(int x, int y, nint textAddress, int color)
     {
-        var text = Utils.GetString(textAddress);
+        var text = Marshal.PtrToStringAuto(textAddress);
         renderBatch.Text.Add(new TextDef { X = x, Y = y, Text = text, Color = color });
     }
 }

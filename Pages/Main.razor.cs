@@ -429,7 +429,7 @@ public partial class Main : ComponentBase
     [UnmanagedCallersOnly]
     public static void ExitError(nint messageAddress)
     {
-        var message = Utils.GetString(messageAddress);
+        var message = Marshal.PtrToStringAuto(messageAddress);
         JSImports.Alert($"An error has occurred: {message}");
     }
 

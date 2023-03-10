@@ -21,7 +21,7 @@ public class FileSystem : IFileSystem
 
     public int GetFilesize(nint nameAddress)
     {
-        var name = Utils.GetString(nameAddress);
+        var name = Marshal.PtrToStringAuto(nameAddress);
         return GetFilesize(name);
     }
 
@@ -49,13 +49,13 @@ public class FileSystem : IFileSystem
 
     public nint GetFileContents(nint nameAddress)
     {
-        var name = Utils.GetString(nameAddress);
+        var name = Marshal.PtrToStringAuto(nameAddress);
         return files[name].Address;
     }
 
     public void PutFileContents(nint nameAddress, nint dataAddress, int dataLength)
     {
-        var name = Utils.GetString(nameAddress);
+        var name = Marshal.PtrToStringAuto(nameAddress);
         var data = new byte[dataLength];
         Marshal.Copy(dataAddress, data, 0, dataLength);
         SetFile(name, data);
@@ -71,7 +71,7 @@ public class FileSystem : IFileSystem
 
     public void RemoveFile(nint nameAddress)
     {
-        var name = Utils.GetString(nameAddress);
+        var name = Marshal.PtrToStringAuto(nameAddress);
         RemoveFile(name);
     }
 }

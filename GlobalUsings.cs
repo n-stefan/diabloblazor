@@ -6,7 +6,6 @@ global using diabloblazor.JsonConverters;
 global using diabloblazor.Models;
 global using diabloblazor.Pages;
 global using diabloblazor.Services;
-global using diabloblazor.Shared;
 global using Microsoft.AspNetCore.Components;
 global using Microsoft.AspNetCore.Components.Forms;
 global using Microsoft.AspNetCore.Components.Web;
