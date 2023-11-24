@@ -12,7 +12,7 @@ async function onInstall(event: /*ExtendableEvent*/any): Promise<void> {
     await caches.open(cacheName).then(cache => cache.addAll([
         location.hostname === 'localhost' ? '_framework/blazor.boot.json' : '_framework/blazor.boot.json.br',
         '_framework/blazor.webassembly.js',
-        '_framework/dotnet..7mi0bgl3w0.js', // Release: hybux8huzu
+        '_framework/dotnet.js',
         'index.html',
         'dist/decode.min.js',
         'dist/external.min.css',
