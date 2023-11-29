@@ -5,10 +5,20 @@
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RunAOTCompilation>true</RunAOTCompilation>
-    <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
-    <InvariantGlobalization>true</InvariantGlobalization>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BlazorWebAssemblyJiterpreter>true</BlazorWebAssemblyJiterpreter>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <InvariantTimezone>true</InvariantTimezone>
+    <PublishTrimmed>true</PublishTrimmed>
+    <!--<TrimMode>full</TrimMode>-->
+    <RunAOTCompilation>true</RunAOTCompilation>
+    <!--<WasmStripILAfterAOT>true</WasmStripILAfterAOT>-->
+    <WasmBuildNative>true</WasmBuildNative>
+    <WasmNativeStrip>true</WasmNativeStrip>
+    <!--<WasmEnableThreads>true</WasmEnableThreads>-->
+    <WasmEnableSIMD>true</WasmEnableSIMD>
+    <WasmEnableExceptionHandling>true</WasmEnableExceptionHandling>
+    <WasmEnableWebcil>true</WasmEnableWebcil>
     <!--<AnalysisMode>AllEnabledByDefault</AnalysisMode>-->
   </PropertyGroup>
 
