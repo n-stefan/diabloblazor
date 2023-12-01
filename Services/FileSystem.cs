@@ -4,7 +4,7 @@ namespace diabloblazor.Services;
 
 public class FileSystem : IFileSystem
 {
-    private Dictionary<string, File> files = new();
+    private Dictionary<string, File> files = [];
 
     public nint SetFile(string name, byte[] data)
     {
@@ -26,7 +26,7 @@ public class FileSystem : IFileSystem
     }
 
     public string[] GetFilenames() =>
-        files.Keys.ToArray();
+        [.. files.Keys];
 
     public bool HasFile(string name, int[]? sizes = null)
     {

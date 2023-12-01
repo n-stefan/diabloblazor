@@ -4,9 +4,9 @@ public record class RenderBatch
 {
     public ImageBitmap? Bitmap { get; init; }
 
-    public List<Image> Images { get; init; } = new();
+    public List<Image> Images { get; init; } = [];
 
-    public List<TextDef> Text { get; init; } = new();
+    public List<TextDef> Text { get; init; } = [];
 
     public Clip Clip { get; set; }
 

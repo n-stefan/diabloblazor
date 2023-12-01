@@ -4,6 +4,8 @@ public static class HttpClientExtensions
 {
     public static async Task<byte[]> GetWithProgressAsync(this HttpClient httpClient, Uri uri, string message, int totalSize, int bufferSize, Action<Progress> onProgress)
     {
+        ArgumentNullException.ThrowIfNull(httpClient);
+
         using var request = new HttpRequestMessage { Method = HttpMethod.Get, RequestUri = uri };
         request.SetBrowserResponseStreamingEnabled(true);
 

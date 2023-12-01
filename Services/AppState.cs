@@ -18,5 +18,5 @@ public class AppState : IAppState
 
     public Progress Progress { get; set; }
 
-    public Collection<SaveGame> Saves { get; } = new();
+    public Collection<SaveGame> Saves { get; } = [];
 }

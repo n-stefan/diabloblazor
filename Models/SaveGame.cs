@@ -10,13 +10,10 @@ public readonly record struct SaveGame
 
     public SaveGame(string name)
     {
-        if (name is null)
-        {
-            throw new ArgumentNullException(nameof(name));
-        }
+        ArgumentNullException.ThrowIfNull(name);
 
         Name = name;
         ShortName = Path.GetFileNameWithoutExtension(name);
-        GameType = name.ToLower().StartsWith("spawn") ? GameType.Shareware : GameType.Retail;
+        GameType = name.ToLower().StartsWith("spawn", StringComparison.InvariantCulture) ? GameType.Shareware : GameType.Retail;
     }
 }

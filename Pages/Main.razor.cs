@@ -11,7 +11,7 @@ namespace diabloblazor.Pages;
 public partial class Main : ComponentBase
 {
     //TODO: Move some into AppState
-    private static readonly int[] spawnFilesizes = { 50_274_091, 25_830_791 };
+    private static readonly int[] spawnFilesizes = [ 50_274_091, 25_830_791 ];
     private readonly int bufferSize = 524_288;
     private const string spawnFilename = "spawn.mpq";
     private const string retailFilename = "diabdat.mpq";
@@ -92,7 +92,7 @@ public partial class Main : ComponentBase
     private static int GetKeyCode(KeyboardEventArgs e) =>
         e.Code switch
         {
-            string s when s.StartsWith("F") => int.Parse(s[1..]) + 111,
+            string s when s.StartsWith('F') => int.Parse(s[1..]) + 111,
             string s when s.StartsWith("Key") => s[^1] - 32,
             string s when s.StartsWith("Digit") => s[^1] + 48,
             string s when s.StartsWith("Shift") => 16,
@@ -199,7 +199,7 @@ public partial class Main : ComponentBase
 
     private void OnMainDragOver(DragEventArgs e)
     {
-        if (e.DataTransfer.Items.Any(x => x.Kind == "file") || e.DataTransfer.Files.Any())
+        if (e.DataTransfer.Items.Any(x => x.Kind == "file") || e.DataTransfer.Files.Length != 0)
         {
             preventDefaultDragOver = true;
         }
@@ -217,7 +217,7 @@ public partial class Main : ComponentBase
 
     private async Task<byte[]> ReadInputFile(string message)
     {
-        var bytesRead = 0;
+        int bytesRead;
         var totalBytesRead = 0;
         var data = new byte[file.Size];
 
@@ -249,10 +249,7 @@ public partial class Main : ComponentBase
 
     private async Task Upload(string name)
     {
-        if (name is null)
-        {
-            throw new ArgumentNullException(nameof(name));
-        }
+        ArgumentNullException.ThrowIfNull(name);
 
         if (!name.EndsWith(".sv"))
         {
