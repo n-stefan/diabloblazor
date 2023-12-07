@@ -69,6 +69,7 @@
                     </p>
                 }
                 <label for="mpqInput" class="startButton">Browse for DIABDAT.MPQ</label>
+                <InputFile OnChange="@LoadMpqFile" accept=".mpq" id="mpqInput" class="hidden" />
                 <div class="startButton" @onclick="() => Start()">Play Shareware</div>
                 @if (AppState.Saves.Any())
                 {
@@ -79,6 +80,5 @@
                 <p><input type="range" min="15" max="100" step="1" @bind="RenderInterval" @bind:event="oninput" @onchange="OnRenderIntervalChange" /></p>
             </div>
         }
-        <InputFile OnChange="@LoadMpqFile" accept=".mpq" id="mpqInput" class="hidden" />
     </div>
 </div>
