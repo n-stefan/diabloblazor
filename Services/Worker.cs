@@ -21,19 +21,19 @@ public partial class Worker : IWorker
 
         var spawn = Main.GameType == GameType.Shareware ? 1 : 0;
 
-        delegate* unmanaged<nint, int> getFilesize = &Main.GetFilesize;
-        delegate* unmanaged<nint, nint> getFileContents = &Main.GetFileContents;
-        delegate* unmanaged<nint, nint, int, void> putFileContents = &Main.PutFileContents;
-        delegate* unmanaged<nint, void> removeFile = &Main.RemoveFile;
+        delegate* unmanaged<nuint, int> getFilesize = &Main.GetFilesize;
+        delegate* unmanaged<nuint, nint> getFileContents = &Main.GetFileContents;
+        delegate* unmanaged<nuint, nint, int, void> putFileContents = &Main.PutFileContents;
+        delegate* unmanaged<nuint, void> removeFile = &Main.RemoveFile;
         delegate* unmanaged<int, int, void> setCursor = &Main.SetCursor;
         delegate* unmanaged<void> exitGame = &Main.ExitGame;
-        delegate* unmanaged<nint, void> exitError = &Main.ExitError;
+        delegate* unmanaged<nuint, void> exitError = &Main.ExitError;
         delegate* unmanaged<int, void> currentSaveId = &Main.CurrentSaveId;
         delegate* unmanaged<void> drawBegin = &Main.DrawBegin;
         delegate* unmanaged<void> drawEnd = &Main.DrawEnd;
         delegate* unmanaged<int, int, int, int, nint, void> drawBlit = &Main.DrawBlit;
         delegate* unmanaged<int, int, int, int, void> drawClipText = &Main.DrawClipText;
-        delegate* unmanaged<int, int, nint, int, void> drawText = &Main.DrawText;
+        delegate* unmanaged<int, int, nuint, int, void> drawText = &Main.DrawText;
 
         NativeImports.DApi_Init(Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds), app.Offscreen ? 1 : 0,
             int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value), spawn,

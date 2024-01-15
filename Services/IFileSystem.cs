@@ -4,19 +4,19 @@ public interface IFileSystem
 {
     void Free();
 
-    nint GetFileContents(nint nameAddress);
+    nint GetFileContents(nuint nameAddress);
 
     string[] GetFilenames();
 
-    int GetFilesize(nint nameAddress);
+    int GetFilesize(nuint nameAddress);
 
     int GetFilesize(string name);
 
     bool HasFile(string name, int[]? sizes = null);
 
-    void PutFileContents(nint nameAddress, nint dataAddress, int dataLength);
+    void PutFileContents(nuint nameAddress, nint dataAddress, int dataLength);
 
-    void RemoveFile(nint nameAddress);
+    void RemoveFile(nuint nameAddress);
 
     void RemoveFile(string name);
 

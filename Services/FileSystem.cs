@@ -19,9 +19,9 @@ public class FileSystem : IFileSystem
     public int GetFilesize(string name) =>
         files.TryGetValue(name, out var file) ? file.Length : 0;
 
-    public int GetFilesize(nint nameAddress)
+    public int GetFilesize(nuint nameAddress)
     {
-        var name = Marshal.PtrToStringAuto(nameAddress);
+        var name = Marshal.PtrToStringAuto((nint)nameAddress);
         return GetFilesize(name);
     }
 
@@ -47,15 +47,15 @@ public class FileSystem : IFileSystem
         files = null;
     }
 
-    public nint GetFileContents(nint nameAddress)
+    public nint GetFileContents(nuint nameAddress)
     {
-        var name = Marshal.PtrToStringAuto(nameAddress);
+        var name = Marshal.PtrToStringAuto((nint)nameAddress);
         return files[name].Address;
     }
 
-    public void PutFileContents(nint nameAddress, nint dataAddress, int dataLength)
+    public void PutFileContents(nuint nameAddress, nint dataAddress, int dataLength)
     {
-        var name = Marshal.PtrToStringAuto(nameAddress);
+        var name = Marshal.PtrToStringAuto((nint)nameAddress);
         var data = new byte[dataLength];
         Marshal.Copy(dataAddress, data, 0, dataLength);
         SetFile(name, data);
@@ -69,9 +69,9 @@ public class FileSystem : IFileSystem
         JSImports.RemoveIndexedDb(name);
     }
 
-    public void RemoveFile(nint nameAddress)
+    public void RemoveFile(nuint nameAddress)
     {
-        var name = Marshal.PtrToStringAuto(nameAddress);
+        var name = Marshal.PtrToStringAuto((nint)nameAddress);
         RemoveFile(name);
     }
 }

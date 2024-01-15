@@ -424,9 +424,9 @@ public partial class Main : ComponentBase
     }
 
     [UnmanagedCallersOnly]
-    public static void ExitError(nint messageAddress)
+    public static void ExitError(nuint messageAddress)
     {
-        var message = Marshal.PtrToStringAuto(messageAddress);
+        var message = Marshal.PtrToStringAuto((nint)messageAddress);
         JSImports.Alert($"An error has occurred: {message}");
     }
 
@@ -435,19 +435,19 @@ public partial class Main : ComponentBase
         NativeImports.DApi_Mouse(0, 0, 0, x, y);
 
     [UnmanagedCallersOnly]
-    public static int GetFilesize(nint nameAddress) =>
+    public static int GetFilesize(nuint nameAddress) =>
         fileSystem.GetFilesize(nameAddress);
 
     [UnmanagedCallersOnly]
-    public static nint GetFileContents(nint nameAddress) =>
+    public static nint GetFileContents(nuint nameAddress) =>
         fileSystem.GetFileContents(nameAddress);
 
     [UnmanagedCallersOnly]
-    public static void PutFileContents(nint nameAddress, nint dataAddress, int dataLength) =>
+    public static void PutFileContents(nuint nameAddress, nint dataAddress, int dataLength) =>
         fileSystem.PutFileContents(nameAddress, dataAddress, dataLength);
 
     [UnmanagedCallersOnly]
-    public static void RemoveFile(nint nameAddress) =>
+    public static void RemoveFile(nuint nameAddress) =>
         fileSystem.RemoveFile(nameAddress);
 
     [UnmanagedCallersOnly]
@@ -467,7 +467,7 @@ public partial class Main : ComponentBase
         graphics.DrawClipText(x0, y0, x1, y1);
 
     [UnmanagedCallersOnly]
-    public static void DrawText(int x, int y, nint textAddress, int color) =>
+    public static void DrawText(int x, int y, nuint textAddress, int color) =>
         graphics.DrawText(x, y, textAddress, color);
 
     //private void CompressMPQ() =>

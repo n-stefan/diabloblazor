@@ -10,5 +10,5 @@ public interface IGraphics
 
     void DrawEnd();
 
-    void DrawText(int x, int y, nint textAddress, int color);
+    void DrawText(int x, int y, nuint textAddress, int color);
 }

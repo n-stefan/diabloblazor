@@ -20,9 +20,9 @@ public class Graphics(IInterop interop) : IGraphics
     public void DrawClipText(int x0, int y0, int x1, int y1) =>
         renderBatch.Clip = new Clip { X0 = x0, Y0 = y0, X1 = x1, Y1 = y1 };
 
-    public void DrawText(int x, int y, nint textAddress, int color)
+    public void DrawText(int x, int y, nuint textAddress, int color)
     {
-        var text = Marshal.PtrToStringAuto(textAddress);
+        var text = Marshal.PtrToStringAuto((nint)textAddress);
         renderBatch.Text.Add(new TextDef { X = x, Y = y, Text = text, Color = color });
     }
 }
