@@ -137,7 +137,7 @@ public partial class Main : ComponentBase
         JSImports.AddEventListeners();
     }
 
-    private void OnRenderIntervalChange(ChangeEventArgs e) =>
+    private void OnRenderIntervalChange(ChangeEventArgs _) =>
         JSImports.SetRenderInterval(RenderInterval);
 
     private void OnCanvasMouseMove(MouseEventArgs e)
@@ -191,10 +191,10 @@ public partial class Main : ComponentBase
         //Do nothing
     }
 
-    private void OnMainDragEnter(DragEventArgs e) =>
+    private void OnMainDragEnter(DragEventArgs _) =>
         SetDropping(1);
 
-    private void OnMainDragLeave(DragEventArgs e) =>
+    private void OnMainDragLeave(DragEventArgs _) =>
         SetDropping(-1);
 
     private void OnMainDragOver(DragEventArgs e)
