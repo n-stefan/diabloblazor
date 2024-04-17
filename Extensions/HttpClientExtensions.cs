@@ -12,8 +12,8 @@ public static class HttpClientExtensions
         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
         response.EnsureSuccessStatusCode();
 
-        using var stream = await response.Content.ReadAsStreamAsync();
-        
+        await using var stream = await response.Content.ReadAsStreamAsync();
+
         var bytesRead = 0;
         var totalBytesRead = 0;
         var data = new byte[totalSize];

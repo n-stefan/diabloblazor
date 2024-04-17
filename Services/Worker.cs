@@ -11,7 +11,7 @@ public partial class Worker : IWorker
         RunGame(app);
     }
 
-    unsafe public void RunGame(Main app)
+    public unsafe void RunGame(Main app)
     {
         ArgumentNullException.ThrowIfNull(app);
 
@@ -35,15 +35,24 @@ public partial class Worker : IWorker
         delegate* unmanaged<int, int, int, int, void> drawClipText = &Main.DrawClipText;
         delegate* unmanaged<int, int, nuint, int, void> drawText = &Main.DrawText;
 
-        NativeImports.DApi_Init(Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds), app.Offscreen ? 1 : 0,
-            int.Parse(version.Groups[1].Value), int.Parse(version.Groups[2].Value), int.Parse(version.Groups[3].Value), spawn,
-                [ (nint)getFilesize, (nint)getFileContents, (nint)putFileContents, (nint)removeFile, (nint)setCursor,
+        NativeImports.DApi_Init(
+            Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds),
+            app.Offscreen ? 1 : 0,
+            int.Parse(version.Groups[1].Value),
+            int.Parse(version.Groups[2].Value),
+            int.Parse(version.Groups[3].Value),
+            spawn,
+            [
+                (nint)getFilesize, (nint)getFileContents, (nint)putFileContents, (nint)removeFile, (nint)setCursor,
                 (nint)exitGame, (nint)exitError, (nint)currentSaveId, (nint)drawBegin, (nint)drawEnd, (nint)drawBlit,
-                (nint)drawClipText, (nint)drawText ]);
+                (nint)drawClipText, (nint)drawText
+            ]);
 
         Main.Timer = new Timer(
             _ => NativeImports.DApi_Render(Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds)),
-        null, 0, app.RenderInterval);
+            null,
+            0,
+            app.RenderInterval);
     }
 
     [GeneratedRegex(@"(\d+)\.(\d+)\.(\d+)", RegexOptions.Compiled)]

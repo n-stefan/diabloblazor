@@ -21,7 +21,7 @@
     <WasmEnableSIMD>true</WasmEnableSIMD>
     <WasmEnableExceptionHandling>true</WasmEnableExceptionHandling>
     <WasmEnableWebcil>true</WasmEnableWebcil>
-    <!--<AnalysisMode>AllEnabledByDefault</AnalysisMode>-->
+    <!--<AnalysisMode>All</AnalysisMode>-->
   </PropertyGroup>
 
   <ItemGroup>

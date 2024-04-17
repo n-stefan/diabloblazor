@@ -16,8 +16,6 @@ public class ExceptionHandler : TextWriter, IExceptionHandler
 
     public override void WriteLine(string? value)
     {
-        ArgumentNullException.ThrowIfNull(value);
-
         Exception?.Invoke(this, new ExceptionEventArgs { Message = value });
         _consoleWriter.WriteLine(value);
     }

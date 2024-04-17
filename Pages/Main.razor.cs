@@ -1,5 +1,4 @@
-﻿
-//TODO master list:
+﻿//TODO master list:
 //Move as much as possible from TS to C#
 //Use threads (Worker) when available
 //Compress .mpq?
@@ -11,10 +10,11 @@ namespace diabloblazor.Pages;
 public partial class Main : ComponentBase
 {
     //TODO: Move some into AppState
-    private static readonly int[] spawnFilesizes = [ 50_274_091, 25_830_791 ];
-    private readonly int bufferSize = 524_288;
     private const string spawnFilename = "spawn.mpq";
     private const string retailFilename = "diabdat.mpq";
+
+    private static readonly int[] spawnFilesizes = [ 50_274_091, 25_830_791 ];
+    private readonly int bufferSize = 524_288;
     private static string? saveName;
     private bool isDrop;
     private bool preventDefaultKeyDown;
@@ -36,20 +36,28 @@ public partial class Main : ComponentBase
 
     [Inject]
     private IAppState AppState { get; set; } = default!;
+
     [Inject]
     private IInterop Interop { get; set; } = default!;
+
     [Inject]
     private IExceptionHandler ExceptionHandler { get; set; } = default!;
+
     [Inject]
     private IConfiguration Configuration { get; set; } = default!;
+
     [Inject]
     private IFileSystem FileSystem { get; set; } = default!;
+
     [Inject]
     private IGraphics Graphics { get; set; } = default!;
+
     [Inject]
     private IWorker Worker { get; set; } = default!;
+
     [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
+
     [Inject]
     private HttpClient HttpClient { get; set; } = default!;
 
@@ -221,7 +229,7 @@ public partial class Main : ComponentBase
         var totalBytesRead = 0;
         var data = new byte[file.Size];
 
-        using var stream = file.OpenReadStream(520_000_000);
+        await using var stream = file.OpenReadStream(520_000_000);
 
         do
         {
@@ -326,19 +334,21 @@ public partial class Main : ComponentBase
 
     private async Task LoadRetail()
     {
-        if (!FileSystem.HasFile(retailFilename))
+        if (FileSystem.HasFile(retailFilename))
         {
-            if (isDrop)
-            {
-                await JSImports.SetDropFile();
-            }
-            else
-            {
-                var data = await ReadInputFile("Loading...");
-                FileSystem.SetFile(file.Name, data);
+            return;
+        }
 
-                file = null;
-            }
+        if (isDrop)
+        {
+            await JSImports.SetDropFile();
+        }
+        else
+        {
+            var data = await ReadInputFile("Loading...");
+            FileSystem.SetFile(file.Name, data);
+
+            file = null;
         }
     }
 

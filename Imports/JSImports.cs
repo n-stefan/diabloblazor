@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Imports;
 
-static partial class JSImports
+internal static partial class JSImports
 {
     [JSImport("globalThis.window.location.reload")]
     internal static partial void Reload();
