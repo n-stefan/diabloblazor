@@ -13,9 +13,9 @@ async function onInstall(event: /*ExtendableEvent*/any): Promise<void> {
         location.hostname === 'localhost' ? '_framework/blazor.boot.json' : '_framework/blazor.boot.json.br',
         '_framework/blazor.webassembly.js',
         '_framework/dotnet.js',
-        '_framework/dotnet.native.8.0.1.pr9zbw12fw.js', //Debug
-      //'_framework/dotnet.native.8.0.1.inirly6fxz.js', //Release
-        '_framework/dotnet.runtime.8.0.1.rswtxkdyko.js',
+        '_framework/dotnet.native.cxt493xko7.js', //Debug
+      //'_framework/dotnet.native.b2ytdhy5a6.js', //Release
+        '_framework/dotnet.runtime.o8gq1i8bk6.js',
         'index.html',
         'dist/decode.min.js',
         'dist/external.min.css',
