@@ -12,7 +12,7 @@
     <PublishTrimmed>true</PublishTrimmed>
     <!--<TrimMode>full</TrimMode>-->
     <RunAOTCompilation>true</RunAOTCompilation>
-    <!--<WasmStripILAfterAOT>true</WasmStripILAfterAOT>-->
+    <WasmStripILAfterAOT>true</WasmStripILAfterAOT>
     <WasmBuildNative>true</WasmBuildNative>
     <WasmNativeStrip>true</WasmNativeStrip>
     <WasmNativeDebugSymbols>false</WasmNativeDebugSymbols>
