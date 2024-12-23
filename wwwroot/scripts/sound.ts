@@ -10,7 +10,7 @@ class Sound {
     private context: AudioContext;
     private sounds: Map<number, SoundDef>;
 
-    constructor() {
+    public constructor() {
         windowAny.DApi.create_sound = this.createSound;
         windowAny.DApi.create_sound_raw = this.createSoundRaw;
         windowAny.DApi.play_sound = this.playSound;
@@ -74,7 +74,7 @@ class Sound {
         const src = this.sounds.get(id);
         if (src) {
             if (src.source)
-                src.source.then(source => source.stop());
+                src.source.then(source => { source.stop(); });
             src.gain.gain.value = Math.pow(2.0, volume / 1000.0);
             const relVolume = Math.pow(2.0, pan / 1000.0);
             if (src.panner)
@@ -82,7 +82,7 @@ class Sound {
             src.source = src.buffer.then(buffer => {
                 const source = this.context.createBufferSource();
                 source.buffer = buffer;
-                source.loop = !!loop;
+                source.loop = Boolean(loop);
                 let node = source.connect(src.gain);
                 if (src.panner)
                     node = node.connect(src.panner);
@@ -96,7 +96,7 @@ class Sound {
     public stopSound = (id: number): void => {
         const src = this.sounds.get(id);
         if (src && src.source) {
-            src.source.then(source => source.stop());
+            src.source.then(source => { source.stop(); });
             delete src.source;
         }
     }
@@ -104,7 +104,7 @@ class Sound {
     public deleteSound = (id: number): void => {
         const src = this.sounds.get(id);
         if (src && src.source)
-            src.source.then(source => source.stop());
+            src.source.then(source => { source.stop(); });
         this.sounds.delete(id);
     }
 
@@ -114,9 +114,8 @@ class Sound {
             src.gain.gain.value = Math.pow(2.0, volume / 1000.0);
     }
 
-    private decodeAudioData = (context: AudioContext, buffer: ArrayBuffer): Promise<AudioBuffer> => {
-        return new Promise((resolve, reject): void => {
+    private readonly decodeAudioData = async (context: AudioContext, buffer: ArrayBuffer): Promise<AudioBuffer> =>
+        new Promise((resolve, reject): void => {
             context.decodeAudioData(buffer, resolve, reject);
-        });
-    }
+        })
 }

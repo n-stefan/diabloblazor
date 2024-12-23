@@ -40,10 +40,10 @@ class Graphics {
 
     public onRender = (renderBatch: RenderBatch): void => {
         if (this.context instanceof ImageBitmapRenderingContext)
-            (this.context as ImageBitmapRenderingContext).transferFromImageBitmap(renderBatch.bitmap);
+            this.context.transferFromImageBitmap(renderBatch.bitmap);
         else if (this.context instanceof CanvasRenderingContext2D) {
-            const ctx = this.context as CanvasRenderingContext2D;
-            for (let i of renderBatch.images) {
+            const ctx = this.context;
+            for (const i of renderBatch.images) {
                 const image = ctx.createImageData(i.width, i.height);
                 const data = windowAny.Blazor.runtime.localHeapViewU8().subarray(i.data, i.data + (i.width * i.height * 4));
                 image.data.set(data);
@@ -58,7 +58,7 @@ class Graphics {
                     ctx.rect(c.x0, c.y0, c.x1 - c.x0, c.y1 - c.y0);
                     ctx.clip();
                 }
-                for (let t of renderBatch.text) {
+                for (const t of renderBatch.text) {
                     const r = ((t.color >> 16) & 0xFF);
                     const g = ((t.color >> 8) & 0xFF);
                     const b = (t.color & 0xFF);

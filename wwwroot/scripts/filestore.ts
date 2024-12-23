@@ -14,17 +14,16 @@ class FileStore {
     //Dummy parameter for minification
     public initIndexedDb = async (dummy: any): Promise<void> => {
         this.store = new IdbKvStore('diablo_fs');
-        for (let [name, data] of Object.entries(await this.store.json()))
+        for (const [name, data] of Object.entries(await this.store.json()))
             getInterop().dotNetReference.invokeMethod('SetFile', name.toLowerCase(), data as Uint8Array);
     }
 
-    public readIndexedDb = async (name: string): Promise<Uint8Array> => {
-        return await this.store.get(name.toLowerCase());
-    }
+    public readIndexedDb = async (name: string): Promise<Uint8Array> =>
+        await this.store.get(name.toLowerCase())
 
     public indexedDbHasFile = async (name: string): Promise<boolean> => {
         const file = await this.store.get(name.toLowerCase());
-        return file ? true : false;
+        return Boolean(file);
     }
 
     public storeIndexedDb = async (name: string, view: typeof MemoryView): Promise<void> => {
@@ -40,12 +39,12 @@ class FileStore {
         await this.store.remove(name);
     }
 
-    private readFile = (file: File): Promise<ArrayBuffer> => new Promise<ArrayBuffer>((resolve, reject): void => {
+    private readonly readFile = async (file: File): Promise<ArrayBuffer> => new Promise<ArrayBuffer>((resolve, reject): void => {
         const reader = new FileReader();
-        reader.onload = (): void => resolve(reader.result as ArrayBuffer);
-        reader.onerror = (): void => reject(reader.error);
-        reader.onabort = (): void => reject();
-        reader.onprogress = (event: ProgressEvent<FileReader>) =>
+        reader.onload = (): void => { resolve(reader.result as ArrayBuffer); };
+        reader.onerror = (): void => { reject(reader.error); };
+        reader.onabort = (): void => { reject(); };
+        reader.onprogress = (event: ProgressEvent<FileReader>): void =>
             getInterop().dotNetReference.invokeMethod('OnProgress', new Progress('Loading...', event.loaded, event.total));
         reader.readAsArrayBuffer(file);
     });
@@ -58,7 +57,7 @@ class FileStore {
         }
     }
 
-    private getDropFile = (event: DragEvent): File => {
+    private readonly getDropFile = (event: DragEvent): File | null => {
         const items = event.dataTransfer.items;
         if (items)
             for (let i = 0; i < items.length; ++i)
@@ -67,6 +66,7 @@ class FileStore {
         const files = event.dataTransfer.files;
         if (files.length)
             return files[0];
+        return null;
     }
 
     //Dummy parameter for minification
@@ -78,7 +78,7 @@ class FileStore {
 
     public getRenderInterval = (): number => {
         const value = localStorage.getItem('DiabloRenderInterval');
-        return value ? parseInt(value) : 50;
+        return value ? parseInt(value, 10) : 50;
     }
 
     public setRenderInterval = (value: number): void => {

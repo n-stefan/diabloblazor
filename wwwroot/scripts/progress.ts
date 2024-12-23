@@ -1,8 +1,8 @@
 ﻿
 class Progress {
-    constructor(
-        private message: string,
-        private bytesLoaded: number,
-        private total: number) {
+    public constructor(
+        private readonly message: string,
+        private readonly bytesLoaded: number,
+        private readonly total: number) {
     }
 }
