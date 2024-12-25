@@ -38,32 +38,33 @@ class Graphics {
         this.context = offscreen ? canvas.getContext('bitmaprenderer') : canvas.getContext('2d', { alpha: false });
     }
 
-    public onRender = (renderBatch: RenderBatch): void => {
-        if (this.context instanceof ImageBitmapRenderingContext)
+    public render = (renderBatch: RenderBatch): void => {
+        if (this.context instanceof ImageBitmapRenderingContext) {
             this.context.transferFromImageBitmap(renderBatch.bitmap);
+        }
         else if (this.context instanceof CanvasRenderingContext2D) {
             const ctx = this.context;
-            for (const i of renderBatch.images) {
-                const image = ctx.createImageData(i.width, i.height);
-                const data = windowAny.Blazor.runtime.localHeapViewU8().subarray(i.data, i.data + (i.width * i.height * 4));
+            for (const iter of renderBatch.images) {
+                const image = ctx.createImageData(iter.width, iter.height);
+                const data = windowAny.Blazor.runtime.localHeapViewU8().subarray(iter.data, iter.data + (iter.width * iter.height * 4));
                 image.data.set(data);
-                ctx.putImageData(image, i.x, i.y);
+                ctx.putImageData(image, iter.x, iter.y);
             }
             if (renderBatch.text.length) {
                 ctx.save();
                 ctx.font = 'bold 13px Times New Roman';
                 if (renderBatch.clip) {
-                    const c = renderBatch.clip;
+                    const clip = renderBatch.clip;
                     ctx.beginPath();
-                    ctx.rect(c.x0, c.y0, c.x1 - c.x0, c.y1 - c.y0);
+                    ctx.rect(clip.x0, clip.y0, clip.x1 - clip.x0, clip.y1 - clip.y0);
                     ctx.clip();
                 }
-                for (const t of renderBatch.text) {
-                    const r = ((t.color >> 16) & 0xFF);
-                    const g = ((t.color >> 8) & 0xFF);
-                    const b = (t.color & 0xFF);
-                    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-                    ctx.fillText(t.text, t.x, t.y /* + 22*/);
+                for (const iter of renderBatch.text) {
+                    const red = ((iter.color >> 16) & 0xFF);
+                    const green = ((iter.color >> 8) & 0xFF);
+                    const blue = (iter.color & 0xFF);
+                    ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+                    ctx.fillText(iter.text, iter.x, iter.y);
                 }
                 ctx.restore();
             }

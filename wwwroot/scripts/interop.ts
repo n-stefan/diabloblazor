@@ -25,8 +25,9 @@ class Interop {
     }
 
     private get canvas(): HTMLCanvasElement {
-        if (!this.#canvas)
+        if (!this.#canvas) {
             this.#canvas = document.getElementById('canvas') as HTMLCanvasElement;
+        }
         return this.#canvas;
     }
 
@@ -42,7 +43,7 @@ class Interop {
         window.addEventListener('resize', (): void => this.#dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
 
         const main = document.getElementById('main');
-        main.addEventListener('drop', (e: DragEvent): void => { this.#fileStore.onDropFile(e); });
+        main.addEventListener('drop', (event: DragEvent): void => { this.#fileStore.onDropFile(event); });
     }
 
     public getCanvasRect = (): ClientRect =>

@@ -14,7 +14,7 @@ public class Interop(IJSRuntime jsRuntime) : IInterop
         jsRuntime.InvokeVoidAsync("interop.clickDownloadLink", link, download, href);
 
     public void Render(RenderBatch renderBatch) =>
-        _jsInProcessRuntime.InvokeVoid("interop.graphics.onRender", renderBatch);
+        _jsInProcessRuntime.InvokeVoid("interop.graphics.render", renderBatch);
 
     public ValueTask<ClientRect> GetCanvasRect() =>
         jsRuntime.InvokeAsync<ClientRect>("interop.getCanvasRect");

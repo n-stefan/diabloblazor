@@ -14,8 +14,9 @@ class FileStore {
     //Dummy parameter for minification
     public initIndexedDb = async (dummy: any): Promise<void> => {
         this.store = new IdbKvStore('diablo_fs');
-        for (const [name, data] of Object.entries(await this.store.json()))
+        for (const [name, data] of Object.entries(await this.store.json())) {
             getInterop().dotNetReference.invokeMethod('SetFile', name.toLowerCase(), data as Uint8Array);
+        }
     }
 
     public readIndexedDb = async (name: string): Promise<Uint8Array> =>
@@ -28,6 +29,7 @@ class FileStore {
 
     public storeIndexedDb = async (name: string, view: typeof MemoryView): Promise<void> => {
         try {
+            // eslint-disable-next-line no-underscore-dangle
             const array = new Uint8Array(view._unsafe_create_view());
             await this.store.set(name, array);
         } finally {
@@ -59,13 +61,17 @@ class FileStore {
 
     private readonly getDropFile = (event: DragEvent): File | null => {
         const items = event.dataTransfer.items;
-        if (items)
-            for (let i = 0; i < items.length; ++i)
-                if (items[i].kind === 'file')
-                    return items[i].getAsFile();
+        if (items) {
+            for (let iter = 0; iter < items.length; ++iter) {
+                if (items[iter].kind === 'file') {
+                    return items[iter].getAsFile();
+                }
+            }
+        }
         const files = event.dataTransfer.files;
-        if (files.length)
+        if (files.length) {
             return files[0];
+        }
         return null;
     }
 
@@ -78,7 +84,7 @@ class FileStore {
 
     public getRenderInterval = (): number => {
         const value = localStorage.getItem('DiabloRenderInterval');
-        return value ? parseInt(value, 10) : 50;
+        return value === null ? 50 : parseInt(value, 10);
     }
 
     public setRenderInterval = (value: number): void => {
