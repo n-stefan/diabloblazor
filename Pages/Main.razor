@@ -1,4 +1,5 @@
 ﻿@page "/"
+@rendermode RenderMode.InteractiveWebAssembly
 
 <div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnMainDragEnter" @ondragleave="OnMainDragLeave"
      @ondragover="OnMainDragOver" @ondragover:preventDefault="preventDefaultDragOver">
