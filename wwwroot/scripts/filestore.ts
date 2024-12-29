@@ -15,7 +15,7 @@ class FileStore {
     public initIndexedDb = async (dummy: any): Promise<void> => {
         this.store = new IdbKvStore('diablo_fs');
         for (const [name, data] of Object.entries(await this.store.json())) {
-            getInterop().dotNetReference.invokeMethod('SetFile', name.toLowerCase(), data as Uint8Array);
+            (<any>window).interop.dotNetReference.invokeMethod('SetFile', name.toLowerCase(), data as Uint8Array);
         }
     }
 
@@ -47,7 +47,7 @@ class FileStore {
         reader.onerror = (): void => { reject(reader.error); };
         reader.onabort = (): void => { reject(); };
         reader.onprogress = (event: ProgressEvent<FileReader>): void =>
-            getInterop().dotNetReference.invokeMethod('OnProgress', new Progress('Loading...', event.loaded, event.total));
+            (<any>window).interop.dotNetReference.invokeMethod('OnProgress', new Progress('Loading...', event.loaded, event.total));
         reader.readAsArrayBuffer(file);
     });
 
@@ -55,7 +55,7 @@ class FileStore {
         this.dropFile = this.getDropFile(event);
         if (this.dropFile) {
             event.preventDefault();
-            getInterop().dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase(), true);
+            (<any>window).interop.dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase(), true);
         }
     }
 
@@ -78,7 +78,7 @@ class FileStore {
     //Dummy parameter for minification
     public setDropFile = async (dummy: any): Promise<void> => {
         const array = new Uint8Array(await this.readFile(this.dropFile));
-        getInterop().dotNetReference.invokeMethod('SetFile', this.dropFile.name.toLowerCase(), array);
+        (<any>window).interop.dotNetReference.invokeMethod('SetFile', this.dropFile.name.toLowerCase(), array);
         this.dropFile = null;
     }
 

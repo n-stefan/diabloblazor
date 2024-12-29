@@ -58,8 +58,5 @@ class Interop {
     }
 }
 
-const windowAny = window as any;
-windowAny.DApi = {};
-windowAny.interop = new Interop();
-
-const getInterop = (): Interop => windowAny.interop;
+(<any>window).DApi = {};
+(<any>window).interop = new Interop();
