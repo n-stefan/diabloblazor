@@ -46,7 +46,7 @@ class Graphics {
             const ctx = this.context;
             for (const iter of renderBatch.images) {
                 const image = ctx.createImageData(iter.width, iter.height);
-                const data = (<any>window).Blazor.runtime.localHeapViewU8().subarray(iter.data, iter.data + (iter.width * iter.height * 4));
+                const data = (window as any).Blazor.runtime.localHeapViewU8().subarray(iter.data, iter.data + (iter.width * iter.height * 4));
                 image.data.set(data);
                 ctx.putImageData(image, iter.x, iter.y);
             }

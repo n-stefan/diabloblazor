@@ -58,5 +58,5 @@ class Interop {
     }
 }
 
-(<any>window).DApi = {};
-(<any>window).interop = new Interop();
+(window as any).DApi = {};
+var interop: Interop = new Interop();

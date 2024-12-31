@@ -11,7 +11,7 @@ class Sound {
     private sounds: Map<number, SoundDef>;
 
     public constructor() {
-        const windowAny = <any>window;
+        const windowAny = window as any;
         windowAny.DApi.create_sound = this.createSound;
         windowAny.DApi.create_sound_raw = this.createSoundRaw;
         windowAny.DApi.play_sound = this.playSound;
@@ -23,7 +23,7 @@ class Sound {
 
     public initSound = (): void => {
         //const stereoPannerNode = window.StereoPannerNode;
-        const audioContext = window.AudioContext || (<any>window).webkitAudioContext;
+        const audioContext = window.AudioContext || (window as any).webkitAudioContext;
         if (!audioContext) {
             return;
         }
