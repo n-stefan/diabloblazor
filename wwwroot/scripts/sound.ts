@@ -11,14 +11,14 @@ class Sound {
     private sounds: Map<number, SoundDef>;
 
     public constructor() {
-        const windowAny = window as any;
-        windowAny.DApi.create_sound = this.createSound;
-        windowAny.DApi.create_sound_raw = this.createSoundRaw;
-        windowAny.DApi.play_sound = this.playSound;
-        windowAny.DApi.stop_sound = this.stopSound;
-        windowAny.DApi.delete_sound = this.deleteSound;
-        windowAny.DApi.duplicate_sound = this.duplicateSound;
-        windowAny.DApi.set_volume = this.setVolume;
+        const dApi = DApi as any;
+        dApi.create_sound = this.createSound;
+        dApi.create_sound_raw = this.createSoundRaw;
+        dApi.play_sound = this.playSound;
+        dApi.stop_sound = this.stopSound;
+        dApi.delete_sound = this.deleteSound;
+        dApi.duplicate_sound = this.duplicateSound;
+        dApi.set_volume = this.setVolume;
     }
 
     public initSound = (): void => {

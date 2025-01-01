@@ -24,13 +24,6 @@ class Interop {
         return this.#fileStore;
     }
 
-    private get canvas(): HTMLCanvasElement {
-        if (!this.#canvas) {
-            this.#canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        }
-        return this.#canvas;
-    }
-
     public get dotNetReference(): any {
         return this.#dotNetReference;
     }
@@ -46,8 +39,12 @@ class Interop {
         main.addEventListener('drop', (event: DragEvent): void => { this.#fileStore.onDropFile(event); });
     }
 
-    public getCanvasRect = (): ClientRect =>
-        this.canvas.getBoundingClientRect()
+    public getCanvasRect = (): ClientRect => {
+        if (!this.#canvas) {
+            this.#canvas = document.getElementById('canvas') as HTMLCanvasElement;
+        }
+        return this.#canvas.getBoundingClientRect();
+    }
 
     public clickDownloadLink = (element: HTMLElement, download: string, href: string): void => {
         element.setAttribute('download', download);
@@ -58,5 +55,5 @@ class Interop {
     }
 }
 
-(window as any).DApi = {};
+var DApi = {};
 var interop: Interop = new Interop();
