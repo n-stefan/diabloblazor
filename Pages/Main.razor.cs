@@ -19,7 +19,7 @@ public partial class Main : ComponentBase
     private bool isDrop;
     private bool preventDefaultKeyDown;
     private bool preventDefaultDragOver;
-    private ClientRect canvasRect;
+    private DOMRect canvasRect;
     private ElementReference downloadLink;
     private IBrowserFile? file;
     private static IFileSystem fileSystem;
@@ -403,7 +403,7 @@ public partial class Main : ComponentBase
     }
 
     [JSInvokable]
-    public void OnResize(ClientRect rect) =>
+    public void OnResize(DOMRect rect) =>
         canvasRect = rect;
 
     [JSInvokable]

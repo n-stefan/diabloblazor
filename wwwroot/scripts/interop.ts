@@ -39,7 +39,7 @@ class Interop {
         main.addEventListener('drop', (event: DragEvent): void => { this.#fileStore.onDropFile(event); });
     }
 
-    public getCanvasRect = (): ClientRect => {
+    public getCanvasRect = (): DOMRect => {
         if (!this.#canvas) {
             this.#canvas = document.getElementById('canvas') as HTMLCanvasElement;
         }

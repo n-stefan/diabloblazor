@@ -4,7 +4,7 @@ public interface IInterop
 {
     ValueTask ClickDownloadLink(ElementReference link, string download, string href);
 
-    ValueTask<ClientRect> GetCanvasRect();
+    ValueTask<DOMRect> GetCanvasRect();
 
     ValueTask<byte[]> ReadIndexedDb(string name);
 
