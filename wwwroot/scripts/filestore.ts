@@ -1,6 +1,5 @@
 ﻿
-declare const IdbKvStore: any;
-declare const MemoryView: any;
+declare const IdbKvStore: any, MemoryView: any;
 
 interface FileDef {
     name: string;

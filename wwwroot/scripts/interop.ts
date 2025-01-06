@@ -1,5 +1,5 @@
 ﻿
-class Interop {
+var DApi = {}, interop = new class Interop {
     readonly #graphics: Graphics;
     readonly #sound: Sound;
     readonly #fileStore: FileStore;
@@ -54,6 +54,3 @@ class Interop {
         element.removeAttribute('href');
     }
 }
-
-var DApi = {};
-var interop: Interop = new Interop();

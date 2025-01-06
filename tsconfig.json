@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
-    "module": "esnext",
+    "target": "ES2015",
+    "module": "ES2020",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "lib": [ "dom", "ES2021" ]
+    "lib": [ "dom", "ES2020" ]
   },
   "exclude": [
     "node_modules"
