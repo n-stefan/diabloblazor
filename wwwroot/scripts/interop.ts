@@ -1,49 +1,49 @@
 ﻿
 var DApi = {}, interop = new class Interop {
-    readonly #graphics: Graphics;
-    readonly #sound: Sound;
-    readonly #fileStore: FileStore;
-    #canvas: HTMLCanvasElement;
-    #dotNetReference: any;
+    private readonly $graphics: Graphics;
+    private readonly $sound: Sound;
+    private readonly $fileStore: FileStore;
+    private $canvas: HTMLCanvasElement;
+    private $dotNetReference: any;
 
     public constructor() {
-        this.#graphics = new Graphics();
-        this.#sound = new Sound();
-        this.#fileStore = new FileStore();
+        this.$graphics = new Graphics();
+        this.$sound = new Sound();
+        this.$fileStore = new FileStore();
     }
 
     public get graphics(): Graphics {
-        return this.#graphics;
+        return this.$graphics;
     }
 
     public get sound(): Sound {
-        return this.#sound;
+        return this.$sound;
     }
 
     public get fileStore(): FileStore {
-        return this.#fileStore;
+        return this.$fileStore;
     }
 
     public get dotNetReference(): any {
-        return this.#dotNetReference;
+        return this.$dotNetReference;
     }
 
     public setDotNetReference = (dotNetReference: any): void => {
-        this.#dotNetReference = dotNetReference;
+        this.$dotNetReference = dotNetReference;
     }
 
     public addEventListeners = (): void => {
-        window.addEventListener('resize', (): void => this.#dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
+        window.addEventListener('resize', (): void => this.$dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
 
         const main = document.getElementById('main');
-        main.addEventListener('drop', (event: DragEvent): void => { this.#fileStore.onDropFile(event); });
+        main.addEventListener('drop', (event: DragEvent): void => { this.$fileStore.onDropFile(event); });
     }
 
     public getCanvasRect = (): DOMRect => {
-        if (!this.#canvas) {
-            this.#canvas = document.getElementById('canvas') as HTMLCanvasElement;
+        if (!this.$canvas) {
+            this.$canvas = document.getElementById('canvas') as HTMLCanvasElement;
         }
-        return this.#canvas.getBoundingClientRect();
+        return this.$canvas.getBoundingClientRect();
     }
 
     public clickDownloadLink = (element: HTMLElement, download: string, href: string): void => {
