@@ -83,8 +83,8 @@ class Sound {
             if (src.source) {
                 src.source.then(source => { source.stop(); }, (reason: unknown) => { console.error(reason); });
             }
-            src.gain.gain.value = 2.0 ** (volume / 1000.0);
-            const relVolume = 2.0 ** (pan / 1000.0);
+            src.gain.gain.value = Math.pow(2.0, volume / 1000.0);
+            const relVolume = Math.pow(2.0, pan / 1000.0);
             if (src.panner) {
                 src.panner.pan.value = 1.0 - 2.0 / (1.0 + relVolume);
             }
@@ -105,7 +105,7 @@ class Sound {
 
     public stopSound = (id: number): void => {
         const src = this.sounds.get(id);
-        if (src?.source) {
+        if (src && src.source) {
             src.source.then(source => { source.stop(); }, (reason: unknown) => { console.error(reason); });
             delete src.source;
         }
@@ -113,7 +113,7 @@ class Sound {
 
     public deleteSound = (id: number): void => {
         const src = this.sounds.get(id);
-        if (src?.source) {
+        if (src && src.source) {
             src.source.then(source => { source.stop(); }, (reason: unknown) => { console.error(reason); });
         }
         this.sounds.delete(id);
@@ -122,7 +122,7 @@ class Sound {
     public setVolume = (id: number, volume: number): void => {
         const src = this.sounds.get(id);
         if (src) {
-            src.gain.gain.value = 2.0 ** (volume / 1000.0);
+            src.gain.gain.value = Math.pow(2.0, volume / 1000.0);
         }
     }
 
