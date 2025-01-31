@@ -22,7 +22,7 @@
     <WasmEnableExceptionHandling>true</WasmEnableExceptionHandling>
     <WasmEnableWebcil>true</WasmEnableWebcil>
     <!--<AnalysisMode>All</AnalysisMode>-->
-    <PrepareForBuildDependsOn>BundleMinify;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
+    <!--<PrepareForBuildDependsOn>BundleMinify;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>-->
   </PropertyGroup>
 
   <ItemGroup>
