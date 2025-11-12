@@ -10,12 +10,11 @@ async function onInstall(event: /*ExtendableEvent*/any): Promise<void> {
     await caches.delete(cacheName);
 
     await caches.open(cacheName).then(cache => cache.addAll([
-        location.hostname === 'localhost' ? '_framework/blazor.boot.json' : '_framework/blazor.boot.json.br',
         '_framework/blazor.webassembly.js',
         '_framework/dotnet.js',
-        '_framework/dotnet.native.cxt493xko7.js', //Debug
-      //'_framework/dotnet.native.b2ytdhy5a6.js', //Release
-        '_framework/dotnet.runtime.o8gq1i8bk6.js',
+        '_framework/dotnet.native.um47d9zjao.js', //Debug
+      //'_framework/dotnet.native.lw0g0oa5jk.js', //Release
+        '_framework/dotnet.runtime.o0qy896u8v.js',
         'index.html',
         'dist/decode.min.js',
         'dist/external.min.css',

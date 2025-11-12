@@ -35,7 +35,7 @@ class Sound {
         this.sounds = new Map<number, SoundDef>();
     }
 
-    public createSound = (id: number, data: Uint8Array): void => {
+    public createSound = (id: number, data: Uint8Array<ArrayBuffer>): void => {
         if (!this.context) {
             return;
         }
