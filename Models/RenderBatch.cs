@@ -1,6 +1,6 @@
 ﻿namespace diabloblazor.Models;
 
-public record class RenderBatch
+public class RenderBatch
 {
     public ImageBitmap? Bitmap { get; init; }
 

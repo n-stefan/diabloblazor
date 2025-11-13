@@ -1,4 +1,7 @@
 ﻿namespace diabloblazor.Models;
 
 [JsonConverter(typeof(ByteArrayConverter))]
-public record class ByteArray(byte[] Data);
+public class ByteArray(byte[] data)
+{
+    public byte[] Data => data;
+}
