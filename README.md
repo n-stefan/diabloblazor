@@ -1,4 +1,4 @@
-# DiabloBlazor <img src="https://devblogs.microsoft.com/aspnet/wp-content/uploads/sites/16/2019/04/BrandBlazor_nohalo_1000x.png" width="50" height="50" />
+# DiabloBlazor
 
 Based on the excellent [DiabloWeb](https://github.com/d07RiV/diabloweb) which, in turn, is based on the likewise excellent [Devilution](https://github.com/diasurgical/devilution).
 
@@ -10,7 +10,7 @@ You can try it out on [GitHub Pages](https://n-stefan.github.io/diabloblazor). I
 
 The game's source code is [here](https://github.com/n-stefan/devilution).
 
-IDE: latest Visual Studio Community 2022 Preview. In recent versions Rebuild may not work, in which case Clean & Build can be used instead.
+IDE: latest Visual Studio Community 2022. In recent versions Rebuild may not work, in which case Clean & Build can be used instead.
 
 The `wasm-tools` SDK workload is required, install it from an elevated command prompt:
 
