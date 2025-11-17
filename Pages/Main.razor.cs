@@ -207,7 +207,7 @@ public partial class Main : ComponentBase
 
     private void OnMainDragOver(DragEventArgs e)
     {
-        if (e.DataTransfer.Items.Any(x => x.Kind == "file") || e.DataTransfer.Files.Length != 0)
+        if (e.DataTransfer.Items.Any(x => string.Equals(x.Kind, "file", StringComparison.Ordinal)) || e.DataTransfer.Files.Length != 0)
         {
             preventDefaultDragOver = true;
         }
@@ -298,7 +298,7 @@ public partial class Main : ComponentBase
         }
 
         FileSystem.RemoveFile(saveGame.Name);
-        var saveToRemove = AppState.Saves.FirstOrDefault(x => x.Name == saveGame.Name);
+        var saveToRemove = AppState.Saves.FirstOrDefault(x => string.Equals(x.Name, saveGame.Name, StringComparison.Ordinal));
         AppState.Saves.Remove(saveToRemove);
     }
 
@@ -384,7 +384,7 @@ public partial class Main : ComponentBase
             return;
         }
 
-        GameType = (name == retailFilename) ? GameType.Retail : GameType.Shareware;
+        GameType = (string.Equals(name, retailFilename, StringComparison.Ordinal)) ? GameType.Retail : GameType.Shareware;
 
         this.isDrop = isDrop;
         AppState.Dropping = 0;
