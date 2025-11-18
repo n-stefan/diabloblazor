@@ -140,7 +140,7 @@ public partial class Main : ComponentBase
 
         canvasRect = await Interop.GetCanvasRect();
 
-        ExceptionHandler.Exception += (_, e) => JSImports.Alert($"An error has occurred: {e.Message}");
+        ExceptionHandler.Exception += static (_, e) => JSImports.Alert($"An error has occurred: {e.Message}");
 
         JSImports.AddEventListeners();
     }
@@ -207,7 +207,7 @@ public partial class Main : ComponentBase
 
     private void OnMainDragOver(DragEventArgs e)
     {
-        if (e.DataTransfer.Items.Any(x => string.Equals(x.Kind, "file", StringComparison.Ordinal)) || e.DataTransfer.Files.Length != 0)
+        if (e.DataTransfer.Items.Any(static x => string.Equals(x.Kind, "file", StringComparison.Ordinal)) || e.DataTransfer.Files.Length != 0)
         {
             preventDefaultDragOver = true;
         }
