@@ -154,7 +154,7 @@ public partial class Main : ComponentBase
     private void InitSaves()
     {
         var filenames = FileSystem.GetFilenames();
-        var saveNames = filenames.Where(x => x.EndsWith(".sv")).ToList();
+        var saveNames = filenames.Where(static x => x.EndsWith(".sv")).ToList();
         saveNames.ForEach(x => AppState.Saves.Add(new SaveGame(x)));
     }
 
