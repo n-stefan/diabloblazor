@@ -249,31 +249,19 @@ public partial class Main : ComponentBase
 
     private async Task DoLoadGame()
     {
-        if (GameType == GameType.Retail)
+        if (GameType == GameType.Retail && !FileSystem.HasFile(retailFilename))
         {
             await LoadRetail();
-            Worker.InitGame(this);
         }
-        else
+        else if (GameType == GameType.Shareware && !AppState.HasSpawn)
         {
-            if (AppState.HasSpawn)
-            {
-                Worker.InitGame(this);
-            }
-            else
-            {
-                await LoadSpawn();
-            }
+            await LoadSpawn();
         }
+        Worker.InitGame(this);
     }
 
     private async Task LoadRetail()
     {
-        if (FileSystem.HasFile(retailFilename))
-        {
-            return;
-        }
-
         if (isDrop)
         {
             await JSImports.SetDropFile();
@@ -301,7 +289,6 @@ public partial class Main : ComponentBase
             var binary = await HttpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], bufferSize, OnProgress);
             FileSystem.SetFile(spawnFilename, binary);
             JSImports.StoreIndexedDb(spawnFilename, binary);
-            Worker.InitGame(this);
         }
     }
 
