@@ -15,40 +15,36 @@ public partial class Main : ComponentBase
     private DOMRect canvasRect;
     private ElementReference downloadLink;
     private IBrowserFile? file;
-
-    public bool Offscreen { get; private set; }
-    public int RenderInterval { get; private set; }
-    public Config Config { get; private set; }
+    private IAppState appState;
+    private IInterop interop;
+    private IExceptionHandler exceptionHandler;
+    private IConfiguration configuration;
+    private IWorker worker;
+    private NavigationManager navigationManager;
+    private HttpClient httpClient;
 
     private string FPSTarget =>
         (RenderInterval != 0) ? (1000d / RenderInterval).ToString("N2") : "0";
 
-    [Inject]
-    private IAppState AppState { get; set; } = default!;
+    public bool Offscreen { get; private set; }
 
-    [Inject]
-    private IInterop Interop { get; set; } = default!;
+    public int RenderInterval { get; private set; }
 
-    [Inject]
-    private IExceptionHandler ExceptionHandler { get; set; } = default!;
+    public Config Config { get; private set; }
 
-    [Inject]
-    private IConfiguration Configuration { get; set; } = default!;
-
-    [Inject]
-    private IFileSystem FileSystem { get; set; } = default!;
-
-    [Inject]
-    private IGraphics Graphics { get; set; } = default!;
-
-    [Inject]
-    private IWorker Worker { get; set; } = default!;
-
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
-
-    [Inject]
-    private HttpClient HttpClient { get; set; } = default!;
+    public Main(IAppState appState, IInterop interop, IExceptionHandler exceptionHandler, IConfiguration configuration,
+        IWorker worker, NavigationManager navigationManager, HttpClient httpClient, IFileSystem fileSystem, IGraphics graphics)
+    {
+        this.appState = appState;
+        this.interop = interop;
+        this.exceptionHandler = exceptionHandler;
+        this.configuration = configuration;
+        this.worker = worker;
+        this.navigationManager = navigationManager;
+        this.httpClient = httpClient;
+        Main.fileSystem = fileSystem;
+        Main.graphics = graphics;
+    }
 
     private (double x, double y) MousePos(MouseEventArgs e)
     {
@@ -63,27 +59,24 @@ public partial class Main : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        fileSystem = FileSystem;
-        graphics = Graphics;
+        await interop.SetDotNetReference(DotNetObjectReference.Create(this));
 
-        await Interop.SetDotNetReference(DotNetObjectReference.Create(this));
-
-        Config = new Config { Version = Configuration["Version"] };
+        Config = new Config { Version = configuration["Version"] };
 
         RenderInterval = JSImports.GetRenderInterval();
 
         await JSImports.InitIndexedDb();
 
-        if (FileSystem.HasFile(spawnFilename, spawnFilesizes))
+        if (fileSystem.HasFile(spawnFilename, spawnFilesizes))
         {
-            AppState.HasSpawn = true;
+            appState.HasSpawn = true;
         }
 
         InitSaves();
 
-        canvasRect = await Interop.GetCanvasRect();
+        canvasRect = await interop.GetCanvasRect();
 
-        ExceptionHandler.Exception += static (_, e) => JSImports.Alert($"An error has occurred: {e.Message}");
+        exceptionHandler.Exception += static (_, e) => JSImports.Alert($"An error has occurred: {e.Message}");
 
         JSImports.AddEventListeners();
     }
@@ -149,13 +142,13 @@ public partial class Main : ComponentBase
     }
 
     private void SetDropping(int change) =>
-        AppState.Dropping = Math.Max(AppState.Dropping + change, 0);
+        appState.Dropping = Math.Max(appState.Dropping + change, 0);
 
     private void InitSaves()
     {
-        var filenames = FileSystem.GetFilenames();
+        var filenames = fileSystem.GetFilenames();
         var saveNames = filenames.Where(static x => x.EndsWith(".sv")).ToList();
-        saveNames.ForEach(x => AppState.Saves.Add(new SaveGame(x)));
+        saveNames.ForEach(x => appState.Saves.Add(new SaveGame(x)));
     }
 
     private async Task<byte[]> ReadInputFile(string message)
@@ -207,22 +200,22 @@ public partial class Main : ComponentBase
         }
 
         var data = await ReadInputFile("Uploading...");
-        FileSystem.SetFile(name, data);
+        fileSystem.SetFile(name, data);
         JSImports.StoreIndexedDb(name, data);
 
         file = null;
 
-        AppState.Saves.Add(new SaveGame(name));
+        appState.Saves.Add(new SaveGame(name));
     }
 
     private void GoBack() =>
-        AppState.ShowSaves = false;
+        appState.ShowSaves = false;
 
     private async Task DownloadSave(string name)
     {
-        var data = await Interop.ReadIndexedDb(name);
+        var data = await interop.ReadIndexedDb(name);
         var base64 = Convert.ToBase64String(data);
-        await Interop.ClickDownloadLink(downloadLink, name, $"data:application/octet-stream;base64,{base64}");
+        await interop.ClickDownloadLink(downloadLink, name, $"data:application/octet-stream;base64,{base64}");
     }
 
     private void RemoveSave(SaveGame saveGame)
@@ -232,13 +225,13 @@ public partial class Main : ComponentBase
             return;
         }
 
-        FileSystem.RemoveFile(saveGame.Name);
-        var saveToRemove = AppState.Saves.FirstOrDefault(x => string.Equals(x.Name, saveGame.Name, StringComparison.Ordinal));
-        AppState.Saves.Remove(saveToRemove);
+        fileSystem.RemoveFile(saveGame.Name);
+        var saveToRemove = appState.Saves.FirstOrDefault(x => string.Equals(x.Name, saveGame.Name, StringComparison.Ordinal));
+        appState.Saves.Remove(saveToRemove);
     }
 
     private void ShowSaves() =>
-        AppState.ShowSaves = !AppState.ShowSaves;
+        appState.ShowSaves = !appState.ShowSaves;
 
     private async Task LoadGame()
     {
@@ -249,15 +242,15 @@ public partial class Main : ComponentBase
 
     private async Task DoLoadGame()
     {
-        if (GameType == GameType.Retail && !FileSystem.HasFile(retailFilename))
+        if (GameType == GameType.Retail && !fileSystem.HasFile(retailFilename))
         {
             await LoadRetail();
         }
-        else if (GameType == GameType.Shareware && !AppState.HasSpawn)
+        else if (GameType == GameType.Shareware && !appState.HasSpawn)
         {
             await LoadSpawn();
         }
-        Worker.InitGame(this);
+        worker.InitGame(this);
     }
 
     private async Task LoadRetail()
@@ -269,7 +262,7 @@ public partial class Main : ComponentBase
         else
         {
             var data = await ReadInputFile("Loading...");
-            FileSystem.SetFile(file.Name, data);
+            fileSystem.SetFile(file.Name, data);
 
             file = null;
         }
@@ -277,17 +270,17 @@ public partial class Main : ComponentBase
 
     private async Task LoadSpawn()
     {
-        var filesize = FileSystem.GetFilesize(spawnFilename);
+        var filesize = fileSystem.GetFilesize(spawnFilename);
         if (filesize != 0 && !spawnFilesizes.Contains(filesize))
         {
-            FileSystem.RemoveFile(spawnFilename);
+            fileSystem.RemoveFile(spawnFilename);
             filesize = 0;
         }
         if (filesize == 0)
         {
-            var url = $"{NavigationManager.BaseUri}{spawnFilename}";
-            var binary = await HttpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], bufferSize, OnProgress);
-            FileSystem.SetFile(spawnFilename, binary);
+            var url = $"{navigationManager.BaseUri}{spawnFilename}";
+            var binary = await httpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], bufferSize, OnProgress);
+            fileSystem.SetFile(spawnFilename, binary);
             JSImports.StoreIndexedDb(spawnFilename, binary);
         }
     }
@@ -301,7 +294,7 @@ public partial class Main : ComponentBase
         if (name is not null && !name.EndsWith(".mpq"))
         {
             JSImports.Alert("Please select an MPQ file. If you downloaded the installer from GoG, you will need to install it on PC and use the MPQ file from the installation folder.");
-            AppState.Dropping = 0;
+            appState.Dropping = 0;
             StateHasChanged();
             return;
         }
@@ -309,8 +302,8 @@ public partial class Main : ComponentBase
         GameType = (string.Equals(name, retailFilename, StringComparison.Ordinal)) ? GameType.Retail : GameType.Shareware;
 
         this.isDrop = isDrop;
-        AppState.Dropping = 0;
-        AppState.Loading = true;
+        appState.Dropping = 0;
+        appState.Loading = true;
 
         await LoadGame();
 
@@ -319,7 +312,7 @@ public partial class Main : ComponentBase
         //document.addEventListener('touchend', this.onTouchEnd, { passive: false, capture: true});
 
         this.isDrop = false;
-        AppState.Started = true;
+        appState.Started = true;
 
         StateHasChanged();
     }
@@ -331,13 +324,13 @@ public partial class Main : ComponentBase
     [JSInvokable]
     public void OnProgress(Progress progress)
     {
-        AppState.Progress = progress;
+        appState.Progress = progress;
         StateHasChanged();
     }
 
     [JSInvokable]
     public ulong SetFile(string name, byte[] data) =>
-        (ulong)FileSystem.SetFile(name, data);
+        (ulong)fileSystem.SetFile(name, data);
 
     //private void CompressMPQ() =>
     //    AppState.Compress = true;

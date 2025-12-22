@@ -1,11 +1,11 @@
 ﻿@page "/"
 @rendermode RenderMode.InteractiveWebAssembly
 
-<div id="main" class="App @(AppState.Started ? "started" : "") @(AppState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnMainDragEnter" @ondragleave="OnMainDragLeave"
+<div id="main" class="App @(appState.Started ? "started" : "") @(appState.Dropping > 0 ? "dropping" : "")" @ondragenter="OnMainDragEnter" @ondragleave="OnMainDragLeave"
      @ondragover="OnMainDragOver" @ondragover:preventDefault="preventDefaultDragOver">
     <div class="Body">
         <div class="inner">
-            @if (!AppState.Error)
+            @if (!appState.Error)
             {
                 <canvas id="canvas" width="640" height="480" tabindex="1" @oncontextmenu="OnCanvasContextMenu" @oncontextmenu:preventDefault
                         @onkeyup="OnCanvasKeyUp" @onkeydown="OnCanvasKeyDown" @onkeydown:preventDefault="preventDefaultKeyDown"
@@ -14,18 +14,18 @@
         </div>
     </div>
     <div class="BodyV">
-        @if (AppState.ShowSaves)
+        @if (appState.ShowSaves)
         {
             <div class="start">
                 <ul class="saveList">
-                    @if (!AppState.Saves.Any())
+                    @if (!appState.Saves.Any())
                     {
                         @:There are no saves.
                     }
                     else
                     {
                         @:Saves:
-                        foreach (var save in AppState.Saves)
+                        foreach (var save in appState.Saves)
                         {
                             <li @key="save.Name">
                                 <div class="saveName">@save.ShortName</div><span class="info">@save.GameType</span>
@@ -41,17 +41,17 @@
                 <div class="startButton" @onclick="GoBack">Back</div>
             </div>
         }
-        else if (AppState.Loading && !AppState.Started)
+        else if (appState.Loading && !appState.Started)
         {
             <div class="loading">
-                @(AppState.Progress.Message ?? "Initializing...")
-                @if (AppState.Progress.Total != 0)
+                @(appState.Progress.Message ?? "Initializing...")
+                @if (appState.Progress.Total != 0)
                 {
-                    <span class="progressBar"><span><span style="width: @AppState.Progress.PercentLoaded%" /></span></span>
+                    <span class="progressBar"><span><span style="width: @appState.Progress.PercentLoaded%" /></span></span>
                 }
             </div>
         }
-        else if (!AppState.Started)
+        else if (!appState.Started)
         {
             <div class="start">
                 <p>
@@ -63,7 +63,7 @@
                     The game can be purchased from <a href="https://www.gog.com/game/diablo">GoG</a>.
                     @*<span class="link" @onclick="CompressMPQ">Click here to compress the MPQ, greatly reducing its size.</span>*@
                 </p>
-                @if (!AppState.HasSpawn)
+                @if (!appState.HasSpawn)
                 {
                     <p>
                         Or you can play the shareware version for free (25MB download).
@@ -72,7 +72,7 @@
                 <label for="mpqInput" class="startButton">Browse for DIABDAT.MPQ</label>
                 <InputFile OnChange="@LoadMpqFile" accept=".mpq" id="mpqInput" class="hidden" />
                 <div class="startButton" @onclick="() => Start()">Play Shareware</div>
-                @if (AppState.Saves.Any())
+                @if (appState.Saves.Any())
                 {
                     <div class="startButton" @onclick="ShowSaves">Manage Saves</div>
                 }

@@ -13,6 +13,7 @@ public partial class Main
     private static IGraphics graphics;
 
     public static GameType GameType { get; private set; }
+
     public static Timer? Timer { private get; set; }
 
     [UnmanagedCallersOnly]
