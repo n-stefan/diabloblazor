@@ -9,7 +9,6 @@ namespace diabloblazor.Pages;
 
 public partial class Main : ComponentBase
 {
-    private bool isDrop;
     private bool preventDefaultKeyDown;
     private bool preventDefaultDragOver;
     private DOMRect canvasRect;
@@ -255,8 +254,9 @@ public partial class Main : ComponentBase
 
     private async Task LoadRetail()
     {
-        if (isDrop)
+        if (appState.Dropping != 0)
         {
+            appState.Dropping = 0;
             await JSImports.SetDropFile();
         }
         else
@@ -286,7 +286,7 @@ public partial class Main : ComponentBase
     }
 
     [JSInvokable]
-    public async Task Start(string? name = null, bool isDrop = false)
+    public async Task Start(string? name = null)
     {
         //if (this.compressMpq)
         //    this.compressMpq.start(file);
@@ -301,8 +301,6 @@ public partial class Main : ComponentBase
 
         GameType = (string.Equals(name, retailFilename, StringComparison.Ordinal)) ? GameType.Retail : GameType.Shareware;
 
-        this.isDrop = isDrop;
-        appState.Dropping = 0;
         appState.Loading = true;
 
         await LoadGame();
@@ -311,7 +309,6 @@ public partial class Main : ComponentBase
         //document.addEventListener('touchmove', this.onTouchMove, { passive: false, capture: true});
         //document.addEventListener('touchend', this.onTouchEnd, { passive: false, capture: true});
 
-        this.isDrop = false;
         appState.Started = true;
 
         StateHasChanged();

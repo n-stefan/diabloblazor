@@ -54,7 +54,7 @@ class FileStore {
         this.dropFile = this.getDropFile(event);
         if (this.dropFile) {
             event.preventDefault();
-            interop.dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase(), true);
+            interop.dotNetReference.invokeMethodAsync('Start', this.dropFile.name.toLowerCase());
         }
     }
 
