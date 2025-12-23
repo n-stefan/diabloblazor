@@ -24,7 +24,6 @@ public static class HttpClientExtensions
             bytesRead = await stream.ReadAsync(data, totalBytesRead, count);
             totalBytesRead += bytesRead;
             onProgress?.Invoke(new Progress { Message = message, BytesLoaded = totalBytesRead, Total = totalSize });
-            await Task.Delay(10);
         }
         while (bytesRead != 0);
 
