@@ -14,13 +14,13 @@ public partial class Main : ComponentBase
     private DOMRect canvasRect;
     private ElementReference downloadLink;
     private IBrowserFile? file;
-    private IAppState appState;
-    private IInterop interop;
-    private IExceptionHandler exceptionHandler;
-    private IConfiguration configuration;
-    private IWorker worker;
-    private NavigationManager navigationManager;
-    private HttpClient httpClient;
+    private readonly IAppState appState;
+    private readonly IInterop interop;
+    private readonly IExceptionHandler exceptionHandler;
+    private readonly IConfiguration configuration;
+    private readonly IWorker worker;
+    private readonly NavigationManager navigationManager;
+    private readonly HttpClient httpClient;
 
     private string FPSTarget =>
         (RenderInterval != 0) ? (1000d / RenderInterval).ToString("N2") : "0";
