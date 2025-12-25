@@ -45,17 +45,6 @@ public partial class Main : ComponentBase
         Main.graphics = graphics;
     }
 
-    private (double x, double y) MousePos(MouseEventArgs e)
-    {
-        double tx = 0, ty = 0;
-        tx = Math.Max(canvasRect.Left, Math.Min(canvasRect.Right, tx + e.ClientX));
-        ty = Math.Max(canvasRect.Top, Math.Min(canvasRect.Bottom, ty + e.ClientY));
-        return (
-            x: Math.Max(0, Math.Min(Math.Round((tx - canvasRect.Left) / (canvasRect.Right - canvasRect.Left) * 640), 639)),
-            y: Math.Max(0, Math.Min(Math.Round((ty - canvasRect.Top) / (canvasRect.Bottom - canvasRect.Top) * 480), 479))
-        );
-    }
-
     protected override async Task OnInitializedAsync()
     {
         await interop.SetDotNetReference(DotNetObjectReference.Create(this));
@@ -109,7 +98,7 @@ public partial class Main : ComponentBase
         {
             return;
         }
-        if (keyCode is 8 or 9 or (>= 112 and <= 119))
+        else if (keyCode is 8 or 9 or (>= 112 and <= 119))
         {
             preventDefaultKeyDown = true;
         }
@@ -126,12 +115,6 @@ public partial class Main : ComponentBase
         }
     }
 
-    private void OnMainDragEnter(DragEventArgs _) =>
-        SetDropping(1);
-
-    private void OnMainDragLeave(DragEventArgs _) =>
-        SetDropping(-1);
-
     private void OnMainDragOver(DragEventArgs e)
     {
         if (e.DataTransfer.Items.Any(static x => string.Equals(x.Kind, "file", StringComparison.Ordinal)) || e.DataTransfer.Files.Length != 0)
@@ -140,14 +123,24 @@ public partial class Main : ComponentBase
         }
     }
 
+    private void OnMainDragEnter(DragEventArgs _) =>
+        SetDropping(1);
+
+    private void OnMainDragLeave(DragEventArgs _) =>
+        SetDropping(-1);
+
     private void SetDropping(int change) =>
         appState.Dropping = Math.Max(appState.Dropping + change, 0);
 
-    private void InitSaves()
+    private (double x, double y) MousePos(MouseEventArgs e)
     {
-        var filenames = fileSystem.GetFilenames();
-        var saveNames = filenames.Where(static x => x.EndsWith(".sv")).ToList();
-        saveNames.ForEach(x => appState.Saves.Add(new SaveGame(x)));
+        double tx = 0, ty = 0;
+        tx = Math.Max(canvasRect.Left, Math.Min(canvasRect.Right, tx + e.ClientX));
+        ty = Math.Max(canvasRect.Top, Math.Min(canvasRect.Bottom, ty + e.ClientY));
+        return (
+            x: Math.Max(0, Math.Min(Math.Round((tx - canvasRect.Left) / (canvasRect.Right - canvasRect.Left) * 640), 639)),
+            y: Math.Max(0, Math.Min(Math.Round((ty - canvasRect.Top) / (canvasRect.Bottom - canvasRect.Top) * 480), 479))
+        );
     }
 
     private async Task<byte[]> ReadInputFile(string message)
@@ -170,13 +163,13 @@ public partial class Main : ComponentBase
         return data;
     }
 
-    private async Task LoadMpqFile(InputFileChangeEventArgs e)
+    private async Task LoadMpq(InputFileChangeEventArgs e)
     {
         file = e.File;
         await Start(file.Name);
     }
 
-    private async Task UploadSaveFile(InputFileChangeEventArgs e)
+    private async Task UploadSave(InputFileChangeEventArgs e)
     {
         file = e.File;
         await Upload(file.Name);
@@ -207,9 +200,6 @@ public partial class Main : ComponentBase
         appState.Saves.Add(new SaveGame(name));
     }
 
-    private void GoBack() =>
-        appState.ShowSaves = false;
-
     private async Task DownloadSave(string name)
     {
         var data = await interop.ReadIndexedDb(name);
@@ -229,8 +219,18 @@ public partial class Main : ComponentBase
         appState.Saves.Remove(saveToRemove);
     }
 
+    private void InitSaves()
+    {
+        var fileNames = fileSystem.GetFilenames();
+        var saveNames = fileNames.Where(static x => x.EndsWith(".sv")).ToList();
+        saveNames.ForEach(x => appState.Saves.Add(new SaveGame(x)));
+    }
+
     private void ShowSaves() =>
-        appState.ShowSaves = !appState.ShowSaves;
+        appState.ShowSaves = true;
+
+    private void GoBack() =>
+        appState.ShowSaves = false;
 
     private async Task LoadGame()
     {

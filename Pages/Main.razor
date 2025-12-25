@@ -37,7 +37,7 @@
                 </ul>
                 <a @ref="downloadLink" class="hidden"></a>
                 <label for="saveInput" class="startButton">Upload Save</label>
-                <InputFile OnChange="@UploadSaveFile" accept=".sv" id="saveInput" class="hidden" />
+                <InputFile OnChange="@UploadSave" accept=".sv" id="saveInput" class="hidden" />
                 <div class="startButton" @onclick="GoBack">Back</div>
             </div>
         }
@@ -70,7 +70,7 @@
                     </p>
                 }
                 <label for="mpqInput" class="startButton">Browse for DIABDAT.MPQ</label>
-                <InputFile OnChange="@LoadMpqFile" accept=".mpq" id="mpqInput" class="hidden" />
+                <InputFile OnChange="@LoadMpq" accept=".mpq" id="mpqInput" class="hidden" />
                 <div class="startButton" @onclick="() => Start()">Play Shareware</div>
                 @if (appState.Saves.Any())
                 {
