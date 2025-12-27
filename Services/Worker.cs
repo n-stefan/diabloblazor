@@ -2,18 +2,11 @@
 
 public partial class Worker : IWorker
 {
-    public void InitGame(Main app)
+    public unsafe void RunGame(Main app)
     {
         ArgumentNullException.ThrowIfNull(app);
 
         app.OnProgress(new Progress { Message = "Launching..." });
-
-        RunGame(app);
-    }
-
-    public unsafe void RunGame(Main app)
-    {
-        ArgumentNullException.ThrowIfNull(app);
 
         var startTime = DateTime.Now;
 

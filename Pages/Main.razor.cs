@@ -129,40 +129,6 @@ public partial class Main : ComponentBase
     private void OnMainDragLeave(DragEventArgs _) =>
         SetDropping(-1);
 
-    private void SetDropping(int change) =>
-        appState.Dropping = Math.Max(appState.Dropping + change, 0);
-
-    private (double x, double y) MousePos(MouseEventArgs e)
-    {
-        double tx = 0, ty = 0;
-        tx = Math.Max(canvasRect.Left, Math.Min(canvasRect.Right, tx + e.ClientX));
-        ty = Math.Max(canvasRect.Top, Math.Min(canvasRect.Bottom, ty + e.ClientY));
-        return (
-            x: Math.Max(0, Math.Min(Math.Round((tx - canvasRect.Left) / (canvasRect.Right - canvasRect.Left) * 640), 639)),
-            y: Math.Max(0, Math.Min(Math.Round((ty - canvasRect.Top) / (canvasRect.Bottom - canvasRect.Top) * 480), 479))
-        );
-    }
-
-    private async Task<byte[]> ReadInputFile(string message)
-    {
-        int bytesRead;
-        var totalBytesRead = 0;
-        var data = new byte[file.Size];
-
-        await using var stream = file.OpenReadStream(520_000_000);
-
-        do
-        {
-            var count = Math.Min(file.Size - totalBytesRead, bufferSize);
-            bytesRead = await stream.ReadAsync(data, totalBytesRead, (int)count);
-            totalBytesRead += bytesRead;
-            OnProgress(new Progress { Message = message, BytesLoaded = totalBytesRead, Total = file.Size });
-        }
-        while (bytesRead != 0);
-
-        return data;
-    }
-
     private async Task LoadMpq(InputFileChangeEventArgs e)
     {
         file = e.File;
@@ -249,7 +215,7 @@ public partial class Main : ComponentBase
         {
             await LoadSpawn();
         }
-        worker.InitGame(this);
+        worker.RunGame(this);
     }
 
     private async Task LoadRetail()
@@ -328,6 +294,40 @@ public partial class Main : ComponentBase
     [JSInvokable]
     public ulong SetFile(string name, byte[] data) =>
         (ulong)fileSystem.SetFile(name, data);
+
+    private void SetDropping(int change) =>
+        appState.Dropping = Math.Max(appState.Dropping + change, 0);
+
+    private (double x, double y) MousePos(MouseEventArgs e)
+    {
+        double tx = 0, ty = 0;
+        tx = Math.Max(canvasRect.Left, Math.Min(canvasRect.Right, tx + e.ClientX));
+        ty = Math.Max(canvasRect.Top, Math.Min(canvasRect.Bottom, ty + e.ClientY));
+        return (
+            x: Math.Max(0, Math.Min(Math.Round((tx - canvasRect.Left) / (canvasRect.Right - canvasRect.Left) * 640), 639)),
+            y: Math.Max(0, Math.Min(Math.Round((ty - canvasRect.Top) / (canvasRect.Bottom - canvasRect.Top) * 480), 479))
+        );
+    }
+
+    private async Task<byte[]> ReadInputFile(string message)
+    {
+        int bytesRead;
+        var totalBytesRead = 0;
+        var data = new byte[file.Size];
+
+        await using var stream = file.OpenReadStream(520_000_000);
+
+        do
+        {
+            var count = Math.Min(file.Size - totalBytesRead, bufferSize);
+            bytesRead = await stream.ReadAsync(data, totalBytesRead, (int)count);
+            totalBytesRead += bytesRead;
+            OnProgress(new Progress { Message = message, BytesLoaded = totalBytesRead, Total = file.Size });
+        }
+        while (bytesRead != 0);
+
+        return data;
+    }
 
     //private void CompressMPQ() =>
     //    AppState.Compress = true;

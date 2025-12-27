@@ -2,7 +2,5 @@
 
 public interface IWorker
 {
-    void InitGame(Main app);
-
     void RunGame(Main app);
 }
