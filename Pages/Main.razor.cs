@@ -202,11 +202,6 @@ public partial class Main : ComponentBase
     {
         JSImports.InitGraphics(Offscreen);
         JSImports.InitSound();
-        await DoLoadGame();
-    }
-
-    private async Task DoLoadGame()
-    {
         if (GameType == GameType.Retail && !fileSystem.HasFile(retailFilename))
         {
             await LoadRetail();
