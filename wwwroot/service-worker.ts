@@ -12,9 +12,9 @@ async function onInstall(event: /*ExtendableEvent*/any): Promise<void> {
     await caches.open(cacheName).then(cache => cache.addAll([
         '_framework/blazor.webassembly.js',
         '_framework/dotnet.js',
-        '_framework/dotnet.native.um47d9zjao.js', //Debug
-      //'_framework/dotnet.native.lw0g0oa5jk.js', //Release
-        '_framework/dotnet.runtime.o0qy896u8v.js',
+        '_framework/dotnet.native.sc4rtbvsq6.js', //Debug
+      //'_framework/dotnet.native.1389dr8vb7.js', //Release
+        '_framework/dotnet.runtime.0j6ezsi0n0.js',
         'index.html',
         'dist/decode.min.js',
         'dist/external.min.css',
