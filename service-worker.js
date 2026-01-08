@@ -7,8 +7,8 @@ async function onInstall(event) {
     await caches.open(cacheName).then(cache => cache.addAll([
         '_framework/blazor.webassembly.js',
         '_framework/dotnet.js',
-        '_framework/dotnet.native.dzuxwe92dh.js',
-        '_framework/dotnet.runtime.o0qy896u8v.js',
+        '_framework/dotnet.native.r6hg5ejalu.js',
+        '_framework/dotnet.runtime.0j6ezsi0n0.js',
         'index.html',
         'dist/decode.min.js',
         'dist/external.min.css',
