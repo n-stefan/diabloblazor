@@ -69,11 +69,11 @@ public partial class Main
 
     [UnmanagedCallersOnly]
     public static void PutFileContents(nuint nameAddress, nint dataAddress, int dataLength) =>
-        fileSystem.PutFileContents(nameAddress, dataAddress, dataLength);
+        _ = fileSystem.PutFileContents(nameAddress, dataAddress, dataLength);
 
     [UnmanagedCallersOnly]
     public static void RemoveFile(nuint nameAddress) =>
-        fileSystem.RemoveFile(nameAddress);
+        _ = fileSystem.RemoveFile(nameAddress);
 
     [UnmanagedCallersOnly]
     public static void SetCursor(int x, int y) =>

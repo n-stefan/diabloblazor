@@ -12,10 +12,10 @@ internal static partial class JSImports
     internal static partial bool Confirm(string message);
 
     [JSImport("globalThis.interop.fileStore.storeIndexedDb")]
-    internal static partial void StoreIndexedDb(string name, [JSMarshalAs<JSType.MemoryView>] ArraySegment<byte> data);
+    internal static partial Task StoreIndexedDb(string name, [JSMarshalAs<JSType.MemoryView>] ArraySegment<byte> data);
 
     [JSImport("globalThis.interop.fileStore.removeIndexedDb")]
-    internal static partial void RemoveIndexedDb(string name);
+    internal static partial Task RemoveIndexedDb(string name);
 
     [JSImport("globalThis.interop.fileStore.indexedDbHasFile")]
     internal static partial Task<bool> IndexedDbHasFile(string name);

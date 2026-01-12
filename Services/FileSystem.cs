@@ -53,25 +53,25 @@ public class FileSystem : IFileSystem
         return files[name].Address;
     }
 
-    public void PutFileContents(nuint nameAddress, nint dataAddress, int dataLength)
+    public async Task PutFileContents(nuint nameAddress, nint dataAddress, int dataLength)
     {
         var name = Marshal.PtrToStringAuto((nint)nameAddress);
         var data = new byte[dataLength];
         Marshal.Copy(dataAddress, data, 0, dataLength);
         SetFile(name, data);
-        JSImports.StoreIndexedDb(name, data);
+        await JSImports.StoreIndexedDb(name, data);
     }
 
-    public void RemoveFile(string name)
+    public async Task RemoveFile(string name)
     {
         files[name].Free();
         files.Remove(name);
-        JSImports.RemoveIndexedDb(name);
+        await JSImports.RemoveIndexedDb(name);
     }
 
-    public void RemoveFile(nuint nameAddress)
+    public async Task RemoveFile(nuint nameAddress)
     {
         var name = Marshal.PtrToStringAuto((nint)nameAddress);
-        RemoveFile(name);
+        await RemoveFile(name);
     }
 }

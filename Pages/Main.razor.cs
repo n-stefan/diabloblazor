@@ -159,7 +159,7 @@ public partial class Main : ComponentBase
 
         var data = await ReadInputFile("Uploading...");
         fileSystem.SetFile(name, data);
-        JSImports.StoreIndexedDb(name, data);
+        await JSImports.StoreIndexedDb(name, data);
 
         file = null;
 
@@ -173,14 +173,14 @@ public partial class Main : ComponentBase
         await interop.ClickDownloadLink(downloadLink, name, $"data:application/octet-stream;base64,{base64}");
     }
 
-    private void RemoveSave(SaveGame saveGame)
+    private async Task RemoveSave(SaveGame saveGame)
     {
         if (!JSImports.Confirm($"Are you sure you want to delete {saveGame.ShortName}?"))
         {
             return;
         }
 
-        fileSystem.RemoveFile(saveGame.Name);
+        await fileSystem.RemoveFile(saveGame.Name);
         var saveToRemove = appState.Saves.FirstOrDefault(x => string.Equals(x.Name, saveGame.Name, StringComparison.Ordinal));
         appState.Saves.Remove(saveToRemove);
     }
@@ -234,7 +234,7 @@ public partial class Main : ComponentBase
         var filesize = fileSystem.GetFilesize(spawnFilename);
         if (filesize != 0 && !spawnFilesizes.Contains(filesize))
         {
-            fileSystem.RemoveFile(spawnFilename);
+            await fileSystem.RemoveFile(spawnFilename);
             filesize = 0;
         }
         if (filesize == 0)
@@ -242,7 +242,7 @@ public partial class Main : ComponentBase
             var url = $"{navigationManager.BaseUri}{spawnFilename}";
             var binary = await httpClient.GetWithProgressAsync(new Uri(url), "Downloading...", spawnFilesizes[1], bufferSize, OnProgress);
             fileSystem.SetFile(spawnFilename, binary);
-            JSImports.StoreIndexedDb(spawnFilename, binary);
+            await JSImports.StoreIndexedDb(spawnFilename, binary);
         }
     }
 
