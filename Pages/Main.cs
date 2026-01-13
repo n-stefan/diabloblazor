@@ -68,12 +68,18 @@ public partial class Main
         fileSystem.GetFilesize(nameAddress);
 
     [UnmanagedCallersOnly]
-    public static void PutFileContents(nuint nameAddress, nint dataAddress, int dataLength) =>
-        _ = fileSystem.PutFileContents(nameAddress, dataAddress, dataLength);
+    public static void PutFileContents(nuint nameAddress, nint dataAddress, int dataLength)
+    {
+        var (name, data) = fileSystem.PutFileContents(nameAddress, dataAddress, dataLength);
+        _ = JSImports.StoreIndexedDb(name, data);
+    }
 
     [UnmanagedCallersOnly]
-    public static void RemoveFile(nuint nameAddress) =>
-        _ = fileSystem.RemoveFile(nameAddress);
+    public static void RemoveFile(nuint nameAddress)
+    {
+        var name = fileSystem.RemoveFile(nameAddress);
+        _ = JSImports.RemoveIndexedDb(name);
+    }
 
     [UnmanagedCallersOnly]
     public static void SetCursor(int x, int y) =>

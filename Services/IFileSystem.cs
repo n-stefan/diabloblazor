@@ -14,11 +14,11 @@ public interface IFileSystem
 
     bool HasFile(string name, int[]? sizes = null);
 
-    Task PutFileContents(nuint nameAddress, nint dataAddress, int dataLength);
+    (string, byte[]) PutFileContents(nuint nameAddress, nint dataAddress, int dataLength);
 
-    Task RemoveFile(nuint nameAddress);
+    string RemoveFile(nuint nameAddress);
 
-    Task RemoveFile(string name);
+    void RemoveFile(string name);
 
     nint SetFile(string name, byte[] data);
 }

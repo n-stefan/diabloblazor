@@ -180,7 +180,8 @@ public partial class Main : ComponentBase
             return;
         }
 
-        await fileSystem.RemoveFile(saveGame.Name);
+        fileSystem.RemoveFile(saveGame.Name);
+        await JSImports.RemoveIndexedDb(saveGame.Name);
         var saveToRemove = appState.Saves.FirstOrDefault(x => string.Equals(x.Name, saveGame.Name, StringComparison.Ordinal));
         appState.Saves.Remove(saveToRemove);
     }
@@ -234,7 +235,8 @@ public partial class Main : ComponentBase
         var filesize = fileSystem.GetFilesize(spawnFilename);
         if (filesize != 0 && !spawnFilesizes.Contains(filesize))
         {
-            await fileSystem.RemoveFile(spawnFilename);
+            fileSystem.RemoveFile(spawnFilename);
+            await JSImports.RemoveIndexedDb(spawnFilename);
             filesize = 0;
         }
         if (filesize == 0)
