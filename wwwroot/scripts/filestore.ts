@@ -11,7 +11,7 @@ class FileStore {
     private dropFile: File;
 
     //Dummy parameter for minification
-    public initIndexedDb = async (dummy: any): Promise<void> => {
+    public initIndexedDb = async (_: any): Promise<void> => {
         this.store = new IdbKvStore('diablo_fs');
         for (const [name, data] of Object.entries(await this.store.json())) {
             interop.dotNetReference.invokeMethod('SetFile', name.toLowerCase(), data as Uint8Array);
@@ -21,7 +21,7 @@ class FileStore {
     public readIndexedDb = async (name: string): Promise<Uint8Array> =>
         await this.store.get(name.toLowerCase());
 
-    public indexedDbHasFile = async (name: string): Promise<boolean> => {
+    public hasFileIndexedDb = async (name: string): Promise<boolean> => {
         const file = await this.store.get(name.toLowerCase());
         return Boolean(file);
     }
@@ -39,16 +39,6 @@ class FileStore {
     public removeIndexedDb = async (name: string): Promise<void> => {
         await this.store.remove(name);
     }
-
-    private readonly readFile = async (file: File): Promise<ArrayBuffer> => new Promise<ArrayBuffer>((resolve, reject): void => {
-        const reader = new FileReader();
-        reader.onload = (): void => { resolve(reader.result as ArrayBuffer); };
-        reader.onerror = (): void => { reject(reader.error); };
-        reader.onabort = (): void => { reject(); };
-        reader.onprogress = (event: ProgressEvent<FileReader>): void =>
-            interop.dotNetReference.invokeMethod('OnProgress', new Progress('Loading...', event.loaded, event.total));
-        reader.readAsArrayBuffer(file);
-    });
 
     public onDropFile = (event: DragEvent): void => {
         this.dropFile = this.getDropFile(event);
@@ -75,7 +65,7 @@ class FileStore {
     }
 
     //Dummy parameter for minification
-    public setDropFile = async (dummy: any): Promise<void> => {
+    public setDropFile = async (_: any): Promise<void> => {
         const array = new Uint8Array(await this.readFile(this.dropFile));
         interop.dotNetReference.invokeMethod('SetFile', this.dropFile.name.toLowerCase(), array);
         this.dropFile = null;
@@ -89,4 +79,14 @@ class FileStore {
     public setRenderInterval = (value: number): void => {
         localStorage.setItem('DiabloRenderInterval', value.toString());
     }
+
+    private readonly readFile = async (file: File): Promise<ArrayBuffer> => new Promise<ArrayBuffer>((resolve, reject): void => {
+        const reader = new FileReader();
+        reader.onload = (): void => { resolve(reader.result as ArrayBuffer); };
+        reader.onerror = (): void => { reject(reader.error); };
+        reader.onabort = (): void => { reject(); };
+        reader.onprogress = (event: ProgressEvent<FileReader>): void =>
+            interop.dotNetReference.invokeMethod('OnProgress', new Progress('Loading...', event.loaded, event.total));
+        reader.readAsArrayBuffer(file);
+    });
 }

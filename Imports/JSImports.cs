@@ -17,8 +17,8 @@ internal static partial class JSImports
     [JSImport("globalThis.interop.fileStore.removeIndexedDb")]
     internal static partial Task RemoveIndexedDb(string name);
 
-    [JSImport("globalThis.interop.fileStore.indexedDbHasFile")]
-    internal static partial Task<bool> IndexedDbHasFile(string name);
+    [JSImport("globalThis.interop.fileStore.hasFileIndexedDb")]
+    internal static partial Task<bool> HasFileIndexedDb(string name);
 
     [JSImport("globalThis.interop.fileStore.initIndexedDb")]
     internal static partial Task InitIndexedDb();

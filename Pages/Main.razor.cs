@@ -151,7 +151,7 @@ public partial class Main : ComponentBase
             return;
         }
 
-        if (await JSImports.IndexedDbHasFile(name))
+        if (await JSImports.HasFileIndexedDb(name))
         {
             JSImports.Alert($"Save '{name}' already exists.");
             return;
@@ -262,7 +262,7 @@ public partial class Main : ComponentBase
             return;
         }
 
-        GameType = (string.Equals(name, retailFilename, StringComparison.Ordinal)) ? GameType.Retail : GameType.Shareware;
+        GameType = string.Equals(name, retailFilename, StringComparison.Ordinal) ? GameType.Retail : GameType.Shareware;
 
         appState.Loading = true;
 
