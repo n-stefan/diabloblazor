@@ -33,7 +33,7 @@ var DApi = {}, interop = new class Interop {
     }
 
     public addEventListeners = (): void => {
-        window.addEventListener('resize', (): void => this.$dotNetReference.invokeMethodAsync('OnResize', this.getCanvasRect()));
+        window.addEventListener('resize', (): void => this.$dotNetReference.invokeMethod('OnResize', this.getCanvasRect()));
         document.getElementById('main').addEventListener('drop', (event: DragEvent): void => { this.$fileStore.onDropFile(event); });
     }
 
