@@ -25,7 +25,7 @@ public partial class Main : ComponentBase
     private string FPSTarget =>
         (RenderInterval != 0) ? (1000d / RenderInterval).ToString("N2") : "0";
 
-    public bool Offscreen { get; private set; }
+    public bool Offscreen { get; }
 
     public int RenderInterval { get; private set; }
 

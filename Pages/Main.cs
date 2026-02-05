@@ -2,7 +2,6 @@
 
 public partial class Main
 {
-    //TODO: Move some into AppState
     private const string spawnFilename = "spawn.mpq";
     private const string retailFilename = "diabdat.mpq";
     private const int bufferSize = 524_288;

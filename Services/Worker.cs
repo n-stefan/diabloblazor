@@ -29,7 +29,7 @@ public partial class Worker : IWorker
         delegate* unmanaged<int, int, nuint, int, void> drawText = &Main.DrawText;
 
         NativeImports.DApi_Init(
-            Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds),
+            Convert.ToUInt32((DateTime.UtcNow - startTime).TotalMilliseconds),
             app.Offscreen ? 1 : 0,
             int.Parse(version.Groups[1].Value),
             int.Parse(version.Groups[2].Value),
@@ -42,7 +42,7 @@ public partial class Worker : IWorker
             ]);
 
         Main.Timer = new Timer(
-            _ => NativeImports.DApi_Render(Convert.ToUInt32((DateTime.Now - startTime).TotalMilliseconds)),
+            _ => NativeImports.DApi_Render(Convert.ToUInt32((DateTime.UtcNow - startTime).TotalMilliseconds)),
             null,
             0,
             app.RenderInterval);
