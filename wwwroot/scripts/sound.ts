@@ -3,12 +3,12 @@ interface SoundDef {
     buffer: Promise<AudioBuffer>;
     gain: GainNode;
     panner: StereoPannerNode;
-    source?: Promise<AudioBufferSourceNode>;
+    source?: Promise<AudioBufferSourceNode | null>;
 }
 
 class Sound {
-    private context: AudioContext;
-    private sounds: Map<number, SoundDef>;
+    private context!: AudioContext | null;
+    private sounds!: Map<number, SoundDef>;
 
     public constructor() {
         const dApi = DApi as any;
@@ -81,7 +81,7 @@ class Sound {
         const src = this.sounds.get(id);
         if (src) {
             if (src.source) {
-                src.source.then(source => { source.stop(); }, (reason: unknown) => { console.error(reason); });
+                src.source.then(source => { source?.stop(); }, (reason: unknown) => { console.error(reason); });
             }
             src.gain.gain.value = Math.pow(2.0, volume / 1000.0);
             const relVolume = Math.pow(2.0, pan / 1000.0);
@@ -89,6 +89,9 @@ class Sound {
                 src.panner.pan.value = 1.0 - 2.0 / (1.0 + relVolume);
             }
             src.source = src.buffer.then(buffer => {
+                if (!this.context) {
+                    return null;
+                }
                 const source = this.context.createBufferSource();
                 source.buffer = buffer;
                 source.loop = Boolean(loop);
@@ -106,7 +109,7 @@ class Sound {
     public stopSound = (id: number): void => {
         const src = this.sounds.get(id);
         if (src && src.source) {
-            src.source.then(source => { source.stop(); }, (reason: unknown) => { console.error(reason); });
+            src.source.then(source => { source?.stop(); }, (reason: unknown) => { console.error(reason); });
             delete src.source;
         }
     }
@@ -114,7 +117,7 @@ class Sound {
     public deleteSound = (id: number): void => {
         const src = this.sounds.get(id);
         if (src && src.source) {
-            src.source.then(source => { source.stop(); }, (reason: unknown) => { console.error(reason); });
+            src.source.then(source => { source?.stop(); }, (reason: unknown) => { console.error(reason); });
         }
         this.sounds.delete(id);
     }

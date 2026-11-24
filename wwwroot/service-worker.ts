@@ -12,9 +12,8 @@ async function onInstall(event: /*ExtendableEvent*/any): Promise<void> {
     await caches.open(cacheName).then(cache => cache.addAll([
         '_framework/blazor.webassembly.js',
         '_framework/dotnet.js',
-        '_framework/dotnet.native.sc4rtbvsq6.js', //Debug
-      //'_framework/dotnet.native.1389dr8vb7.js', //Release
-        '_framework/dotnet.runtime.0j6ezsi0n0.js',
+        '_framework/dotnet.native.js',
+        '_framework/dotnet.runtime.js',
         'index.html',
         'dist/decode.min.js',
         'dist/external.min.css',
@@ -32,7 +31,7 @@ async function onInstall(event: /*ExtendableEvent*/any): Promise<void> {
     ]));
 }
 
-async function onFetch(event: /*FetchEvent*/any): Promise<Response> {
+async function onFetch(event: /*FetchEvent*/any): Promise<Response | null> {
     if (event.request.method !== 'GET') return null;
 
     try {
@@ -51,6 +50,7 @@ async function onFetch(event: /*FetchEvent*/any): Promise<Response> {
             return fromCache;
         }
         console.error(`Couldn't fetch ${event.request.url} from either the network or the offline cache`);
-        return null;
     }
+
+    return null;
 }

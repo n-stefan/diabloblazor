@@ -3,7 +3,7 @@ var DApi = {}, interop = new class Interop {
     private readonly $graphics: Graphics;
     private readonly $sound: Sound;
     private readonly $fileStore: FileStore;
-    private $canvas: HTMLCanvasElement;
+    private $canvas!: HTMLCanvasElement;
     private $dotNetReference: any;
 
     public constructor() {
@@ -34,7 +34,7 @@ var DApi = {}, interop = new class Interop {
 
     public addEventListeners = (): void => {
         window.addEventListener('resize', (): void => this.$dotNetReference.invokeMethod('OnResize', this.getCanvasRect()));
-        document.getElementById('main').addEventListener('drop', (event: DragEvent): void => { this.$fileStore.onDropFile(event); });
+        document.getElementById('main')?.addEventListener('drop', (event: DragEvent): void => { this.$fileStore.onDropFile(event); });
     }
 
     public getCanvasRect = (): DOMRect => {

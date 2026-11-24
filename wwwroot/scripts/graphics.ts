@@ -22,16 +22,16 @@ interface Clip {
 }
 
 interface RenderBatch {
-    bitmap?: ImageBitmap;
+    bitmap: ImageBitmap;
     images: Image[];
     text: TextDef[];
     clip: Clip;
 }
 
-type RenderContext = CanvasRenderingContext2D | ImageBitmapRenderingContext;
+type RenderContext = CanvasRenderingContext2D | ImageBitmapRenderingContext | null;
 
 class Graphics {
-    private context: RenderContext;
+    private context!: RenderContext;
 
     public initGraphics = (offscreen: boolean): void => {
         const canvas = document.getElementById('canvas') as HTMLCanvasElement;

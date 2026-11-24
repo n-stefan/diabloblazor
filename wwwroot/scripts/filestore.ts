@@ -8,7 +8,7 @@ interface FileDef {
 
 class FileStore {
     private store: typeof IdbKvStore;
-    private dropFile: File;
+    private dropFile!: File | null;
 
     //Dummy parameter for minification
     public initIndexedDb = async (_: any): Promise<void> => {
@@ -49,6 +49,9 @@ class FileStore {
     }
 
     private readonly getDropFile = (event: DragEvent): File | null => {
+        if (!event.dataTransfer) {
+            return null;
+        }
         const items = event.dataTransfer.items;
         if (items) {
             for (let iter = 0; iter < items.length; ++iter) {
@@ -66,6 +69,9 @@ class FileStore {
 
     //Dummy parameter for minification
     public setDropFile = async (_: any): Promise<void> => {
+        if (!this.dropFile) {
+            return;
+        }
         const array = new Uint8Array(await this.readFile(this.dropFile));
         interop.dotNetReference.invokeMethod('SetFile', this.dropFile.name.toLowerCase(), array);
         this.dropFile = null;
