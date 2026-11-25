@@ -40,6 +40,7 @@ public partial class Main
         graphics.DrawText(x, y, textAddress, color);
 
     [UnmanagedCallersOnly]
+    [SupportedOSPlatform("browser")]
     public static void ExitError(nuint messageAddress)
     {
         var message = Marshal.PtrToStringAuto((nint)messageAddress);
@@ -47,6 +48,7 @@ public partial class Main
     }
 
     [UnmanagedCallersOnly]
+    [SupportedOSPlatform("browser")]
     public static void ExitGame()
     {
         Timer?.Change(Timeout.Infinite, Timeout.Infinite);
@@ -67,6 +69,7 @@ public partial class Main
         fileSystem.GetFilesize(nameAddress);
 
     [UnmanagedCallersOnly]
+    [SupportedOSPlatform("browser")]
     public static void PutFileContents(nuint nameAddress, nint dataAddress, int dataLength)
     {
         var (name, data) = fileSystem.PutFileContents(nameAddress, dataAddress, dataLength);
@@ -74,6 +77,7 @@ public partial class Main
     }
 
     [UnmanagedCallersOnly]
+    [SupportedOSPlatform("browser")]
     public static void RemoveFile(nuint nameAddress)
     {
         var name = fileSystem.RemoveFile(nameAddress);

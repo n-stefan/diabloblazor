@@ -45,6 +45,7 @@ public partial class Main : ComponentBase
         Main.graphics = graphics;
     }
 
+    [SupportedOSPlatform("browser")]
     protected override async Task OnInitializedAsync()
     {
         await interop.SetDotNetReference(DotNetObjectReference.Create(this));
@@ -69,6 +70,7 @@ public partial class Main : ComponentBase
         JSImports.AddEventListeners();
     }
 
+    [SupportedOSPlatform("browser")]
     private void OnRenderIntervalChange(ChangeEventArgs _) =>
         JSImports.SetRenderInterval(RenderInterval);
 
@@ -129,18 +131,21 @@ public partial class Main : ComponentBase
     private void OnMainDragLeave(DragEventArgs _) =>
         SetDropping(-1);
 
+    [SupportedOSPlatform("browser")]
     private async Task LoadMpq(InputFileChangeEventArgs e)
     {
         file = e.File;
         await Start(file.Name);
     }
 
+    [SupportedOSPlatform("browser")]
     private async Task UploadSave(InputFileChangeEventArgs e)
     {
         file = e.File;
         await Upload(file.Name);
     }
 
+    [SupportedOSPlatform("browser")]
     private async Task Upload(string name)
     {
         ArgumentNullException.ThrowIfNull(name);
@@ -173,6 +178,7 @@ public partial class Main : ComponentBase
         await interop.ClickDownloadLink(downloadLink, name, $"data:application/octet-stream;base64,{base64}");
     }
 
+    [SupportedOSPlatform("browser")]
     private async Task RemoveSave(SaveGame saveGame)
     {
         if (!JSImports.Confirm($"Are you sure you want to delete {saveGame.ShortName}?"))
@@ -199,6 +205,7 @@ public partial class Main : ComponentBase
     private void GoBack() =>
         appState.ShowSaves = false;
 
+    [SupportedOSPlatform("browser")]
     private async Task LoadGame()
     {
         JSImports.InitGraphics(Offscreen);
@@ -214,6 +221,7 @@ public partial class Main : ComponentBase
         worker.RunGame(this);
     }
 
+    [SupportedOSPlatform("browser")]
     private async Task LoadRetail()
     {
         if (appState.Dropping != 0)
@@ -230,6 +238,7 @@ public partial class Main : ComponentBase
         }
     }
 
+    [SupportedOSPlatform("browser")]
     private async Task LoadSpawn()
     {
         var filesize = fileSystem.GetFilesize(spawnFilename);
@@ -249,6 +258,7 @@ public partial class Main : ComponentBase
     }
 
     [JSInvokable]
+    [SupportedOSPlatform("browser")]
     public async Task Start(string? name = null)
     {
         //if (this.compressMpq)

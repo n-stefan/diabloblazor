@@ -2,6 +2,7 @@
 
 public partial class Worker : IWorker
 {
+    [SupportedOSPlatform("browser")]
     public unsafe void RunGame(Main app)
     {
         ArgumentNullException.ThrowIfNull(app);
