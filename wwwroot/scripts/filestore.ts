@@ -10,8 +10,7 @@ class FileStore {
     private store: typeof IdbKvStore;
     private dropFile!: File | null;
 
-    //Dummy parameter for minification
-    public initIndexedDb = async (_: any): Promise<void> => {
+    public initIndexedDb = async (): Promise<void> => {
         this.store = new IdbKvStore('diablo_fs');
         for (const [name, data] of Object.entries(await this.store.json())) {
             interop.dotNetReference.invokeMethod('SetFile', name.toLowerCase(), data as Uint8Array);
@@ -67,8 +66,7 @@ class FileStore {
         return null;
     }
 
-    //Dummy parameter for minification
-    public setDropFile = async (_: any): Promise<void> => {
+    public setDropFile = async (): Promise<void> => {
         if (!this.dropFile) {
             return;
         }
